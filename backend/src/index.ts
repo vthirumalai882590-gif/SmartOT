@@ -51,13 +51,15 @@ app.get('/api/health', (req, res) => {
 app.use('/api', router);
 
 // Serve Frontend Static Bundle in Production / Monorepo deployment
-const frontendDist = path.resolve(__dirname, '../../frontend/dist');
-const altFrontendDist = path.resolve(process.cwd(), 'frontend/dist');
-const staticPath = fs.existsSync(frontendDist)
-  ? frontendDist
-  : fs.existsSync(altFrontendDist)
-  ? altFrontendDist
-  : null;
+const candidateStaticPaths = [
+  path.resolve(process.cwd(), 'frontend/dist'),
+  path.resolve(__dirname, '../../../../frontend/dist'),
+  path.resolve(__dirname, '../../frontend/dist'),
+  path.resolve(__dirname, '../frontend/dist'),
+  path.resolve(process.cwd(), 'dist'),
+];
+const staticPath = candidateStaticPaths.find((p) => fs.existsSync(p)) || null;
+
 
 if (staticPath) {
   console.log(`📦 Serving production frontend build from: ${staticPath}`);

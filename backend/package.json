@@ -2,11 +2,12 @@
   "name": "@smartot/backend",
   "version": "1.0.0",
   "description": "SmartOT Command - Backend Workflow & Intelligence Engine",
-  "main": "dist/index.js",
+  "main": "dist/backend/src/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/backend/src/index.js",
+
     "seed": "tsx src/database/seed.ts",
     "test": "vitest run",
     "test:workflow": "tsx tests/workflow.test.ts"
