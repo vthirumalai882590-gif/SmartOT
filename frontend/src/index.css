@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   SMARTOT COMMAND — LIGHT THEME DESIGN TOKEN SYSTEM
+   Source: MediwoxPlus + CarboTrack globals.css (:root light block)
+   MediwoxPlus: bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100,
+                white glass cards (bg-white/85 backdrop-blur-md border border-white)
+   CarboTrack:  --background: 0 0% 100%, --foreground: 222.2 84% 4.9%
+   ============================================================ */
+@layer base {
+  :root {
+    /* CarboTrack verbatim light-mode variables */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    /* SmartOT primary teal tailored for light background */
+    --primary: 173 80% 36%;
+    --primary-foreground: 210 40% 98%;
+    /* CarboTrack light secondary/muted/accent */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    /* CarboTrack destructive */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    /* CarboTrack border/input/ring */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 173 80% 36%;
+    /* Chart tokens */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.75rem;
+  }
+}
+
+html, body {
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  /* Allow normal page scrolling — dashboard uses its own h-screen + overflow-hidden container */
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+#root {
+  min-height: 100%;
+}
+
+/* ============================================================
+   MediwoxPlus font-serif heading utility
+   Source: PatientDashboard.tsx — Georgia font on h1/h2
+   ============================================================ */
+.heading-serif {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+/* ============================================================
+   MediwoxPlus Nav Wordmark Text-Shadow Stack (verbatim)
+   ============================================================ */
+.wordmark-shadow {
+  text-shadow:
+    1px 1px 0 #000,
+    2px 2px 0 #000,
+    3px 3px 0 #000,
+    4px 4px 0 #000;
+}
+
+/* ============================================================
+   MediwoxPlus Glass Card anatomy (verbatim)
+   Source: PatientDashboard.tsx
+   "bg-white/85 backdrop-blur-md rounded-2xl shadow-xl border border-white text-gray-900"
+   ============================================================ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
+  color: #0f172a;
+}
+
+/* ============================================================
+   Glass Panel (Light)
+   ============================================================ */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* ============================================================
+   CarboTrack footer photo-negative band
+   Source: Footer.js — "bg-gray-900 dark:bg-white"
+   ============================================================ */
+.footer-band {
+  background-color: rgb(17 24 39); /* Tailwind gray-900 */
+  color: #ffffff;
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* ============================================================
+   MediwoxPlus KPI icon tinted circle
+   Source: Hero.tsx / PatientDashboard.tsx
+   ============================================================ */
+.kpi-icon-ring {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+.kpi-icon-ring:hover {
+  transform: rotate(6deg);
+}
+
+/* Custom Sleek Scrollbars for Light Theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+
+/* Glowing OT Status Pulse */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(13, 148, 136, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(13, 148, 136, 0.6);
+  }
+}
+
+.ot-active-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+/* MediwoxPlus fade animations */
+@keyframes fade-in-up {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-right {
+  0%   { opacity: 0; transform: translateX(16px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-fade-in-right {
+  animation: fade-in-right 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* CarboTrack item animation */
+@keyframes carbo-item-in {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-carbo-item {
+  animation: carbo-item-in 0.5s cubic-bezier(0, 0, 0.2, 1) both;
+}

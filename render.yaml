@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: smartot-command
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: AI_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL_NAME
+        value: llama-3.3-70b-versatile
+      - key: JWT_SECRET
+        generateValue: true

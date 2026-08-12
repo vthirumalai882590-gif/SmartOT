@@ -1,0 +1,20 @@
+{
+  "name": "smartot-command-monorepo",
+  "version": "1.0.0",
+  "description": "SmartOT Command — AI-Powered Hospital Operations Workflow Platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "start": "npm --prefix backend start",
+    "postinstall": "npm --prefix backend install && npm --prefix frontend install",
+    "seed": "npm --prefix backend run seed",
+    "test": "npm --prefix backend test"
+  },
+
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

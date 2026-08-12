@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartOT Command — CSSD Pack QR Codes</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f8fafc;
+      padding: 32px;
+      color: #0f172a;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .header h1 { font-size: 24px; font-weight: 900; color: #0f766e; }
+    .header p  { font-size: 13px; color: #64748b; margin-top: 6px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .card.valid   { border-color: #6ee7b7; background: #f0fdf4; }
+    .card.expired { border-color: #fca5a5; background: #fff5f5; }
+    .card.inuse   { border-color: #93c5fd; background: #eff6ff; }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .badge.valid   { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .badge.expired { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .badge.inuse   { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+    .pack-id {
+      font-family: monospace;
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f766e;
+      letter-spacing: .04em;
+    }
+    .qr-box { padding: 8px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .meta   { font-size: 11px; color: #475569; text-align: center; line-height: 1.6; }
+    .meta strong { color: #0f172a; font-weight: 700; }
+    .cut-line {
+      border: none;
+      border-top: 1px dashed #cbd5e1;
+      margin: 32px 0;
+    }
+    .instructions {
+      background: #f0fdf4;
+      border: 1px solid #6ee7b7;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      font-size: 13px;
+      color: #065f46;
+    }
+    .instructions h2 { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+    .instructions ol { padding-left: 20px; line-height: 2; }
+    @media print {
+      body { background: #fff; padding: 16px; }
+      .instructions { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🏥 SmartOT Command — CSSD Pack QR Codes</h1>
+    <p>Print this sheet. Cut each card. Stick on sterile packs. Scan in SmartOT CSSD module.</p>
+  </div>
+
+  <div class="instructions">
+    <h2>📋 How to use these QR codes</h2>
+    <ol>
+      <li>Print this page (Ctrl + P) and cut out each QR card</li>
+      <li>Open SmartOT → CSSD → "Scan QR" button</li>
+      <li>Allow camera access when prompted</li>
+      <li>Hold the printed QR code in front of your camera</li>
+      <li>SmartOT will auto-detect and verify the pack instantly</li>
+    </ol>
+  </div>
+
+  <div class="grid" id="qr-grid"></div>
+
+  <hr class="cut-line" />
+  <p style="text-align:center;font-size:11px;color:#94a3b8;">SmartOT Command · Synthetic demo data only · Not for clinical use</p>
+
+  <script>
+    const packs = [
+      {
+        packId: 'CSSD-021',
+        type: 'Appendectomy Set',
+        batch: 'BATCH-A-2025',
+        sterilized: '2026-08-10',
+        expires: '2026-08-14',
+        location: 'CSSD Main Storage',
+        status: 'AVAILABLE',
+        cssClass: 'valid',
+        badgeClass: 'valid',
+        badgeLabel: 'VALID — STERILE',
+        note: 'Hero demo pack for P-1024 / OT-03',
+      },
+      {
+        packId: 'CSSD-001',
+        type: 'Laparotomy Major Set',
+        batch: 'BATCH-B-2025',
+        sterilized: '2026-08-11',
+        expires: '2026-08-15',
+        location: 'CSSD Main Storage',
+        status: 'AVAILABLE',
+        cssClass: 'valid',
+        badgeClass: 'valid',
+        badgeLabel: 'VALID — STERILE',
+        note: 'Valid for OT-01 / OT-02',
+      },
+      {
+        packId: 'CSSD-002',
+        type: 'Orthopedic Major Set',
+        batch: 'BATCH-C-2025',
+        sterilized: '2026-08-09',
+        expires: '2026-08-13',
+        location: 'CSSD Main Storage',
+        status: 'AVAILABLE',
+        cssClass: 'valid',
+        badgeClass: 'valid',
+        badgeLabel: 'VALID — STERILE',
+        note: 'Valid for OT-04 ortho cases',
+      },
+      {
+        packId: 'CSSD-044',
+        type: 'Laparotomy Major Set',
+        batch: 'BATCH-D-2025',
+        sterilized: null,
+        expires: '2026-08-14',
+        location: 'CSSD Autoclave Bay',
+        status: 'STERILIZING',
+        cssClass: 'inuse',
+        badgeClass: 'inuse',
+        badgeLabel: 'BLOCKED — IN AUTOCLAVE',
+        note: 'Will be blocked — still sterilizing',
+      },
+      {
+        packId: 'CSSD-099',
+        type: 'Appendectomy Set',
+        batch: 'BATCH-E-2024',
+        sterilized: '2026-07-01',
+        expires: '2026-07-08',
+        location: 'CSSD Quarantine Bay',
+        status: 'EXPIRED',
+        cssClass: 'expired',
+        badgeClass: 'expired',
+        badgeLabel: 'BLOCKED — EXPIRED',
+        note: 'Will be blocked — sterile barrier expired',
+      },
+      {
+        packId: 'CSSD-055',
+        type: 'Cardiac Bypass Set',
+        batch: 'BATCH-F-2025',
+        sterilized: '2026-08-12',
+        expires: '2026-08-16',
+        location: 'CSSD Main Storage',
+        status: 'AVAILABLE',
+        cssClass: 'valid',
+        badgeClass: 'valid',
+        badgeLabel: 'VALID — STERILE',
+        note: 'Cardiac cases, OT-01',
+      },
+    ];
+
+    const grid = document.getElementById('qr-grid');
+
+    packs.forEach(pack => {
+      const card = document.createElement('div');
+      card.className = `card ${pack.cssClass}`;
+
+      const badge = document.createElement('span');
+      badge.className = `badge ${pack.badgeClass}`;
+      badge.textContent = pack.badgeLabel;
+      card.appendChild(badge);
+
+      const idEl = document.createElement('div');
+      idEl.className = 'pack-id';
+      idEl.textContent = pack.packId;
+      card.appendChild(idEl);
+
+      const qrBox = document.createElement('div');
+      qrBox.className = 'qr-box';
+      const qrDiv = document.createElement('div');
+      qrDiv.id = `qr-${pack.packId}`;
+      qrBox.appendChild(qrDiv);
+      card.appendChild(qrBox);
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.innerHTML = `
+        <strong>${pack.type}</strong><br>
+        Batch: ${pack.batch}<br>
+        ${pack.sterilized ? `Sterilized: ${pack.sterilized}<br>` : ''}
+        Expires: ${pack.expires}<br>
+        Location: ${pack.location}<br>
+        <em style="font-size:10px;color:#94a3b8;">${pack.note}</em>
+      `;
+      card.appendChild(meta);
+
+      grid.appendChild(card);
+
+      // Render QR code
+      new QRCode(qrDiv, {
+        text: pack.packId,
+        width: 160,
+        height: 160,
+        colorDark: '#0f172a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M,
+      });
+    });
+  </script>
+</body>
+</html>

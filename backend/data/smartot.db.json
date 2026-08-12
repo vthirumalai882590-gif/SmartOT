@@ -1,0 +1,1818 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_01",
+      "email": "admin@smartot.hospital",
+      "name": "Dr. Sarah Jenkins",
+      "role": "ADMINISTRATOR",
+      "department": "Hospital Administration",
+      "createdAt": "2026-08-01T08:00:00Z"
+    },
+    {
+      "id": "usr_ot_01",
+      "email": "otmanager@smartot.hospital",
+      "name": "Marcus Vance, RN",
+      "role": "OT_MANAGER",
+      "department": "Surgical Suite / OT Operations",
+      "createdAt": "2026-08-01T08:00:00Z"
+    },
+    {
+      "id": "usr_cssd_01",
+      "email": "cssd@smartot.hospital",
+      "name": "Elena Rostova",
+      "role": "CSSD_STAFF",
+      "department": "Central Sterile Services Department",
+      "createdAt": "2026-08-01T08:00:00Z"
+    },
+    {
+      "id": "usr_ward_01",
+      "email": "ward@smartot.hospital",
+      "name": "Nurse David Chen",
+      "role": "WARD_STAFF",
+      "department": "Pre-Op Inpatient Ward 4B",
+      "createdAt": "2026-08-01T08:00:00Z"
+    }
+  ],
+  "patients": [
+    {
+      "id": "pat_1024",
+      "mrn": "MRN-2026-1024",
+      "name": "Arthur Pendelton",
+      "age": 48,
+      "gender": "M",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 412",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "PREPARING",
+      "primaryDiagnosis": "Acute Appendicitis (Scheduled for Demo Scenario)",
+      "activeSurgeryId": "surg_1024"
+    },
+    {
+      "id": "pat_1001",
+      "mrn": "MRN-2026-1001",
+      "name": "Eleanor Sterling",
+      "age": 62,
+      "gender": "F",
+      "wardId": "Ward 3A",
+      "bedNumber": "Bed 301",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Cholecystitis (Laparoscopic Cholecystectomy)",
+      "activeSurgeryId": "surg_01"
+    },
+    {
+      "id": "pat_1002",
+      "mrn": "MRN-2026-1002",
+      "name": "Thomas Thorne",
+      "age": 54,
+      "gender": "M",
+      "wardId": "Ward 2B",
+      "bedNumber": "Bed 205",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Right Inguinal Hernia Repair",
+      "activeSurgeryId": "surg_02"
+    },
+    {
+      "id": "pat_1003",
+      "mrn": "MRN-2026-1003",
+      "name": "Victoria Zhao",
+      "age": 41,
+      "gender": "F",
+      "wardId": "Ward 5C",
+      "bedNumber": "Bed 510",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Total Knee Arthroplasty",
+      "activeSurgeryId": "surg_03"
+    },
+    {
+      "id": "pat_1004",
+      "mrn": "MRN-2026-1004",
+      "name": "James Montgomery",
+      "age": 67,
+      "gender": "M",
+      "wardId": "Ward 5A",
+      "bedNumber": "Bed 502",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Coronary Artery Bypass Graft (CABG)",
+      "activeSurgeryId": "surg_04"
+    },
+    {
+      "id": "pat_1005",
+      "mrn": "MRN-2026-1005",
+      "name": "Sophia Al-Mansoor",
+      "age": 35,
+      "gender": "F",
+      "wardId": "Ward 4A",
+      "bedNumber": "Bed 408",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Thyroid Lobectomy",
+      "activeSurgeryId": "surg_05"
+    },
+    {
+      "id": "pat_1006",
+      "mrn": "MRN-2026-1006",
+      "name": "Liam O’Connor",
+      "age": 29,
+      "gender": "M",
+      "wardId": "Ward 2A",
+      "bedNumber": "Bed 214",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Anterior Cruciate Ligament (ACL) Reconstruction",
+      "activeSurgeryId": "surg_06"
+    },
+    {
+      "id": "pat_1007",
+      "mrn": "MRN-2026-1007",
+      "name": "Chloe Dubois",
+      "age": 51,
+      "gender": "F",
+      "wardId": "Ward 3B",
+      "bedNumber": "Bed 318",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "PREPARING",
+      "primaryDiagnosis": "Umbilical Hernia Repair",
+      "activeSurgeryId": "surg_07"
+    },
+    {
+      "id": "pat_1008",
+      "mrn": "MRN-2026-1008",
+      "name": "Marcus Brody",
+      "age": 58,
+      "gender": "M",
+      "wardId": "Ward 5B",
+      "bedNumber": "Bed 520",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Lumbar Laminectomy",
+      "activeSurgeryId": "surg_08"
+    },
+    {
+      "id": "pat_1009",
+      "mrn": "MRN-2026-1009",
+      "name": "Aaliyah Khan",
+      "age": 44,
+      "gender": "F",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 415",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "PREPARING",
+      "primaryDiagnosis": "Laparoscopic Hysterectomy",
+      "activeSurgeryId": "surg_09"
+    },
+    {
+      "id": "pat_1010",
+      "mrn": "MRN-2026-1010",
+      "name": "Benjamin Hayes",
+      "age": 72,
+      "gender": "M",
+      "wardId": "Ward 3A",
+      "bedNumber": "Bed 306",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Transurethral Resection of Prostate (TURP)",
+      "activeSurgeryId": "surg_10"
+    },
+    {
+      "id": "pat_1011",
+      "mrn": "MRN-2026-1011",
+      "name": "Grace Nakamura",
+      "age": 38,
+      "gender": "F",
+      "wardId": "Ward 4A",
+      "bedNumber": "Bed 402",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Endoscopic Sinus Surgery (FESS)",
+      "activeSurgeryId": "surg_11"
+    },
+    {
+      "id": "pat_1012",
+      "mrn": "MRN-2026-1012",
+      "name": "Daniel Ross",
+      "age": 60,
+      "gender": "M",
+      "wardId": "Ward 5C",
+      "bedNumber": "Bed 514",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Total Hip Replacement",
+      "activeSurgeryId": "surg_12"
+    },
+    {
+      "id": "pat_1013",
+      "mrn": "MRN-2026-1013",
+      "name": "Isabella Rossi",
+      "age": 49,
+      "gender": "F",
+      "wardId": "Ward 2B",
+      "bedNumber": "Bed 208",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Mastectomy with Sentinel Node Biopsy",
+      "activeSurgeryId": "surg_13"
+    },
+    {
+      "id": "pat_1014",
+      "mrn": "MRN-2026-1014",
+      "name": "Ethan Wright",
+      "age": 33,
+      "gender": "M",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 422",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "PREPARING",
+      "primaryDiagnosis": "Open Appendectomy",
+      "activeSurgeryId": "surg_14"
+    },
+    {
+      "id": "pat_1015",
+      "mrn": "MRN-2026-1015",
+      "name": "Maya Patel",
+      "age": 56,
+      "gender": "F",
+      "wardId": "Ward 3B",
+      "bedNumber": "Bed 312",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Carotid Endarterectomy",
+      "activeSurgeryId": "surg_15"
+    },
+    {
+      "id": "pat_1016",
+      "mrn": "MRN-2026-1016",
+      "name": "Lucas Silva",
+      "age": 24,
+      "gender": "M",
+      "wardId": "Ward 2A",
+      "bedNumber": "Bed 218",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Shoulder Arthroscopy",
+      "activeSurgeryId": "surg_16"
+    },
+    {
+      "id": "pat_1017",
+      "mrn": "MRN-2026-1017",
+      "name": "Zoe Washington",
+      "age": 69,
+      "gender": "F",
+      "wardId": "Ward 5A",
+      "bedNumber": "Bed 508",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Aortic Valve Replacement",
+      "activeSurgeryId": "surg_17"
+    },
+    {
+      "id": "pat_1018",
+      "mrn": "MRN-2026-1018",
+      "name": "Henry Cavendish",
+      "age": 75,
+      "gender": "M",
+      "wardId": "Ward 3A",
+      "bedNumber": "Bed 315",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "PREPARING",
+      "primaryDiagnosis": "Femoral-Popliteal Bypass",
+      "activeSurgeryId": "surg_18"
+    },
+    {
+      "id": "pat_1019",
+      "mrn": "MRN-2026-1019",
+      "name": "Amelia Earhart",
+      "age": 46,
+      "gender": "F",
+      "wardId": "Ward 4C",
+      "bedNumber": "Bed 430",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Cataract Phacoemulsification",
+      "activeSurgeryId": "surg_19"
+    },
+    {
+      "id": "pat_1020",
+      "mrn": "MRN-2026-1020",
+      "name": "Oliver Twist",
+      "age": 31,
+      "gender": "M",
+      "wardId": "Ward 2B",
+      "bedNumber": "Bed 220",
+      "admissionDate": "2026-08-11T07:30:00Z",
+      "status": "READY_FOR_OT",
+      "primaryDiagnosis": "Laparoscopic Appendectomy",
+      "activeSurgeryId": "surg_20"
+    }
+  ],
+  "patient_readiness": [
+    {
+      "id": "readiness_pat_1024",
+      "patientId": "pat_1024",
+      "admissionCompleted": true,
+      "consentStatus": "MISSING",
+      "documentationCompleted": false,
+      "reportsAvailable": true,
+      "doctorConfirmed": false,
+      "preopPrepCompleted": false,
+      "completedItemsCount": 2,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "notes": "Awaiting surgical consent confirmation from ward attending",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1001",
+      "patientId": "pat_1001",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1002",
+      "patientId": "pat_1002",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1003",
+      "patientId": "pat_1003",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1004",
+      "patientId": "pat_1004",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1005",
+      "patientId": "pat_1005",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1006",
+      "patientId": "pat_1006",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1007",
+      "patientId": "pat_1007",
+      "admissionCompleted": true,
+      "consentStatus": "PENDING",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 5,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1008",
+      "patientId": "pat_1008",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1009",
+      "patientId": "pat_1009",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": false,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 5,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1010",
+      "patientId": "pat_1010",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1011",
+      "patientId": "pat_1011",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1012",
+      "patientId": "pat_1012",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1013",
+      "patientId": "pat_1013",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1014",
+      "patientId": "pat_1014",
+      "admissionCompleted": true,
+      "consentStatus": "PENDING",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 5,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1015",
+      "patientId": "pat_1015",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1016",
+      "patientId": "pat_1016",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1017",
+      "patientId": "pat_1017",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1018",
+      "patientId": "pat_1018",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": false,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 5,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1019",
+      "patientId": "pat_1019",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "readiness_pat_1020",
+      "patientId": "pat_1020",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "notes": "Pre-op checklist verification in progress",
+      "updatedAt": "2026-08-11T13:40:00Z"
+    }
+  ],
+  "operating_theatres": [
+    {
+      "id": "ot_01",
+      "code": "OT-01",
+      "name": "Operating Theatre 1",
+      "specialty": "General & Laparoscopic Surgery",
+      "currentStatus": "SURGERY_STARTED",
+      "activeSurgeryId": "surg_01",
+      "expectedTurnoverMinutes": 25,
+      "currentDelayMinutes": 0,
+      "riskLevel": "LOW",
+      "lastUpdated": "2026-08-11T14:15:00Z"
+    },
+    {
+      "id": "ot_02",
+      "code": "OT-02",
+      "name": "Operating Theatre 2",
+      "specialty": "Orthopedics & Joint Replacement",
+      "currentStatus": "AVAILABLE",
+      "expectedTurnoverMinutes": 25,
+      "currentDelayMinutes": 0,
+      "riskLevel": "LOW",
+      "lastUpdated": "2026-08-11T13:50:00Z"
+    },
+    {
+      "id": "ot_03",
+      "code": "OT-03",
+      "name": "Operating Theatre 3",
+      "specialty": "Emergency & General Surgery",
+      "currentStatus": "PREPARING",
+      "activeSurgeryId": "surg_1024",
+      "expectedTurnoverMinutes": 25,
+      "currentDelayMinutes": 18,
+      "riskLevel": "HIGH",
+      "lastUpdated": "2026-08-11T14:10:00Z"
+    },
+    {
+      "id": "ot_04",
+      "code": "OT-04",
+      "name": "Operating Theatre 4",
+      "specialty": "Cardiovascular & Thoracic",
+      "currentStatus": "TURNOVER",
+      "turnoverStartedAt": "2026-08-11T13:45:00Z",
+      "expectedTurnoverMinutes": 25,
+      "currentDelayMinutes": 8,
+      "riskLevel": "MEDIUM",
+      "lastUpdated": "2026-08-11T14:10:00Z"
+    }
+  ],
+  "surgeries": [
+    {
+      "id": "surg_1024",
+      "patientId": "pat_1024",
+      "patientName": "Arthur Pendelton",
+      "patientMrn": "MRN-2026-1024",
+      "otId": "ot_03",
+      "otCode": "OT-03",
+      "procedureName": "Emergency Appendectomy",
+      "surgeonName": "Dr. Robert Martinez",
+      "anesthesiologistName": "Dr. Clara Oswald",
+      "requiredPackType": "Appendectomy Set",
+      "scheduledStartTime": "2026-08-11T14:00:00Z",
+      "expectedDurationMinutes": 60,
+      "status": "SCHEDULED",
+      "delayMinutes": 18,
+      "delayReason": "Missing patient surgical consent and delayed pre-op checklist completion in Ward 4B",
+      "riskLevel": "HIGH",
+      "riskReasons": [
+        "Surgical consent status currently MISSING",
+        "Patient readiness checklist is 5/6 (Incomplete)",
+        "Scheduled OT start time has elapsed by 18 minutes"
+      ],
+      "createdAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "surg_01",
+      "patientId": "pat_1001",
+      "patientName": "Eleanor Sterling",
+      "patientMrn": "MRN-2026-1001",
+      "otId": "ot_01",
+      "otCode": "OT-01",
+      "procedureName": "Laparoscopic Cholecystectomy",
+      "surgeonName": "Dr. Alan Grant",
+      "anesthesiologistName": "Dr. Ian Malcolm",
+      "requiredPackType": "Laparotomy Major Set",
+      "assignedPackId": "CSSD-004",
+      "scheduledStartTime": "2026-08-11T13:30:00Z",
+      "actualStartTime": "2026-08-11T13:35:00Z",
+      "expectedDurationMinutes": 75,
+      "status": "IN_PROGRESS",
+      "delayMinutes": 5,
+      "riskLevel": "LOW",
+      "createdAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "surg_02",
+      "patientId": "pat_1002",
+      "patientName": "Thomas Thorne",
+      "patientMrn": "MRN-2026-1002",
+      "otId": "ot_01",
+      "otCode": "OT-01",
+      "procedureName": "Right Inguinal Hernia Repair",
+      "surgeonName": "Dr. Alan Grant",
+      "anesthesiologistName": "Dr. Ian Malcolm",
+      "requiredPackType": "Laparotomy Major Set",
+      "scheduledStartTime": "2026-08-11T15:30:00Z",
+      "expectedDurationMinutes": 60,
+      "status": "SCHEDULED",
+      "delayMinutes": 0,
+      "riskLevel": "LOW",
+      "createdAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "surg_03",
+      "patientId": "pat_1003",
+      "patientName": "Victoria Zhao",
+      "patientMrn": "MRN-2026-1003",
+      "otId": "ot_02",
+      "otCode": "OT-02",
+      "procedureName": "Total Knee Arthroplasty",
+      "surgeonName": "Dr. Gregory House",
+      "anesthesiologistName": "Dr. Lisa Cuddy",
+      "requiredPackType": "Orthopedic Arthroplasty Set",
+      "scheduledStartTime": "2026-08-11T14:30:00Z",
+      "expectedDurationMinutes": 110,
+      "status": "READY",
+      "delayMinutes": 0,
+      "riskLevel": "LOW",
+      "createdAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "surg_04",
+      "patientId": "pat_1004",
+      "patientName": "James Montgomery",
+      "patientMrn": "MRN-2026-1004",
+      "otId": "ot_04",
+      "otCode": "OT-04",
+      "procedureName": "Coronary Artery Bypass Graft (CABG)",
+      "surgeonName": "Dr. Cristina Yang",
+      "anesthesiologistName": "Dr. Derek Shepherd",
+      "requiredPackType": "Cardiovascular Basic Set",
+      "scheduledStartTime": "2026-08-11T15:00:00Z",
+      "expectedDurationMinutes": 180,
+      "status": "SCHEDULED",
+      "delayMinutes": 12,
+      "delayReason": "Turnover in OT-04 running over benchmark by 12 minutes",
+      "riskLevel": "MEDIUM",
+      "riskReasons": [
+        "OT-04 turnover delayed past 25-minute benchmark",
+        "Cascading schedule push for subsequent case"
+      ],
+      "createdAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "surg_05",
+      "patientId": "pat_1005",
+      "patientName": "Sophia Al-Mansoor",
+      "patientMrn": "MRN-2026-1005",
+      "otId": "ot_03",
+      "otCode": "OT-03",
+      "procedureName": "Thyroid Lobectomy",
+      "surgeonName": "Dr. Robert Martinez",
+      "anesthesiologistName": "Dr. Clara Oswald",
+      "requiredPackType": "Laparotomy Major Set",
+      "scheduledStartTime": "2026-08-11T16:00:00Z",
+      "expectedDurationMinutes": 70,
+      "status": "SCHEDULED",
+      "delayMinutes": 20,
+      "riskLevel": "MEDIUM",
+      "riskReasons": [
+        "Downstream delay inherited from earlier case (P-1024) in OT-03"
+      ],
+      "createdAt": "2026-08-11T08:00:00Z"
+    }
+  ],
+  "cssd_packs": [
+    {
+      "id": "pack_021",
+      "packId": "CSSD-021",
+      "packType": "Appendectomy Set",
+      "sterilizationBatch": "BATCH-20260810-03",
+      "sterilizedAt": "2026-08-10T11:00:00Z",
+      "expiresAt": "2026-08-24T11:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Sterile Storage Shelf A-3",
+      "notes": "Passed biological and chemical indicator verification",
+      "updatedAt": "2026-08-10T11:30:00Z"
+    },
+    {
+      "id": "pack_099",
+      "packId": "CSSD-099",
+      "packType": "Appendectomy Set",
+      "sterilizationBatch": "BATCH-20260715-01",
+      "sterilizedAt": "2026-07-15T09:00:00Z",
+      "expiresAt": "2026-07-29T09:00:00Z",
+      "sterilityStatus": "EXPIRED",
+      "currentStatus": "EXPIRED",
+      "currentLocation": "CSSD Quarantine Area",
+      "notes": "Expired sterile barrier pack. Reprocessing required.",
+      "updatedAt": "2026-08-01T09:00:00Z"
+    },
+    {
+      "id": "pack_044",
+      "packId": "CSSD-044",
+      "packType": "Laparotomy Major Set",
+      "sterilizationBatch": "BATCH-20260811-09",
+      "sterilizedAt": "2026-08-11T13:00:00Z",
+      "expiresAt": "2026-08-25T13:00:00Z",
+      "sterilityStatus": "UNSTERILIZED",
+      "currentStatus": "STERILIZING",
+      "currentLocation": "Autoclave Chamber #2",
+      "notes": "Undergoing 134°C steam sterilization cycle",
+      "updatedAt": "2026-08-11T13:30:00Z"
+    },
+    {
+      "id": "pack_001",
+      "packId": "CSSD-001",
+      "packType": "Laparotomy Major Set",
+      "sterilizationBatch": "BATCH-20260810-01",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage Shelf B-1",
+      "updatedAt": "2026-08-10T08:45:00Z"
+    },
+    {
+      "id": "pack_002",
+      "packId": "CSSD-002",
+      "packType": "Orthopedic Arthroplasty Set",
+      "sterilizationBatch": "BATCH-20260810-02",
+      "sterilizedAt": "2026-08-10T09:30:00Z",
+      "expiresAt": "2026-08-24T09:30:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "STORED",
+      "currentLocation": "CSSD Main Storage Shelf C-2",
+      "updatedAt": "2026-08-10T10:00:00Z"
+    },
+    {
+      "id": "pack_003",
+      "packId": "CSSD-003",
+      "packType": "Cardiovascular Basic Set",
+      "sterilizationBatch": "BATCH-20260809-04",
+      "sterilizedAt": "2026-08-09T14:00:00Z",
+      "expiresAt": "2026-08-23T14:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage Shelf D-1",
+      "updatedAt": "2026-08-09T14:30:00Z"
+    },
+    {
+      "id": "pack_004",
+      "packId": "CSSD-004",
+      "packType": "Laparotomy Major Set",
+      "sterilizationBatch": "BATCH-20260810-01",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "IN_USE",
+      "currentLocation": "OT-01 Sterile Field",
+      "assignedOtId": "ot_01",
+      "assignedSurgeryId": "surg_01",
+      "updatedAt": "2026-08-11T13:30:00Z"
+    },
+    {
+      "id": "pack_005",
+      "packId": "CSSD-005",
+      "packType": "Appendectomy Set",
+      "sterilizationBatch": "BATCH-20260810-03",
+      "sterilizedAt": "2026-08-10T11:00:00Z",
+      "expiresAt": "2026-08-24T11:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "STORED",
+      "currentLocation": "CSSD Main Storage Shelf A-2",
+      "updatedAt": "2026-08-10T11:45:00Z"
+    },
+    {
+      "id": "pack_006",
+      "packId": "CSSD-006",
+      "packType": "Orthopedic Arthroplasty Set",
+      "sterilizationBatch": "BATCH-20260811-01",
+      "sterilizedAt": "2026-08-11T06:00:00Z",
+      "expiresAt": "2026-08-25T06:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage Shelf C-1",
+      "updatedAt": "2026-08-11T06:40:00Z"
+    },
+    {
+      "id": "pack_007",
+      "packId": "CSSD-007",
+      "packType": "Trauma Emergency Set",
+      "sterilizationBatch": "BATCH-20260810-3",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_008",
+      "packId": "CSSD-008",
+      "packType": "Appendectomy Set",
+      "sterilizationBatch": "BATCH-20260810-4",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_009",
+      "packId": "CSSD-009",
+      "packType": "Laparotomy Major Set",
+      "sterilizationBatch": "BATCH-20260810-5",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_010",
+      "packId": "CSSD-010",
+      "packType": "Orthopedic Arthroplasty Set",
+      "sterilizationBatch": "BATCH-20260810-1",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "UNSTERILIZED",
+      "currentStatus": "REPROCESSING",
+      "currentLocation": "CSSD Decontamination Bay",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_011",
+      "packId": "CSSD-011",
+      "packType": "Cardiovascular Basic Set",
+      "sterilizationBatch": "BATCH-20260810-2",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_012",
+      "packId": "CSSD-012",
+      "packType": "Neurosurgical Cranial Set",
+      "sterilizationBatch": "BATCH-20260810-3",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "STERILIZING",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_013",
+      "packId": "CSSD-013",
+      "packType": "ENT Pediatric Microsurgery Set",
+      "sterilizationBatch": "BATCH-20260810-4",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_014",
+      "packId": "CSSD-014",
+      "packType": "Ophthalmic Phaco Set",
+      "sterilizationBatch": "BATCH-20260810-5",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_015",
+      "packId": "CSSD-015",
+      "packType": "Trauma Emergency Set",
+      "sterilizationBatch": "BATCH-20260810-1",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "UNSTERILIZED",
+      "currentStatus": "REPROCESSING",
+      "currentLocation": "CSSD Decontamination Bay",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_016",
+      "packId": "CSSD-016",
+      "packType": "Appendectomy Set",
+      "sterilizationBatch": "BATCH-20260810-2",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_017",
+      "packId": "CSSD-017",
+      "packType": "Laparotomy Major Set",
+      "sterilizationBatch": "BATCH-20260810-3",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_018",
+      "packId": "CSSD-018",
+      "packType": "Orthopedic Arthroplasty Set",
+      "sterilizationBatch": "BATCH-20260810-4",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "STERILIZING",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_019",
+      "packId": "CSSD-019",
+      "packType": "Cardiovascular Basic Set",
+      "sterilizationBatch": "BATCH-20260810-5",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_020",
+      "packId": "CSSD-020",
+      "packType": "Neurosurgical Cranial Set",
+      "sterilizationBatch": "BATCH-20260810-1",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "UNSTERILIZED",
+      "currentStatus": "REPROCESSING",
+      "currentLocation": "CSSD Decontamination Bay",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_021",
+      "packId": "CSSD-021",
+      "packType": "ENT Pediatric Microsurgery Set",
+      "sterilizationBatch": "BATCH-20260810-2",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_022",
+      "packId": "CSSD-022",
+      "packType": "Ophthalmic Phaco Set",
+      "sterilizationBatch": "BATCH-20260810-3",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_023",
+      "packId": "CSSD-023",
+      "packType": "Trauma Emergency Set",
+      "sterilizationBatch": "BATCH-20260810-4",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_024",
+      "packId": "CSSD-024",
+      "packType": "Appendectomy Set",
+      "sterilizationBatch": "BATCH-20260810-5",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "STERILIZING",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_025",
+      "packId": "CSSD-025",
+      "packType": "Laparotomy Major Set",
+      "sterilizationBatch": "BATCH-20260810-1",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "UNSTERILIZED",
+      "currentStatus": "REPROCESSING",
+      "currentLocation": "CSSD Decontamination Bay",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_026",
+      "packId": "CSSD-026",
+      "packType": "Orthopedic Arthroplasty Set",
+      "sterilizationBatch": "BATCH-20260810-2",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_027",
+      "packId": "CSSD-027",
+      "packType": "Cardiovascular Basic Set",
+      "sterilizationBatch": "BATCH-20260810-3",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_028",
+      "packId": "CSSD-028",
+      "packType": "Neurosurgical Cranial Set",
+      "sterilizationBatch": "BATCH-20260810-4",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_029",
+      "packId": "CSSD-029",
+      "packType": "ENT Pediatric Microsurgery Set",
+      "sterilizationBatch": "BATCH-20260810-5",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_030",
+      "packId": "CSSD-030",
+      "packType": "Ophthalmic Phaco Set",
+      "sterilizationBatch": "BATCH-20260810-1",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "UNSTERILIZED",
+      "currentStatus": "REPROCESSING",
+      "currentLocation": "CSSD Decontamination Bay",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_031",
+      "packId": "CSSD-031",
+      "packType": "Trauma Emergency Set",
+      "sterilizationBatch": "BATCH-20260810-2",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "pack_032",
+      "packId": "CSSD-032",
+      "packType": "Appendectomy Set",
+      "sterilizationBatch": "BATCH-20260810-3",
+      "sterilizedAt": "2026-08-10T08:00:00Z",
+      "expiresAt": "2026-08-24T08:00:00Z",
+      "sterilityStatus": "STERILIZED",
+      "currentStatus": "AVAILABLE",
+      "currentLocation": "CSSD Main Storage",
+      "updatedAt": "2026-08-11T08:00:00Z"
+    }
+  ],
+  "workflow_events": [
+    {
+      "id": "evt_1786541111554_01g2pr",
+      "eventType": "CSSD_PACK_SCANNED",
+      "entityType": "CSSD_PACK",
+      "entityId": "CSSD-021",
+      "department": "CSSD",
+      "timestamp": "2026-08-12T13:25:11.555Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "verificationResult": "VERIFIED",
+        "reasons": [
+          "Verified batch BATCH-20260810-03",
+          "Valid until 24/08/2026",
+          "Stored at CSSD Sterile Storage Shelf A-3"
+        ],
+        "targetOT": "OT-03",
+        "requiredPackType": "Appendectomy Set"
+      }
+    },
+    {
+      "id": "evt_001",
+      "eventType": "PATIENT_ADMITTED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1024",
+      "department": "ADMISSIONS",
+      "timestamp": "2026-08-11T07:30:00Z",
+      "actorId": "usr_ward_01",
+      "actorName": "Nurse David Chen",
+      "metadata": {
+        "mrn": "MRN-2026-1024",
+        "ward": "Ward 4B",
+        "diagnosis": "Acute Appendicitis"
+      }
+    },
+    {
+      "id": "evt_002",
+      "eventType": "SURGERY_SCHEDULED",
+      "entityType": "SURGERY",
+      "entityId": "surg_1024",
+      "department": "OT",
+      "timestamp": "2026-08-11T08:00:00Z",
+      "actorId": "usr_ot_01",
+      "actorName": "Marcus Vance, RN",
+      "metadata": {
+        "otCode": "OT-03",
+        "scheduledStartTime": "2026-08-11T14:00:00Z",
+        "requiredPack": "Appendectomy Set"
+      }
+    },
+    {
+      "id": "evt_003",
+      "eventType": "CSSD_PACK_STERILIZED",
+      "entityType": "CSSD_PACK",
+      "entityId": "CSSD-021",
+      "department": "CSSD",
+      "timestamp": "2026-08-10T11:00:00Z",
+      "actorId": "usr_cssd_01",
+      "actorName": "Elena Rostova",
+      "metadata": {
+        "batch": "BATCH-20260810-03",
+        "packType": "Appendectomy Set",
+        "expiry": "2026-08-24T11:00:00Z"
+      }
+    },
+    {
+      "id": "evt_004",
+      "eventType": "ALERT_TRIGGERED",
+      "entityType": "ALERT",
+      "entityId": "alt_01",
+      "department": "SYSTEM",
+      "timestamp": "2026-08-11T13:45:00Z",
+      "actorId": "system",
+      "actorName": "SmartOT Alert Engine",
+      "metadata": {
+        "patientId": "pat_1024",
+        "triggerReason": "Consent MISSING 15m prior to scheduled OT start"
+      }
+    },
+    {
+      "id": "evt_005",
+      "eventType": "SURGERY_STARTED",
+      "entityType": "SURGERY",
+      "entityId": "surg_01",
+      "department": "OT",
+      "timestamp": "2026-08-11T13:35:00Z",
+      "actorId": "usr_ot_01",
+      "actorName": "Marcus Vance, RN",
+      "metadata": {
+        "otCode": "OT-01",
+        "patientId": "pat_1001",
+        "packId": "CSSD-004"
+      }
+    },
+    {
+      "id": "evt_006",
+      "eventType": "TURNOVER_STARTED",
+      "entityType": "OT",
+      "entityId": "ot_04",
+      "department": "OT",
+      "timestamp": "2026-08-11T13:45:00Z",
+      "actorId": "usr_ot_01",
+      "actorName": "Marcus Vance, RN",
+      "metadata": {
+        "expectedMinutes": 25
+      }
+    },
+    {
+      "id": "evt_007",
+      "eventType": "TURNOVER_DELAY_DETECTED",
+      "entityType": "OT",
+      "entityId": "ot_04",
+      "department": "SYSTEM",
+      "timestamp": "2026-08-11T14:10:00Z",
+      "actorId": "system",
+      "actorName": "SmartOT Delay Engine",
+      "metadata": {
+        "delayMinutes": 12,
+        "cause": "TURNOVER_OVERRUN"
+      }
+    }
+  ],
+  "alerts": [
+    {
+      "id": "alt_consent_surg_1024",
+      "severity": "CRITICAL",
+      "title": "Missing Surgical Consent: Arthur Pendelton (OT-03)",
+      "description": "Surgery \"Emergency Appendectomy\" is scheduled for 07:30 pm but consent is MISSING in Ward 4B.",
+      "entityType": "PATIENT",
+      "entityId": "pat_1024",
+      "responsibleRole": "WARD_STAFF",
+      "recommendedAction": "Verify and complete surgical consent in Ward 4B before transfer.",
+      "status": "OPEN",
+      "createdAt": "2026-08-11T15:52:46.960Z"
+    },
+    {
+      "id": "alt_01",
+      "severity": "CRITICAL",
+      "title": "Missing Surgical Consent: Patient P-1024",
+      "description": "Scheduled surgery \"Emergency Appendectomy\" in OT-03 is 18m past schedule start with Consent MISSING in Ward 4B.",
+      "entityType": "PATIENT",
+      "entityId": "pat_1024",
+      "responsibleRole": "WARD_STAFF",
+      "recommendedAction": "Verify patient/surrogate consent immediately in Pre-Op Ward 4B or alert attending surgeon.",
+      "status": "OPEN",
+      "createdAt": "2026-08-11T13:45:00Z"
+    },
+    {
+      "id": "alt_02",
+      "severity": "WARNING",
+      "title": "Turnover Benchmark Overrun: OT-04",
+      "description": "Room turnover in OT-04 has exceeded the 25-minute benchmark by 12 minutes, placing CABG case (surg_04) at delay risk.",
+      "entityType": "OT",
+      "entityId": "ot_04",
+      "responsibleRole": "OT_MANAGER",
+      "recommendedAction": "Dispatch auxiliary environmental services team to accelerate terminal disinfection.",
+      "status": "OPEN",
+      "createdAt": "2026-08-11T14:02:00Z"
+    },
+    {
+      "id": "alt_03",
+      "severity": "INFO",
+      "title": "CSSD Demand Advisory: Appendectomy Sets",
+      "description": "Tomorrow has 8 scheduled appendectomy procedures with only 5 sets currently sterilized and available.",
+      "entityType": "CSSD_PACK",
+      "entityId": "Appendectomy Set",
+      "responsibleRole": "CSSD_STAFF",
+      "recommendedAction": "Prioritize sterilization batch #4 for incoming decontaminated appendectomy trays.",
+      "status": "OPEN",
+      "createdAt": "2026-08-11T12:00:00Z"
+    }
+  ],
+  "transfers": [
+    {
+      "id": "trf_01",
+      "patientId": "pat_1001",
+      "surgeryId": "surg_01",
+      "fromWard": "Ward 3A",
+      "toOtId": "ot_01",
+      "toOtCode": "OT-01",
+      "transferStartedAt": "2026-08-11T13:10:00Z",
+      "patientArrivedAt": "2026-08-11T13:22:00Z",
+      "durationMinutes": 12,
+      "status": "COMPLETED"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "aud_1786547149923_utp6",
+      "timestamp": "2026-08-12T15:05:49.924Z",
+      "actorId": "usr_ot_01",
+      "actorName": "Marcus Vance, RN",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_ot_01",
+      "newState": {
+        "role": "OT_MANAGER",
+        "email": "otmanager@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786547077619_sow6",
+      "timestamp": "2026-08-12T15:04:37.619Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786547014881_vgpr",
+      "timestamp": "2026-08-12T15:03:34.881Z",
+      "actorId": "usr_ot_01",
+      "actorName": "Marcus Vance, RN",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_ot_01",
+      "newState": {
+        "role": "OT_MANAGER",
+        "email": "otmanager@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786545869693_sc6w",
+      "timestamp": "2026-08-12T14:44:29.694Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786545851764_872p",
+      "timestamp": "2026-08-12T14:44:11.764Z",
+      "actorId": "usr_ward_01",
+      "actorName": "Nurse David Chen",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_ward_01",
+      "newState": {
+        "role": "WARD_STAFF",
+        "email": "ward@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786545840624_qjfg",
+      "timestamp": "2026-08-12T14:44:00.624Z",
+      "actorId": "usr_cssd_01",
+      "actorName": "Elena Rostova",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_cssd_01",
+      "newState": {
+        "role": "CSSD_STAFF",
+        "email": "cssd@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786545833093_qjzf",
+      "timestamp": "2026-08-12T14:43:53.093Z",
+      "actorId": "usr_ot_01",
+      "actorName": "Marcus Vance, RN",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_ot_01",
+      "newState": {
+        "role": "OT_MANAGER",
+        "email": "otmanager@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786545306294_9z2r",
+      "timestamp": "2026-08-12T14:35:06.294Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786544769527_0lnw",
+      "timestamp": "2026-08-12T14:26:09.527Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "AI_CONSULTATION_REQUEST",
+      "entityType": "AI_CONSULTANT",
+      "entityId": "ai_ops",
+      "newState": {
+        "query": "hi",
+        "summary": "The hospital's surgical suite is currently operating at 82% utilization with one active surgery, 16 ready patients, and 2 delayed cases. There is a high-risk case pending in OT-03, which is being held up due to missing surgical consent."
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786543021709_rkx1",
+      "timestamp": "2026-08-12T13:57:01.709Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "AI_CONSULTATION_REQUEST",
+      "entityType": "AI_CONSULTANT",
+      "entityId": "ai_ops",
+      "newState": {
+        "query": "How can we optimize nurse staffing during peak turnover hours between 12:00 and 15:00 based on current OT volume?",
+        "summary": "SmartOT Operations Consultant: Current suite status shows 1 active surgeries, 2 delayed cases, and 4 active alerts across 4 Operating Theatres."
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786543021700_9s7l",
+      "timestamp": "2026-08-12T13:57:01.700Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786543012224_kwie",
+      "timestamp": "2026-08-12T13:56:52.224Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "AI_CONSULTATION_REQUEST",
+      "entityType": "AI_CONSULTANT",
+      "entityId": "ai_ops",
+      "newState": {
+        "query": "Why is OT-03 delayed and what should the team do right now?",
+        "summary": "OT-03 is currently delayed by 18 minutes due to an incomplete pre-op readiness checklist and missing surgical consent for Patient Arthur Pendelton (P-1024) in Pre-Op Ward 4B."
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786543012212_jrrq",
+      "timestamp": "2026-08-12T13:56:52.213Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786541111558_ftuo",
+      "timestamp": "2026-08-12T13:25:11.558Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "CSSD_PACK_QR_SCAN",
+      "entityType": "CSSD_PACK",
+      "entityId": "CSSD-021",
+      "newState": {
+        "status": "VERIFIED",
+        "reasons": [
+          "Verified batch BATCH-20260810-03",
+          "Valid until 24/08/2026",
+          "Stored at CSSD Sterile Storage Shelf A-3"
+        ]
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786539917854_bq2z",
+      "timestamp": "2026-08-12T13:05:17.854Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786539842572_bm2b",
+      "timestamp": "2026-08-12T13:04:02.572Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786539640970_o6rl",
+      "timestamp": "2026-08-12T13:00:40.971Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786539313324_kw0o",
+      "timestamp": "2026-08-12T12:55:13.324Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786523538035_ck0c",
+      "timestamp": "2026-08-12T08:32:18.035Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786521583944_91g7",
+      "timestamp": "2026-08-12T07:59:43.944Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786493568304_nttx",
+      "timestamp": "2026-08-12T00:12:48.304Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1786492053032_a4s2",
+      "timestamp": "2026-08-11T23:47:33.033Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_01",
+      "timestamp": "2026-08-11T08:00:00Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "SYSTEM_INITIALIZATION",
+      "entityType": "SYSTEM",
+      "entityId": "smartot_core",
+      "previousState": null,
+      "newState": {
+        "status": "INITIALIZED",
+        "seedVersion": "1.0.0"
+      },
+      "ipAddress": "127.0.0.1"
+    },
+    {
+      "id": "aud_02",
+      "timestamp": "2026-08-11T08:05:00Z",
+      "actorId": "usr_ot_01",
+      "actorName": "Marcus Vance, RN",
+      "action": "OT_SCHEDULE_PUBLISHED",
+      "entityType": "OT_SCHEDULE",
+      "entityId": "schedule_20260811",
+      "previousState": null,
+      "newState": {
+        "caseCount": 6,
+        "otCount": 4
+      },
+      "ipAddress": "10.0.4.12"
+    }
+  ],
+  "sync_queue": [],
+  "meta": {
+    "initialized": true,
+    "lastSeededAt": "2026-08-11T15:50:58.108Z",
+    "version": "1.0.0"
+  },
+  "system_settings": {
+    "hospitalName": "SmartOT Command Demo Hospital",
+    "hospitalCode": "DEMO-HOSP-001",
+    "timezone": "Asia/Kolkata",
+    "otDelayWarningMinutes": 10,
+    "otDelayCriticalMinutes": 20,
+    "turnoverWarningMinutes": 30,
+    "transferWarningMinutes": 15,
+    "aiEnabled": true,
+    "aiRiskPredictionEnabled": true,
+    "aiRecommendationsEnabled": true,
+    "aiConfidenceThreshold": 70,
+    "consentRequired": true,
+    "documentationRequired": true,
+    "preopPrepRequired": true,
+    "reportsRequired": true,
+    "doctorConfirmationRequired": true,
+    "alertRules": {
+      "consentMissing": {
+        "enabled": true,
+        "severity": "CRITICAL",
+        "thresholdMinutes": 30
+      },
+      "packUnavailable": {
+        "enabled": true,
+        "severity": "CRITICAL",
+        "thresholdMinutes": 0
+      },
+      "transferNotStarted": {
+        "enabled": true,
+        "severity": "WARNING",
+        "thresholdMinutes": 15
+      },
+      "turnoverDelay": {
+        "enabled": true,
+        "severity": "WARNING",
+        "thresholdMinutes": 30
+      },
+      "otDelay": {
+        "enabled": true,
+        "severity": "WARNING",
+        "thresholdMinutes": 10
+      }
+    },
+    "notifications": {
+      "inApp": true,
+      "email": false,
+      "sms": false,
+      "push": false
+    }
+  }
+}
