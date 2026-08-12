@@ -32,7 +32,16 @@ export interface DatabaseSchema {
   };
 }
 
-const DEFAULT_DB_PATH = path.resolve(__dirname, '../../data/smartot.db.json');
+const candidateDbPaths = [
+  path.resolve(process.cwd(), 'backend/data/smartot.db.json'),
+  path.resolve(process.cwd(), 'data/smartot.db.json'),
+  path.resolve(__dirname, '../../data/smartot.db.json'),
+  path.resolve(__dirname, '../../../../data/smartot.db.json'),
+  path.resolve(__dirname, '../../../../backend/data/smartot.db.json'),
+];
+const DEFAULT_DB_PATH =
+  candidateDbPaths.find((p) => fs.existsSync(p)) ||
+  path.resolve(process.cwd(), 'backend/data/smartot.db.json');
 
 export class Database {
   private static instance: Database;
@@ -48,6 +57,7 @@ export class Database {
     }
     this.data = this.load();
   }
+
 
   public static getInstance(customPath?: string): Database {
     if (!Database.instance) {
