@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { patientRepository } from '../repositories/patient.repository';
+import { patientStateService } from '../services/patient-state.service';
 import { eventEngine } from '../events/event-engine';
 import { auditRepository } from '../repositories/audit.repository';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
@@ -40,16 +41,18 @@ export class PatientController {
     const updatedReadiness = patientRepository.updateReadiness(id, updates);
 
 
-    // Emit event
+    // Emit event — alert engine subscribes to READINESS_UPDATED to re-evaluate consent rules
     await eventEngine.emitEvent({
-      eventType: updatedReadiness.isReady ? 'PATIENT_READY' : 'READINESS_CHECKLIST_UPDATED',
+      eventType: updatedReadiness.isReady ? 'PATIENT_READY' : 'READINESS_UPDATED',
       entityType: 'PATIENT',
       entityId: id,
       department: 'WARD',
       actorId: actor.userId,
       actorName: actor.email,
       metadata: {
+        patientId: id,
         completedCount: updatedReadiness.completedItemsCount,
+        totalCount: updatedReadiness.totalItemsCount,
         isReady: updatedReadiness.isReady,
         consentStatus: updatedReadiness.consentStatus,
       },
@@ -114,24 +117,20 @@ export class PatientController {
   public async markReady(req: AuthenticatedRequest, res: Response): Promise<void> {
     const id = req.params.id as string;
     const actor = req.user || { userId: 'system', email: 'ward@smartot.hospital', role: 'WARD_STAFF', department: 'Ward' };
-    const patient = patientRepository.findById(id);
-    if (!patient) {
-      res.status(404).json({ success: false, error: 'PATIENT_NOT_FOUND' });
+
+    const result = await patientStateService.transitionPatientStatus(id, 'READY_FOR_OT', {
+      actorId: actor.userId,
+      actorName: actor.email,
+      department: 'WARD',
+      ipAddress: req.ip,
+    });
+
+    if (!result.success) {
+      res.status(409).json({ success: false, error: 'INVALID_STATE_TRANSITION', message: result.error });
       return;
     }
 
-    const updated = patientRepository.updateStatus(id, 'READY_FOR_OT');
-    await eventEngine.emitEvent({
-      eventType: 'PATIENT_READY',
-      entityType: 'PATIENT',
-      entityId: id,
-      department: 'WARD',
-      actorId: actor.userId,
-      actorName: actor.email,
-      metadata: { status: 'READY_FOR_OT' },
-    });
-
-    res.json({ success: true, data: updated });
+    res.json({ success: true, data: result.patient });
   }
 
   public async clearBlocker(req: AuthenticatedRequest, res: Response): Promise<void> {

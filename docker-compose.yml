@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  smartot-db:
+    image: postgres:16-alpine
+    container_name: smartot-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: smartot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: smartot_production_secret_pass_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d smartot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  smartot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartot-command-center
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:smartot_production_secret_pass_2026@smartot-db:5432/smartot
+      JWT_SECRET: smartot_super_secret_jwt_key_2026_production_safe
+      CORS_ORIGIN: "*"
+      AI_PROVIDER: local
+    depends_on:
+      smartot-db:
+        condition: service_healthy
+    volumes:
+      - smartot-data:/app/backend/data
+
+volumes:
+  pgdata:
+  smartot-data:

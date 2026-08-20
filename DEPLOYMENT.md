@@ -1,95 +1,69 @@
-# SmartOT Command — Complete Deployment Guide
+# SmartOT Command Platform — Deployment & Production Guide
 
-This guide details how to deploy the entire **SmartOT Command** platform (Frontend + Express Backend + SQLite/JSON Database + Groq Cloud AI Engine).
+This guide details how to deploy the **SmartOT Hospital Operating Theatre Command Center & CSSD System** into production.
 
 ---
 
-## 🚀 Option 1: One-Click Unified Deployment on Render (Recommended & Free)
+## 🚀 Option 1: Docker Compose Deployment (Recommended)
 
-Render allows running the entire application (Frontend + Backend + Database) as a single Web Service on their free tier.
+The entire platform (PostgreSQL Database + Express Backend + React Production Frontend) is containerized into a single production stack.
 
 ### Steps:
-1. **Push your code to GitHub**:
+1. Ensure Docker Desktop or Docker Engine is installed.
+2. Run the deployment command in the project root:
    ```bash
-   git init
-   git add .
-   git commit -m "Initial commit - SmartOT Command"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/smartot-command.git
-   git push -u origin main
+   docker compose up --build -d
+   ```
+3. Open your browser and navigate to:
+   - **Production App**: `http://localhost:4000` (or `http://<SERVER_IP>:4000`)
+   - **Health Check API**: `http://localhost:4000/api/health`
+
+---
+
+## 🌐 Option 2: Cloud PaaS Deployment (Render / Railway / Fly.io)
+
+### Render.com
+1. Connect your GitHub repository to Render.com.
+2. Select **New Blueprint** and connect `render.yaml`.
+3. Deploy! Render will build the monorepo and expose the unified endpoint.
+
+### Railway / Fly.io
+1. Install Railway CLI: `npm i -g @railway/cli`
+2. Login and deploy:
+   ```bash
+   railway login
+   railway init
+   railway up
    ```
 
-2. **Deploy on Render**:
-   - Go to [dashboard.render.com](https://dashboard.render.com) and click **New +** → **Web Service**.
-   - Connect your GitHub repository.
-   - Configure the following:
-     - **Name**: `smartot-command`
-     - **Runtime**: `Node`
-     - **Build Command**: `npm run build`
-     - **Start Command**: `npm start`
-     - **Plan**: `Free`
+---
 
-3. **Add Environment Variables in Render**:
-   | Key | Recommended Value |
-   |---|---|
-   | `NODE_ENV` | `production` |
-   | `PORT` | `4000` |
-   | `JWT_SECRET` | *(Generate any random 32-char string)* |
-   | `AI_PROVIDER` | `groq` |
-   | `GROQ_API_KEY` | `your_groq_api_key_here` |
-   | `GROQ_MODEL_NAME` | `llama-3.3-70b-versatile` |
+## 🏥 Option 3: Local Hospital LAN Network Launch
 
-4. Click **Deploy Web Service**! Your live app will be accessible at `https://smartot-command.onrender.com`.
+To allow all handheld devices, tablets, and laptops on the hospital Wi-Fi network to access the web app:
+
+1. Build the production bundle:
+   ```bash
+   npm run build
+   ```
+2. Start the production backend server:
+   ```bash
+   npm run start
+   ```
+3. Find your local machine IP address:
+   - Windows: `ipconfig` (e.g. `192.168.1.105`)
+4. Staff can access the application from any handheld scanner or laptop on the local network via:
+   `http://192.168.1.105:4000`
 
 ---
 
-## ⚡ Option 2: One-Click Deployment on Railway
+## 🔐 Environment Variables (`.env`)
 
-Railway automatically detects Node monorepos and deploys in under 2 minutes.
-
-### Steps:
-1. Go to [railway.app](https://railway.app) and click **New Project** → **Deploy from GitHub repo**.
-2. Select your repository.
-3. In **Settings** → **Variables**, add:
-   - `PORT` = `4000`
-   - `NODE_ENV` = `production`
-   - `GROQ_API_KEY` = `your_groq_api_key_here`
-   - `AI_PROVIDER` = `groq`
-   - `JWT_SECRET` = `smartot_super_secret_jwt_key_2026_production_safe`
-4. Under **Networking**, click **Generate Domain**. Your app is live!
-
----
-
-## 🐳 Option 3: Deploy with Docker (AWS, DigitalOcean, VPS)
-
-SmartOT Command includes a multi-stage production Dockerfile.
-
-### 1. Build the Docker Image:
-```bash
-docker build -t smartot-command:latest .
-```
-
-### 2. Run the Container:
-```bash
-docker run -d \
-  --name smartot \
-  -p 4000:4000 \
-  -e NODE_ENV=production \
-  -e GROQ_API_KEY=your_groq_api_key_here \
-  -e AI_PROVIDER=groq \
-  smartot-command:latest
-```
-
-### 3. Open in Browser:
-Navigate to `http://YOUR_SERVER_IP:4000`.
-
----
-
-## 📱 Default Demo Login Credentials
-
-| Role | Email | Password |
-|---|---|---|
-| **Administrator** | `admin@smartot.hospital` | `Admin@123password` |
-| **OT Manager** | `otmanager@smartot.hospital` | `OTManager@123password` |
-| **CSSD Staff** | `cssd@smartot.hospital` | `CSSDStaff@123password` |
-| **Ward Nurse** | `ward@smartot.hospital` | `WardStaff@123password` |
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `PORT` | Server Port | `4000` |
+| `NODE_ENV` | Environment Mode | `production` |
+| `JWT_SECRET` | Secret Key for Auth | `smartot_super_secret_jwt_key_2026_production_safe` |
+| `CORS_ORIGIN` | Allowed Origins | `*` |
+| `DATABASE_URL` | PostgreSQL Connection String | `postgresql://postgres:pass@localhost:5432/smartot` |
+| `AI_PROVIDER` | AI Engine Provider | `local` |

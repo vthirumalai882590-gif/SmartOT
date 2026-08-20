@@ -21,6 +21,9 @@ interface QRScannerModalProps {
   onPackAssigned?: (pack: CSSDPack, otCode: string) => void;
   defaultOTCode?: string;
   defaultRequiredPackType?: string;
+  surgeryId?: string;
+  patientId?: string;
+  otId?: string;
 }
 
 type ScanMode = 'camera' | 'manual';
@@ -33,6 +36,9 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
   onPackAssigned,
   defaultOTCode = 'OT-03',
   defaultRequiredPackType = 'Appendectomy Set',
+  surgeryId,
+  patientId,
+  otId,
 }) => {
   const [mode, setMode] = useState<ScanMode>('camera');
   const [packIdInput, setPackIdInput] = useState('CSSD-021');
@@ -45,6 +51,56 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
   const [scannedRaw, setScannedRaw] = useState<string | null>(null);
 
   const html5QrRef = useRef<Html5Qrcode | null>(null);
+  const handleDetectedRef = useRef<(rawText: string) => void>(() => {});
+
+  // Keep targetOT synced with defaultOTCode prop if passed
+  useEffect(() => {
+    if (defaultOTCode) setTargetOT(defaultOTCode);
+  }, [defaultOTCode]);
+
+  const playScanChime = (success: boolean = true) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(success ? 880 : 330, ctx.currentTime);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    } catch (e) {}
+  };
+
+  // ── Handle a decoded QR value ───────────────────────────────────────
+  const handleQRDetected = async (rawText: string) => {
+    playScanChime(true);
+    await stopCamera();
+
+    let packId = rawText.trim();
+    if (packId.startsWith('{')) {
+      try {
+        const parsed = JSON.parse(packId);
+        packId = parsed.packId || parsed.id || parsed.pack_id || packId;
+      } catch {}
+    }
+    if (packId.startsWith('http')) {
+      try {
+        const url = new URL(packId);
+        packId = url.searchParams.get('packId') || url.pathname.split('/').pop() || packId;
+      } catch {}
+    }
+
+    setScannedRaw(rawText);
+    setPackIdInput(packId);
+    await verifyPack(packId);
+  };
+
+  handleDetectedRef.current = handleQRDetected;
 
   // ── Start camera scanner ────────────────────────────────────────────
   const startCamera = useCallback(async () => {
@@ -54,29 +110,58 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
     setIsAssigned(false);
 
     try {
-      // Clean up any previous instance
       if (html5QrRef.current) {
         try { await html5QrRef.current.stop(); } catch {}
+        try { await html5QrRef.current.clear(); } catch {}
         html5QrRef.current = null;
+      }
+
+      const domElem = document.getElementById(QR_READER_ID);
+      if (!domElem) {
+        setCameraError('Viewfinder element loading... Click Retry.');
+        return;
       }
 
       const scanner = new Html5Qrcode(QR_READER_ID, { verbose: false });
       html5QrRef.current = scanner;
 
-      await scanner.start(
-        { facingMode: 'environment' }, // rear camera preferred
-        {
-          fps: 10,
-          qrbox: { width: 240, height: 240 },
-        },
-        (decodedText) => {
-          // QR code detected — stop camera and verify
-          handleQRDetected(decodedText);
-        },
-        () => {
-          // scan frame error — silently ignore
+      let cameraConfig: any = { facingMode: 'environment' };
+      try {
+        const cameras = await Html5Qrcode.getCameras();
+        if (cameras && cameras.length > 0) {
+          const backCam = cameras.find(
+            (c) => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('environment') || c.label.toLowerCase().includes('rear')
+          );
+          cameraConfig = backCam ? backCam.id : cameras[0].id;
         }
-      );
+      } catch (e) {
+        console.warn('Could not enumerate cameras, falling back to facingMode constraint', e);
+      }
+
+      try {
+        await scanner.start(
+          cameraConfig,
+          { fps: 10, qrbox: { width: 240, height: 240 } },
+          (decodedText) => {
+            if (handleDetectedRef.current) {
+              handleDetectedRef.current(decodedText);
+            }
+          },
+          () => {}
+        );
+      } catch (firstErr) {
+        console.warn('First camera config failed, retrying with facingMode user...', firstErr);
+        await scanner.start(
+          { facingMode: 'user' },
+          { fps: 10, qrbox: { width: 240, height: 240 } },
+          (decodedText) => {
+            if (handleDetectedRef.current) {
+              handleDetectedRef.current(decodedText);
+            }
+          },
+          () => {}
+        );
+      }
 
       setCameraActive(true);
     } catch (err: any) {
@@ -104,7 +189,6 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
   // ── When modal opens in camera mode, start camera ───────────────────
   useEffect(() => {
     if (isOpen && mode === 'camera') {
-      // Small delay to let DOM render the reader div first
       const t = setTimeout(() => startCamera(), 250);
       return () => clearTimeout(t);
     }
@@ -124,34 +208,6 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
 
   if (!isOpen) return null;
 
-  // ── Handle a decoded QR value ───────────────────────────────────────
-  const handleQRDetected = async (rawText: string) => {
-    await stopCamera();
-
-    // Extract pack ID — QR may encode just "CSSD-021" or a JSON/URL with it
-    let packId = rawText.trim();
-
-    // If it looks like JSON, try to parse packId from it
-    if (packId.startsWith('{')) {
-      try {
-        const parsed = JSON.parse(packId);
-        packId = parsed.packId || parsed.id || parsed.pack_id || packId;
-      } catch {}
-    }
-
-    // If it's a URL, extract the last path segment or query param
-    if (packId.startsWith('http')) {
-      try {
-        const url = new URL(packId);
-        packId = url.searchParams.get('packId') || url.pathname.split('/').pop() || packId;
-      } catch {}
-    }
-
-    setScannedRaw(rawText);
-    setPackIdInput(packId);
-    await verifyPack(packId);
-  };
-
   // ── Verify pack via backend ─────────────────────────────────────────
   const verifyPack = async (id: string) => {
     const packId = id.trim();
@@ -166,8 +222,12 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
         packId,
         targetOT,
         requiredPackType: defaultRequiredPackType,
+        surgeryId,
+        patientId,
+        otId: otId || targetOT,
       });
-      setResult(res);
+      const verification = res?.data || res;
+      setResult(verification);
     } catch (err: any) {
       setResult({
         valid: false,
@@ -186,13 +246,16 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
     if (!result?.pack) return;
     setIsLoading(true);
     try {
-      await api.transitionCSSDPack(result.pack.packId, {
+      const packCode = 'packId' in result.pack ? result.pack.packId : result.pack.qrCode;
+      await api.transitionCSSDPack(packCode, {
         targetStatus: 'ASSIGNED',
-        assignedOtId: targetOT,
+        assignedOtId: otId || targetOT,
+        assignedSurgeryId: surgeryId,
+        assignedPatientId: patientId,
         currentLocation: `${targetOT} Sterile Anteroom`,
       });
       setIsAssigned(true);
-      if (onPackAssigned) onPackAssigned(result.pack, targetOT);
+      if (onPackAssigned) onPackAssigned(result.pack as CSSDPack, targetOT);
     } catch (err: any) {
       alert(`Assignment failed: ${err.message}`);
     } finally {
@@ -433,10 +496,10 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({
               {/* Pack details when verified */}
               {result.pack && result.status === 'VERIFIED' && (
                 <div className="grid grid-cols-2 gap-2 text-xs text-slate-700 pt-1 bg-white/80 p-2.5 rounded-lg border border-emerald-200">
-                  <div><span className="text-slate-500">Pack ID:</span> <span className="font-mono font-bold text-teal-700">{result.pack.packId}</span></div>
-                  <div><span className="text-slate-500">Type:</span> <span className="font-semibold">{result.pack.packType}</span></div>
-                  <div><span className="text-slate-500">Batch:</span> <span className="font-semibold">{result.pack.sterilizationBatch}</span></div>
-                  <div><span className="text-slate-500">Expires:</span> <span className="font-semibold">{new Date(result.pack.expiresAt).toLocaleDateString()}</span></div>
+                  <div><span className="text-slate-500">Pack ID:</span> <span className="font-mono font-bold text-teal-700">{'packId' in result.pack ? result.pack.packId : result.pack.qrCode}</span></div>
+                  <div><span className="text-slate-500">Type:</span> <span className="font-semibold">{'packType' in result.pack ? result.pack.packType : result.pack.name}</span></div>
+                  <div><span className="text-slate-500">Batch:</span> <span className="font-semibold">{'sterilizationBatch' in result.pack ? result.pack.sterilizationBatch : (result.pack.cycleReference || 'BATCH-2026')}</span></div>
+                  <div><span className="text-slate-500">Expires:</span> <span className="font-semibold">{'expiresAt' in result.pack && result.pack.expiresAt ? new Date(result.pack.expiresAt).toLocaleDateString() : 'N/A'}</span></div>
                 </div>
               )}
 

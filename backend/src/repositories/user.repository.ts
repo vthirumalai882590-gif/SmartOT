@@ -11,7 +11,9 @@ export class UserRepository {
   }
 
   findByEmail(email: string): User | undefined {
-    return db.getData().users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    if (!email || typeof email !== 'string') return undefined;
+    const clean = email.trim().toLowerCase();
+    return db.getData().users.find((u) => u.email && u.email.toLowerCase() === clean);
   }
 
   create(user: User): User {

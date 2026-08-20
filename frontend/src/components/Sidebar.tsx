@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -25,6 +25,9 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isExpanded = false, onToggleExpand }) => {
   const { user, logout } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
+
+  const effectiveExpanded = isExpanded || isHovered;
 
   const navItems = [
     { to: '/', label: 'Home', fullLabel: 'Command Center', icon: Home },
@@ -39,21 +42,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded = false, onToggleEx
     { to: '/settings', label: 'Settings', fullLabel: 'Admin & Master Data', icon: Settings },
   ];
 
-
   return (
     <motion.aside
       initial={false}
-      animate={{ width: isExpanded ? 256 : 74 }}
+      animate={{ width: effectiveExpanded ? 256 : 74 }}
       transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-      className="h-full overflow-y-auto overflow-x-hidden border-r border-slate-200 bg-white/95 backdrop-blur-xl flex flex-col justify-between select-none z-30 shrink-0 p-1.5 shadow-sm"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="h-full overflow-y-auto overflow-x-hidden border-r border-slate-200 bg-white/95 backdrop-blur-xl flex flex-col justify-between select-none z-30 shrink-0 p-1.5 shadow-sm transition-shadow hover:shadow-md"
     >
       <div className="flex flex-col items-center space-y-1 w-full">
         {/* Top Hamburger Menu Button (YouTube Style) */}
         <div className="w-full flex items-center justify-center py-2 mb-1 shrink-0">
           <button
             onClick={onToggleExpand}
-            className="p-2.5 rounded-full hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition flex items-center justify-center hover:scale-105 active:scale-95"
-            title="Toggle navigation sidebar"
+            className="p-2.5 rounded-full hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition flex items-center justify-center hover:scale-105 active:scale-95 cursor-pointer"
+            title={isExpanded ? 'Collapse sidebar' : 'Pin / expand sidebar'}
           >
             <Menu className="h-6 w-6 stroke-[2]" />
           </button>
@@ -68,7 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded = false, onToggleEx
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  isExpanded
+                  effectiveExpanded
                     ? `flex items-center space-x-3.5 px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
                         isActive
                           ? 'bg-teal-50 text-teal-700 border border-teal-200/90 shadow-sm'
@@ -85,15 +89,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded = false, onToggleEx
                   <>
                     <Icon
                       className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${
-                        isExpanded ? 'h-5 w-5' : 'h-6 w-6 mb-1.5'
+                        effectiveExpanded ? 'h-5 w-5' : 'h-6 w-6 mb-1.5'
                       } ${isActive ? 'text-teal-600' : 'text-slate-500'}`}
                     />
                     <span
                       className={`tracking-tight ${
-                        isExpanded ? 'text-xs truncate font-semibold' : 'text-[10px] leading-tight font-medium truncate max-w-full'
+                        effectiveExpanded ? 'text-xs truncate font-semibold' : 'text-[10px] leading-tight font-medium truncate max-w-full'
                       }`}
                     >
-                      {isExpanded ? item.fullLabel : item.label}
+                      {effectiveExpanded ? item.fullLabel : item.label}
                     </span>
                   </>
                 )}
@@ -105,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded = false, onToggleEx
 
       {/* Footer Band with User Persona & Logout Button */}
       <div className="w-full pt-2 flex flex-col items-center shrink-0 mt-4 rounded-xl space-y-1.5">
-        {isExpanded ? (
+        {effectiveExpanded ? (
           <div className="w-full p-2.5 rounded-xl bg-slate-900 text-white flex items-center justify-between">
             <div className="flex items-center space-x-2.5 truncate">
               <UserCircle className="h-8 w-8 text-teal-400 shrink-0" />
@@ -116,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded = false, onToggleEx
             </div>
             <button
               onClick={logout}
-              className="p-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 transition"
+              className="p-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 transition cursor-pointer"
               title="Logout"
             >
               <LogOut className="h-4 w-4" />

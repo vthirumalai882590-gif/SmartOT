@@ -122,16 +122,87 @@ export const api = {
 
   // CSSD
   getCSSDPacks: () => request<any[]>('/cssd/packs'),
-  verifyCSSDQR: (data: { packId: string; targetOT?: string; requiredPackType?: string }) =>
+  getCSSDItems: () => request<any[]>('/cssd/items'),
+  getCSSDItemById: (id: string) => request<any>(`/cssd/items/${id}`),
+  getCSSDItemByQR: (qrCode: string) => request<any>(`/cssd/items/qr/${encodeURIComponent(qrCode)}`),
+  getCSSDItemHistory: (id: string) => request<any[]>(`/cssd/items/${id}/history`),
+  createCSSDItem: (data: any) => request<any>('/cssd/items', { method: 'POST', body: JSON.stringify(data) }),
+
+  getCSSDSterilizationJobs: () => request<any[]>('/cssd/sterilization-jobs'),
+  getCSSDSterilizationJobById: (id: string) => request<any>(`/cssd/sterilization-jobs/${id}`),
+  createSterilizationJob: (data: {
+    instrumentId: string;
+    qrCode?: string;
+    quantity?: number;
+    currentLocation?: string;
+    sourceDepartment?: string;
+    sourceOT?: string;
+    associatedSurgeryId?: string;
+    condition?: string;
+    notes?: string;
+    method?: string;
+  }) => request<any>('/cssd/sterilization-jobs', { method: 'POST', body: JSON.stringify(data) }),
+
+  startSterilizationJob: (id: string, data?: { method?: string }) =>
+    request<any>(`/cssd/sterilization-jobs/${id}/start`, { method: 'POST', body: JSON.stringify(data || {}) }),
+  completeSterilizationJob: (id: string) =>
+    request<any>(`/cssd/sterilization-jobs/${id}/complete`, { method: 'POST', body: JSON.stringify({}) }),
+  releaseSterilizationJob: (
+    id: string,
+    data: {
+      cycleCompleted: boolean;
+      packagingAcceptable: boolean;
+      indicatorVerified: boolean;
+      releaseDecision: 'RELEASED' | 'REJECTED' | 'QUARANTINED';
+      notes?: string;
+    }
+  ) => request<any>(`/cssd/sterilization-jobs/${id}/release`, { method: 'POST', body: JSON.stringify(data) }),
+  rejectSterilizationJob: (id: string, reason?: string) =>
+    request<any>(`/cssd/sterilization-jobs/${id}/reject`, { method: 'POST', body: JSON.stringify({ reason }) }),
+  quarantineSterilizationJob: (id: string, reason?: string) =>
+    request<any>(`/cssd/sterilization-jobs/${id}/quarantine`, { method: 'POST', body: JSON.stringify({ reason }) }),
+
+  getCSSDHistory: (params?: Record<string, string>) => {
+    const query = new URLSearchParams(params || {}).toString();
+    return request<any[]>(`/cssd/history${query ? `?${query}` : ''}`);
+  },
+  getCSSDMetrics: () => request<any>('/cssd/metrics'),
+  getCSSDCycleProfiles: () => request<any[]>('/cssd/cycle-profiles'),
+
+  verifyCSSDQR: (data: {
+    packId: string;
+    targetOT?: string;
+    requiredPackType?: string;
+    surgeryId?: string;
+    patientId?: string;
+    otId?: string;
+  }) =>
     request<any>('/cssd/scan', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
   transitionCSSDPack: (
     packId: string,
-    data: { targetStatus: string; assignedOtId?: string; assignedSurgeryId?: string; currentLocation?: string }
+    data: {
+      targetStatus: string;
+      assignedOtId?: string;
+      assignedSurgeryId?: string;
+      assignedPatientId?: string;
+      currentLocation?: string;
+    }
   ) =>
     request<any>(`/cssd/packs/${packId}/transition`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  dispatchCSSDPack: (
+    packId: string,
+    data: {
+      targetOT: string;
+      notes?: string;
+    }
+  ) =>
+    request<any>(`/cssd/packs/${packId}/dispatch`, {
       method: 'POST',
       body: JSON.stringify(data),
     }),
@@ -253,6 +324,15 @@ export const api = {
       body: JSON.stringify(data),
     }),
   getAdminDataStats: () => request<any>('/admin/data-stats'),
+  importHospitalDatabase: (database: any, mode: 'REPLACE' | 'MERGE' = 'REPLACE') =>
+    request<any>('/admin/import-database', {
+      method: 'POST',
+      body: JSON.stringify({ database, mode }),
+    }),
+  exportHospitalDatabase: () => {
+    const token = localStorage.getItem('smartot_auth_token');
+    window.open(`/api/admin/export-database${token ? `?token=${encodeURIComponent(token)}` : ''}`, '_blank');
+  },
   resetDemoData: (confirmText: string) =>
     request<any>('/admin/reset-demo', {
       method: 'POST',

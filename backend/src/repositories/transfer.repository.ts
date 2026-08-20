@@ -54,6 +54,21 @@ export class TransferRepository {
     }
     return transfer;
   }
+
+  /**
+   * Rollback a transfer that was just created but a downstream state transition failed.
+   * Only valid for IN_TRANSIT transfers that haven't progressed yet.
+   */
+  cancelTransfer(transferId: string): boolean {
+    const dbData = db.getData();
+    const idx = dbData.transfers.findIndex((t) => t.id === transferId && t.status === 'IN_TRANSIT');
+    if (idx !== -1) {
+      dbData.transfers.splice(idx, 1);
+      db.persist();
+      return true;
+    }
+    return false;
+  }
 }
 
 export const transferRepository = new TransferRepository();

@@ -163,7 +163,8 @@ export class OTController {
     // ─── 3. HANDLE SPECIFIC WORKFLOW STATE EFFECTS ────────────────────────────
     if (activeSurgery) {
       if (targetState === 'PATIENT_READY') {
-        patientRepository.updateStatus(activeSurgery.patientId, 'READY_FOR_OT');
+        const patRes = patientRepository.updateStatus(activeSurgery.patientId, 'READY_FOR_OT');
+        if (!patRes.success) console.warn(`[OT] Patient state transition warning: ${patRes.error}`);
         await eventEngine.emitEvent({
           eventType: 'PATIENT_READY',
           entityType: 'PATIENT',
@@ -174,7 +175,8 @@ export class OTController {
           metadata: { otCode: result.ot.code, surgeryId: activeSurgery.id },
         });
       } else if (targetState === 'PATIENT_TRANSFER') {
-        patientRepository.updateStatus(activeSurgery.patientId, 'IN_TRANSFER');
+        const patRes = patientRepository.updateStatus(activeSurgery.patientId, 'IN_TRANSFER');
+        if (!patRes.success) console.warn(`[OT] Patient state transition warning: ${patRes.error}`);
         await eventEngine.emitEvent({
           eventType: 'TRANSFER_STARTED',
           entityType: 'PATIENT',
@@ -185,7 +187,8 @@ export class OTController {
           metadata: { otCode: result.ot.code, toOtId: result.ot.id, surgeryId: activeSurgery.id },
         });
       } else if (targetState === 'PATIENT_ARRIVED') {
-        patientRepository.updateStatus(activeSurgery.patientId, 'IN_OT');
+        const patRes = patientRepository.updateStatus(activeSurgery.patientId, 'IN_OT');
+        if (!patRes.success) console.warn(`[OT] Patient state transition warning: ${patRes.error}`);
         await eventEngine.emitEvent({
           eventType: 'PATIENT_ARRIVED_OT',
           entityType: 'PATIENT',
@@ -211,7 +214,8 @@ export class OTController {
           delayReason: delayReason || (autoDelayMinutes > 0 ? 'Induction / Readiness latency' : undefined),
         });
 
-        patientRepository.updateStatus(activeSurgery.patientId, 'IN_SURGERY');
+        const patRes = patientRepository.updateStatus(activeSurgery.patientId, 'IN_SURGERY');
+        if (!patRes.success) console.warn(`[OT] Patient state transition warning: ${patRes.error}`);
 
         if (autoDelayMinutes > 0) {
           await eventEngine.emitEvent({
@@ -254,7 +258,8 @@ export class OTController {
           actualDurationMinutes,
         });
 
-        patientRepository.updateStatus(activeSurgery.patientId, 'POST_OP');
+        const postRes = patientRepository.updateStatus(activeSurgery.patientId, 'POST_OP');
+        if (!postRes.success) console.warn(`[OT] Patient state transition warning: ${postRes.error}`);
 
         await eventEngine.emitEvent({
           eventType: 'SURGERY_COMPLETED',
@@ -395,7 +400,8 @@ export class OTController {
     otRepository.createSurgery(newSurgery);
 
     // Update patient activeSurgeryId & status
-    patientRepository.updateStatus(patient.id, 'PREPARING');
+    const schedRes = patientRepository.updateStatus(patient.id, 'PREPARING');
+    if (!schedRes.success) console.warn(`[OT] Patient state transition warning on scheduling: ${schedRes.error}`);
     const dbData = (patientRepository as any).findAll ? undefined : undefined;
     (patient as any).activeSurgeryId = surgeryId;
 

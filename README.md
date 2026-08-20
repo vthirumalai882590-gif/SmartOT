@@ -20,32 +20,32 @@ $$\text{CONNECT} \longrightarrow \text{TRACK} \longrightarrow \text{UNDERSTAND} 
 2. **TRACK**: Monitors 6-point pre-op patient readiness checklists, digital consent status, and real scannable QR-based sterile instrument pack lifecycles.
 3. **UNDERSTAND**: Correlates multi-entity events to identify root causes behind schedule delays and idle theatre capacity.
 4. **PREDICT**: Scores delay risks (LOW, MEDIUM, HIGH) and forecasts cascading downstream schedule impacts on subsequent cases.
-5. **RECOMMEND**: Generates prioritized next-best operational actions and provides an interactive AI Operations Consultant powered by Groq Cloud (LLaMA 3.3 70B).
+5. **RECOMMEND**: Generates prioritized next-best operational actions and provides an interactive AI Operations Consultant powered by live operational data introspection and multi-model LLMs.
 
 ---
 
 ## 🚀 Key Modules & Capabilities
 
 ### 1. 🟢 Live OT Command Center & State Machine
-- Interactive state-aware workflow: `AVAILABLE` $\rightarrow$ `SCHEDULED` $\rightarrow$ `PREPARING / STAGING` $\rightarrow$ `PATIENT WAITING` $\rightarrow$ `PATIENT IN OT` $\rightarrow$ `SURGERY IN PROGRESS` $\rightarrow$ `SURGERY COMPLETED` $\rightarrow$ `TURNOVER / SANITIZATION` $\rightarrow$ `AVAILABLE`.
-- Clinical safety gates: enforces 6/6 patient readiness and sterile pack verification before theatre entry.
+- Backend-enforced state machine: `SCHEDULED` $\rightarrow$ `PREPARING` $\rightarrow$ `PATIENT_READY` $\rightarrow$ `PATIENT_TRANSFER` $\rightarrow$ `PATIENT_ARRIVED` $\rightarrow$ `OT_READY` $\rightarrow$ `SURGERY_STARTED` $\rightarrow$ `SURGERY_COMPLETED` $\rightarrow$ `TURNOVER` $\rightarrow$ `AVAILABLE`.
+- Safety gates: enforces 6/6 patient readiness and sterile pack verification before theatre entry.
 - Dynamic delay attribution and timeline logging for every transition.
 
-### 2. 📋 Inpatient Surgical Readiness & Real Camera QR Scanner
+### 2. 📋 Inpatient Surgical Readiness & QR Sterile Pack Scanner
 - Real camera-based QR barcode scanner (`html5-qrcode`) and real-time QR generation (`qrcode`).
-- Real-time 6-point verification: Surgical Consent, Pre-Op Fasting, Lab Reports, Site Marking, Vitals Clearance, Anesthesia Review.
-- Blocker detection with 1-click nurse coordinator resolution.
+- 6-point pre-op verification: Admission, Surgical Consent, Pre-Op PAC Documentation, Lab Reports, Attending Confirmation, Pre-Op Preparation.
+- Auto-resolves critical alerts upon consent sign-off.
 
 ### 3. 📦 CSSD Sterile Pack Tracking
 - Traceable autoclave batches, sterilization timestamps, expiry enforcement, and surgical pack reservations.
 
-### 4. 🤖 Groq Cloud AI Operations Consultant
-- Powered by `llama-3.3-70b-versatile` on Groq Cloud ultra-fast inference.
-- Provides real-time delay explanations, next-best actions, and bottleneck mitigations across Global Navbar, Global Drawer, Analytics, and Dashboard.
+### 4. 🤖 Dynamic AI Operations Consultant (Zero Hardcoding)
+- Live data introspection: dynamically inspects live room states, patient checklist status, active alerts, and schedule timings.
+- Multi-model inference: Groq Cloud (LLaMA 3.3 70B), xAI Grok (Grok-2), OpenAI (GPT-4o), or explainable local dynamic rule engine.
+- Every consultation is logged to `ai_interactions` for auditability and compliance.
 
 ### 5. 🛡️ Admin Command & Centralized Data Governance (RBAC)
-- Role-Based Access Control enforcing `ADMINISTRATOR` privileges for configuration, master data edits, and demo resets.
-- Read-Only Mode for staff roles with interactive elevation prompts.
+- Role-Based Access Control enforcing `ADMINISTRATOR`, `OT_MANAGER`, `CSSD_STAFF`, and `WARD_STAFF` privileges.
 - Master data management for Operating Theatres, Patients, CSSD Packs, Authenticated Users, and Audit Logs.
 
 ---
@@ -68,6 +68,7 @@ You can sign in using the credentials below or click the quick persona buttons o
 ### Prerequisites
 - **Node.js**: v18.0.0 or later (v20+ recommended)
 - **npm**: v9.0.0 or later
+- **PostgreSQL** (Optional in local mode; recommended for staging/production)
 
 ### 1. Clone & Install
 ```bash
@@ -82,14 +83,12 @@ npm --prefix frontend install
 ```
 
 ### 2. Configure Environment Variables
-Create a `.env` file in the root or `backend/` directory:
+Create a `.env` file in the root directory:
 ```env
 PORT=4000
 NODE_ENV=development
 JWT_SECRET=smartot_super_secret_jwt_key_2026_production_safe
-AI_PROVIDER=groq
-GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL_NAME=llama-3.3-70b-versatile
+AI_PROVIDER=local
 ```
 
 ### 3. Launch Development Servers
@@ -98,73 +97,23 @@ npm run dev
 ```
 - **Frontend App**: `http://localhost:5173`
 - **Backend API**: `http://localhost:4000`
+- **Health Check**: `http://localhost:4000/api/health`
 
----
-
-## 🚢 Cloud Deployment Guide
-
-### Option 1: 1-Click Deployment on Render (Free & Recommended)
-1. Go to [dashboard.render.com](https://dashboard.render.com) and click **New +** → **Web Service**.
-2. Connect your GitHub repository: `https://github.com/vthirumalai882590-gif/SmartOT`.
-3. Configure settings:
-   - **Runtime**: `Node`
-   - **Build Command**: `npm run build`
-   - **Start Command**: `npm start`
-4. Add Environment Variables:
-   - `NODE_ENV` = `production`
-   - `PORT` = `4000`
-   - `AI_PROVIDER` = `groq`
-   - `GROQ_API_KEY` = `your_groq_api_key_here`
-   - `GROQ_MODEL_NAME` = `llama-3.3-70b-versatile`
-   - `JWT_SECRET` = *(Any random string)*
-5. Click **Deploy Web Service**!
-
----
-
-### Option 2: Railway
-1. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**.
-2. Select your `SmartOT` repository.
-3. In **Settings** → **Variables**, set `PORT=4000`, `NODE_ENV=production`, and your `GROQ_API_KEY`.
-4. Click **Generate Domain** under Networking.
-
----
-
-### Option 3: Docker Container
+### 4. Run Test Suite
 ```bash
-# Build the Docker image
-docker build -t smartot-command:latest .
-
-# Run the container
-docker run -d \
-  --name smartot \
-  -p 4000:4000 \
-  -e NODE_ENV=production \
-  -e GROQ_API_KEY=your_groq_api_key_here \
-  -e AI_PROVIDER=groq \
-  smartot-command:latest
+npm --prefix backend run test
 ```
 
 ---
 
-## 🧪 Testing
-```bash
-# Run backend test suite
-npm --prefix backend test
-
-# Run production build validation
-npm run build
-```
-
----
-
-## 📐 Technology Stack
-- **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide Icons, Recharts, Vite, HTML5-QRCode.
-- **Backend**: Node.js, Express.js (v5), TypeScript.
-- **AI Engine**: Groq Cloud API (`llama-3.3-70b-versatile`) with structured JSON schema responses.
-- **Data & Persistence**: Relational schema with transactional persistence, audit logs, and automatic seeding.
-- **Offline Sync**: Local event queue with automatic network state detection and replay synchronization.
-
----
-
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 📚 Complete Project Documentation
+- [Architecture Blueprint](file:///c:/Users/WELCOME/IOT_P/ARCHITECTURE.md)
+- [PostgreSQL Database & Relational Schema](file:///c:/Users/WELCOME/IOT_P/DATABASE.md)
+- [REST API Specification](file:///c:/Users/WELCOME/IOT_P/API.md)
+- [AI Consultant & Dynamic Reasoning](file:///c:/Users/WELCOME/IOT_P/AI.md)
+- [Offline-First Event Sourcing](file:///c:/Users/WELCOME/IOT_P/OFFLINE.md)
+- [Workflow State Machines](file:///c:/Users/WELCOME/IOT_P/WORKFLOW.md)
+- [Security & RBAC Matrix](file:///c:/Users/WELCOME/IOT_P/SECURITY.md)
+- [Testing & Quality Assurance](file:///c:/Users/WELCOME/IOT_P/TESTING.md)
+- [Deployment Guide](file:///c:/Users/WELCOME/IOT_P/DEPLOYMENT.md)
+- [5–7 Minute Hackathon Demo Script](file:///c:/Users/WELCOME/IOT_P/docs/demo-script.md)

@@ -2,22 +2,23 @@
   "name": "@smartot/backend",
   "version": "1.0.0",
   "description": "SmartOT Command - Backend Workflow & Intelligence Engine",
-  "main": "dist/backend/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/backend/src/index.js",
-
+    "start": "node dist/index.js",
     "seed": "tsx src/database/seed.ts",
     "test": "vitest run",
     "test:workflow": "tsx tests/workflow.test.ts"
   },
   "dependencies": {
+    "@types/pg": "^8.23.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

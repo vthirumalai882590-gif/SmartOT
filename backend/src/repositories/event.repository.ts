@@ -19,6 +19,31 @@ export class EventRepository {
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }
 
+  /**
+   * FIX: Explicit idempotency key lookup for offline sync deduplication.
+   * The sync controller uses this to detect and reject duplicate events
+   * before attempting to apply them — rather than relying on the append()
+   * method's silent deduplication.
+   */
+  findByIdempotencyKey(key: string): WorkflowEvent | undefined {
+    return db.getData().workflow_events.find((e) => e.idempotencyKey === key);
+  }
+
+  /**
+   * Find all events correlated to a surgery via explicit surgeryId in metadata.
+   * Preferred over string matching. Used by correlation engine.
+   */
+  findBySurgeryId(surgeryId: string): WorkflowEvent[] {
+    return db
+      .getData()
+      .workflow_events.filter(
+        (e) =>
+          e.entityId === surgeryId ||
+          e.metadata?.surgeryId === surgeryId
+      )
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  }
+
   append(event: WorkflowEvent): WorkflowEvent {
     const data = db.getData();
     // Check idempotency if key provided

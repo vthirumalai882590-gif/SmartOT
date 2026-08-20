@@ -18,7 +18,7 @@ export class AnalyticsService {
     const delayedCases = ots.filter((o) => o.currentDelayMinutes > 0 || o.currentStatus === 'DELAYED').length;
     const highRiskCases = surgeries.filter((s) => s.riskLevel === 'HIGH').length;
 
-    const availablePacksCount = packs.filter((p) => p.currentStatus === 'AVAILABLE' || p.currentStatus === 'STORED').length;
+    const availablePacksCount = packs.filter((p) => p.currentStatus === 'AVAILABLE' || p.currentStatus === 'STORED' || p.currentStatus === 'STERILE').length;
     const cssdAvailability = Math.round((availablePacksCount / (packs.length || 1)) * 100);
 
     // Compute dynamic OT utilization based on active theatre states

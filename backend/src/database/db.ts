@@ -7,6 +7,11 @@ import {
   OperatingTheatre,
   Surgery,
   CSSDPack,
+  CSSDItem,
+  SterilizationJob,
+  SterilizationCycleProfile,
+  CSSDReleaseRecord,
+  CSSDItemEvent,
   WorkflowEvent,
   Alert,
   PatientTransfer,
@@ -20,6 +25,11 @@ export interface DatabaseSchema {
   operating_theatres: OperatingTheatre[];
   surgeries: Surgery[];
   cssd_packs: CSSDPack[];
+  cssd_items: CSSDItem[];
+  cssd_sterilization_jobs: SterilizationJob[];
+  cssd_cycle_profiles: SterilizationCycleProfile[];
+  cssd_releases: CSSDReleaseRecord[];
+  cssd_item_events: CSSDItemEvent[];
   workflow_events: WorkflowEvent[];
   alerts: Alert[];
   transfers: PatientTransfer[];
@@ -74,6 +84,11 @@ export class Database {
       operating_theatres: [],
       surgeries: [],
       cssd_packs: [],
+      cssd_items: [],
+      cssd_sterilization_jobs: [],
+      cssd_cycle_profiles: [],
+      cssd_releases: [],
+      cssd_item_events: [],
       workflow_events: [],
       alerts: [],
       transfers: [],
@@ -91,7 +106,14 @@ export class Database {
     try {
       if (fs.existsSync(this.dbPath)) {
         const raw = fs.readFileSync(this.dbPath, 'utf-8');
-        return JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        // Ensure default arrays exist
+        parsed.cssd_items = parsed.cssd_items || [];
+        parsed.cssd_sterilization_jobs = parsed.cssd_sterilization_jobs || [];
+        parsed.cssd_cycle_profiles = parsed.cssd_cycle_profiles || [];
+        parsed.cssd_releases = parsed.cssd_releases || [];
+        parsed.cssd_item_events = parsed.cssd_item_events || [];
+        return parsed;
       }
     } catch (err) {
       console.error('Error loading database, initializing fresh state:', err);

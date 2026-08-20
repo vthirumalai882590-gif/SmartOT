@@ -17,13 +17,14 @@ export interface CorrelatedCaseTimeline {
     admission?: { timestamp: string; actor: string };
     readiness?: { timestamp: string; isReady: boolean; consent: string };
     cssdVerification?: { timestamp: string; packId: string; packType: string; status: string };
-    transfer?: { startedAt: string; arrivedAt?: string; durationMinutes?: number };
+    transfer?: { startedAt: string; arrivedAt?: string; durationMinutes?: number; transferId?: string };
     otArrival?: { timestamp: string };
     surgeryStart?: { timestamp: string; delayMinutes: number };
     surgeryCompletion?: { timestamp: string; durationMinutes: number };
     turnover?: { startedAt: string; completedAt?: string; durationMinutes?: number };
   };
   events: WorkflowEvent[];
+  uncorrelatedEvents: WorkflowEvent[];  // FIX: track events that couldn't be confidently linked
 }
 
 export class CorrelationEngine {
@@ -33,15 +34,49 @@ export class CorrelationEngine {
 
     const patient = patientRepository.findById(surgery.patientId);
     const ot = otRepository.findOTById(surgery.otId);
-    const relatedEvents = eventRepository
+
+    // FIX: Use explicit surgeryId-based event lookup (via metadata.surgeryId) as primary strategy.
+    // Fall back to patient-based lookup only as secondary strategy.
+    // This prevents cross-surgery event contamination.
+    const surgeryEvents = eventRepository.findBySurgeryId(surgeryId);
+
+    // Secondary: patient-level events (admission, readiness) where surgery wasn't known yet
+    const patientOnlyEvents = eventRepository
       .findAll()
       .filter(
         (e) =>
-          e.entityId === surgeryId ||
-          e.entityId === surgery.patientId ||
-          e.entityId === surgery.assignedPackId ||
-          (e.metadata && (e.metadata.surgeryId === surgeryId || e.metadata.patientId === surgery.patientId))
+          (e.entityId === surgery.patientId || e.metadata?.patientId === surgery.patientId) &&
+          // Exclude events already captured by surgeryId search
+          !surgeryEvents.find((se) => se.id === e.id)
       );
+
+    // CSSD pack events — look for events referencing assigned pack
+    const packEvents = surgery.assignedPackId
+      ? eventRepository.findAll().filter(
+          (e) =>
+            (e.entityId === surgery.assignedPackId || e.metadata?.packId === surgery.assignedPackId) &&
+            !surgeryEvents.find((se) => se.id === e.id)
+        )
+      : [];
+
+    // Combine all related events
+    const allRelatedEvents = [...new Map(
+      [...surgeryEvents, ...patientOnlyEvents, ...packEvents].map((e) => [e.id, e])
+    ).values()].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+    // Identify uncorrelated events (those that came in via patient fallback only, not surgeryId)
+    const uncorrelatedEvents: WorkflowEvent[] = patientOnlyEvents.filter((e) => {
+      // Mark as uncorrelated if event type is surgery/transfer/CSSD related but has no surgeryId
+      const surgerySensitiveTypes = [
+        'TRANSFER_STARTED', 'PATIENT_ARRIVED_OT', 'CSSD_PACK_SCANNED',
+        'CSSD_PACK_ASSIGNED', 'SURGERY_STARTED', 'SURGERY_COMPLETED',
+      ];
+      return (
+        surgerySensitiveTypes.includes(e.eventType) &&
+        !e.metadata?.surgeryId &&
+        e.entityId !== surgeryId
+      );
+    });
 
     const timeline: CorrelatedCaseTimeline = {
       surgeryId,
@@ -52,16 +87,19 @@ export class CorrelationEngine {
       scheduledStartTime: surgery.scheduledStartTime,
       actualStartTime: surgery.actualStartTime,
       stages: {},
-      events: relatedEvents,
+      events: allRelatedEvents,
+      uncorrelatedEvents,
     };
 
-    // Correlate Admission
-    const admitEvt = relatedEvents.find((e) => e.eventType === 'PATIENT_ADMITTED');
+    // --- Stage Correlation ---
+
+    // Admission: patient-level event
+    const admitEvt = allRelatedEvents.find((e) => e.eventType === 'PATIENT_ADMITTED');
     if (admitEvt) {
       timeline.stages.admission = { timestamp: admitEvt.timestamp, actor: admitEvt.actorName };
     }
 
-    // Correlate Readiness & Consent
+    // Readiness & Consent: from patient record (database source of truth, not event)
     if (patient?.readiness) {
       timeline.stages.readiness = {
         timestamp: patient.readiness.updatedAt,
@@ -70,9 +108,12 @@ export class CorrelationEngine {
       };
     }
 
-    // Correlate CSSD Pack
-    const cssdEvt = relatedEvents.find(
-      (e) => e.eventType === 'CSSD_PACK_SCANNED' || e.eventType === 'CSSD_PACK_ASSIGNED'
+    // CSSD Pack: prefer events with explicit surgeryId match; fall back to pack assignment
+    const cssdEvt = allRelatedEvents.find(
+      (e) =>
+        (e.eventType === 'CSSD_PACK_SCANNED' || e.eventType === 'CSSD_PACK_ASSIGNED') &&
+        (e.metadata?.surgeryId === surgeryId || e.metadata?.assignedSurgeryId === surgeryId ||
+         e.entityId === surgery.assignedPackId)
     );
     if (cssdEvt) {
       timeline.stages.cssdVerification = {
@@ -83,18 +124,26 @@ export class CorrelationEngine {
       };
     }
 
-    // Correlate Transfer
-    const transfer = transferRepository.findAll().find((t) => t.surgeryId === surgeryId || t.patientId === surgery.patientId);
+    // Transfer: use explicit surgeryId match first (transfer.surgeryId field)
+    // FIX: transferRepository.findAll() now has transfers with real surgeryId (no 'surg_default')
+    const transfer = transferRepository
+      .findAll()
+      .find(
+        (t) =>
+          t.surgeryId === surgeryId ||
+          (t.patientId === surgery.patientId && t.surgeryId && t.surgeryId !== 'surg_default')
+      );
     if (transfer) {
       timeline.stages.transfer = {
         startedAt: transfer.transferStartedAt,
         arrivedAt: transfer.patientArrivedAt,
         durationMinutes: transfer.durationMinutes,
+        transferId: transfer.id,
       };
     }
 
-    // Correlate Surgery execution
-    const startEvt = relatedEvents.find((e) => e.eventType === 'SURGERY_STARTED');
+    // Surgery Execution
+    const startEvt = allRelatedEvents.find((e) => e.eventType === 'SURGERY_STARTED');
     if (startEvt) {
       timeline.stages.surgeryStart = {
         timestamp: startEvt.timestamp,
@@ -102,9 +151,11 @@ export class CorrelationEngine {
       };
     }
 
-    const endEvt = relatedEvents.find((e) => e.eventType === 'SURGERY_COMPLETED');
+    const endEvt = allRelatedEvents.find((e) => e.eventType === 'SURGERY_COMPLETED');
     if (endEvt && startEvt) {
-      const dur = Math.round((new Date(endEvt.timestamp).getTime() - new Date(startEvt.timestamp).getTime()) / (1000 * 60));
+      const dur = Math.round(
+        (new Date(endEvt.timestamp).getTime() - new Date(startEvt.timestamp).getTime()) / (1000 * 60)
+      );
       timeline.stages.surgeryCompletion = {
         timestamp: endEvt.timestamp,
         durationMinutes: dur,

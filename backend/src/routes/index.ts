@@ -12,14 +12,22 @@ import { auditController } from '../controllers/audit.controller';
 import { syncController } from '../controllers/sync.controller';
 import { adminController } from '../controllers/admin.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
-
+import {
+  validateLogin,
+  validateOTTransition,
+  validateScheduleCase,
+  validateConsentUpdate,
+  validateTransferStart,
+  validateCSSDScan,
+  validateAlertStatus,
+} from '../middleware/validate.middleware';
 
 const router = Router();
 
 // ==========================================
 // 1. Authentication Routes (Public + Me)
 // ==========================================
-router.post('/auth/login', (req, res) => authController.login(req, res));
+router.post('/auth/login', validateLogin, (req, res) => authController.login(req, res));
 router.get('/auth/me', authenticate, (req, res) => authController.getMe(req, res));
 
 // ==========================================
@@ -44,6 +52,7 @@ router.post(
   '/patients/:id/consent',
   authenticate,
   authorize('ADMINISTRATOR', 'OT_MANAGER', 'WARD_STAFF'),
+  validateConsentUpdate,
   (req, res) => patientController.updateConsent(req, res)
 );
 
@@ -56,12 +65,14 @@ router.post(
   '/ot/schedule-case',
   authenticate,
   authorize('ADMINISTRATOR', 'OT_MANAGER'),
+  validateScheduleCase,
   (req, res) => otController.scheduleCase(req, res)
 );
 router.post(
   '/ot/:id/transition',
   authenticate,
   authorize('ADMINISTRATOR', 'OT_MANAGER'),
+  validateOTTransition,
   (req, res) => otController.transitionOTState(req, res)
 );
 
@@ -74,6 +85,7 @@ router.post(
   '/transfers/start',
   authenticate,
   authorize('ADMINISTRATOR', 'OT_MANAGER', 'WARD_STAFF'),
+  validateTransferStart,
   (req, res) => transferController.startTransfer(req, res)
 );
 router.post(
@@ -84,13 +96,39 @@ router.post(
 );
 
 // ==========================================
-// 6. CSSD Sterile Packs & QR Verification
+// 6. CSSD Sterile Packs, Items & Sterilization Jobs
 // ==========================================
+router.get('/cssd/items', authenticate, (req, res) => cssdController.getItems(req, res));
+router.get('/cssd/items/qr/:qrCode', authenticate, (req, res) => cssdController.getItemByQR(req, res));
+router.get('/cssd/items/:id', authenticate, (req, res) => cssdController.getItemById(req, res));
+router.get('/cssd/items/:id/history', authenticate, (req, res) => cssdController.getItemHistory(req, res));
+router.post('/cssd/items', authenticate, authorize('ADMINISTRATOR', 'CSSD_STAFF'), (req, res) => cssdController.createItem(req, res));
+
+router.get('/cssd/sterilization-jobs', authenticate, (req, res) => cssdController.getSterilizationJobs(req, res));
+router.get('/cssd/sterilization-jobs/:id', authenticate, (req, res) => cssdController.getSterilizationJobById(req, res));
+router.post(
+  '/cssd/sterilization-jobs',
+  authenticate,
+  authorize('ADMINISTRATOR', 'OT_MANAGER', 'CSSD_STAFF', 'WARD_STAFF'),
+  (req, res) => cssdController.createSterilizationJob(req, res)
+);
+
+router.post('/cssd/sterilization-jobs/:id/start', authenticate, authorize('ADMINISTRATOR', 'CSSD_STAFF'), (req, res) => cssdController.startSterilizationJob(req, res));
+router.post('/cssd/sterilization-jobs/:id/complete', authenticate, authorize('ADMINISTRATOR', 'CSSD_STAFF'), (req, res) => cssdController.completeSterilizationJob(req, res));
+router.post('/cssd/sterilization-jobs/:id/release', authenticate, authorize('ADMINISTRATOR', 'CSSD_STAFF'), (req, res) => cssdController.releaseSterilizationJob(req, res));
+router.post('/cssd/sterilization-jobs/:id/reject', authenticate, authorize('ADMINISTRATOR', 'CSSD_STAFF'), (req, res) => cssdController.rejectSterilizationJob(req, res));
+router.post('/cssd/sterilization-jobs/:id/quarantine', authenticate, authorize('ADMINISTRATOR', 'CSSD_STAFF'), (req, res) => cssdController.quarantineSterilizationJob(req, res));
+
+router.get('/cssd/history', authenticate, (req, res) => cssdController.getHistory(req, res));
+router.get('/cssd/metrics', authenticate, (req, res) => cssdController.getMetrics(req, res));
+router.get('/cssd/cycle-profiles', authenticate, (req, res) => cssdController.getCycleProfiles(req, res));
+
 router.get('/cssd/packs', authenticate, (req, res) => cssdController.getPacks(req, res));
 router.post(
   '/cssd/scan',
   authenticate,
   authorize('ADMINISTRATOR', 'OT_MANAGER', 'CSSD_STAFF'),
+  validateCSSDScan,
   (req, res) => cssdController.scanAndVerifyQR(req, res)
 );
 router.post(
@@ -98,6 +136,12 @@ router.post(
   authenticate,
   authorize('ADMINISTRATOR', 'CSSD_STAFF'),
   (req, res) => cssdController.transitionPackStatus(req, res)
+);
+router.post(
+  '/cssd/packs/:id/dispatch',
+  authenticate,
+  authorize('ADMINISTRATOR', 'CSSD_STAFF'),
+  (req, res) => cssdController.dispatchPack(req, res)
 );
 
 // ==========================================
@@ -108,6 +152,7 @@ router.patch(
   '/alerts/:id',
   authenticate,
   authorize('ADMINISTRATOR', 'OT_MANAGER', 'CSSD_STAFF', 'WARD_STAFF'),
+  validateAlertStatus,
   (req, res) => alertController.updateAlertStatus(req, res)
 );
 
@@ -143,6 +188,7 @@ router.post(
   (req, res) => aiController.askConsultant(req, res)
 );
 router.get('/ai/context', authenticate, (req, res) => aiController.getContext(req, res));
+router.get('/ai/history', authenticate, (req, res) => aiController.getHistory(req, res));
 
 // ==========================================
 // 10. Audit Trail & Workflow Events Log
@@ -187,6 +233,8 @@ router.patch('/admin/users/:id', authenticate, authorize('ADMINISTRATOR'), (req,
 
 router.get('/admin/data-stats', authenticate, (req, res) => adminController.getDataStats(req, res));
 router.get('/admin/export/:entity', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.exportData(req, res));
+router.post('/admin/import-database', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.importDatabase(req, res));
+router.get('/admin/export-database', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.exportFullDatabase(req, res));
 router.post('/admin/reset-demo', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.resetDemoData(req, res));
 router.get('/admin/system-health', authenticate, (req, res) => adminController.getSystemHealth(req, res));
 

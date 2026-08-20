@@ -4,18 +4,15 @@ services:
     env: node
     plan: free
     buildCommand: npm install && npm run build
-    startCommand: node backend/dist/backend/src/index.js
-
+    startCommand: node backend/dist/index.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 4000
+        value: 10000
       - key: AI_PROVIDER
-        value: groq
-      - key: GROQ_API_KEY
-        sync: false
-      - key: GROQ_MODEL_NAME
-        value: llama-3.3-70b-versatile
+        value: local
+      - key: CORS_ORIGIN
+        value: "*"
       - key: JWT_SECRET
         generateValue: true

@@ -7,62 +7,75 @@ import { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 export class AuthController {
   public async login(req: Request, res: Response): Promise<void> {
-    const { email, password } = req.body;
+    try {
+      const { email, password } = req.body || {};
 
-    if (!email || !password) {
-      res.status(400).json({
-        success: false,
-        error: 'VALIDATION_ERROR',
-        message: 'Email and password are required',
-      });
-      return;
-    }
+      if (!email || !password) {
+        res.status(400).json({
+          success: false,
+          error: 'VALIDATION_ERROR',
+          message: 'Email and password are required',
+        });
+        return;
+      }
 
-    const user = userRepository.findByEmail(email);
-    if (!user) {
-      res.status(401).json({
-        success: false,
-        error: 'INVALID_CREDENTIALS',
-        message: 'Invalid email or password',
-      });
-      return;
-    }
+      const user = userRepository.findByEmail(email);
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          error: 'INVALID_CREDENTIALS',
+          message: 'Invalid email or password',
+        });
+        return;
+      }
 
-    const isValid = await verifyUserPassword(email, password);
-    if (!isValid) {
-      res.status(401).json({
-        success: false,
-        error: 'INVALID_CREDENTIALS',
-        message: 'Invalid email or password',
-      });
-      return;
-    }
+      const isValid = await verifyUserPassword(email, password);
+      if (!isValid) {
+        res.status(401).json({
+          success: false,
+          error: 'INVALID_CREDENTIALS',
+          message: 'Invalid email or password',
+        });
+        return;
+      }
 
-    const token = generateToken(user);
+      const token = generateToken(user);
 
-    auditRepository.log({
-      actorId: user.id,
-      actorName: user.name,
-      action: 'USER_LOGIN',
-      entityType: 'USER',
-      entityId: user.id,
-      newState: { role: user.role, email: user.email },
-      ipAddress: req.ip || '127.0.0.1',
-    });
+      try {
+        auditRepository.log({
+          actorId: user.id,
+          actorName: user.name,
+          action: 'USER_LOGIN',
+          entityType: 'USER',
+          entityId: user.id,
+          newState: { role: user.role, email: user.email },
+          ipAddress: req.ip || '127.0.0.1',
+        });
+      } catch (auditErr) {
+        console.warn('[Audit Warning] Failed to log user login audit event:', auditErr);
+      }
 
-    res.json({
-      success: true,
-      data: {
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          department: user.department,
+      res.json({
+        success: true,
+        data: {
+          token,
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            department: user.department,
+          },
         },
-      },
-    });
+      });
+    } catch (err: any) {
+      console.error('[Auth Controller Error]', err);
+      res.status(500).json({
+        success: false,
+        error: 'INTERNAL_SERVER_ERROR',
+        message: err.message || 'An unexpected error occurred during authentication.',
+      });
+    }
   }
 
   public async getMe(req: AuthenticatedRequest, res: Response): Promise<void> {

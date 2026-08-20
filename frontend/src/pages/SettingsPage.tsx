@@ -193,6 +193,13 @@ export const SettingsPage: React.FC = () => {
   const [importEntity, setImportEntity] = useState<'patients' | 'ots' | 'cssd'>('patients');
   const [importPreview, setImportPreview] = useState<any[]>([]);
 
+  // ─── Complete Hospital Database Uploader State ─────────────────────────────
+  const [dbUploadFile, setDbUploadFile] = useState<File | null>(null);
+  const [parsedHospitalDb, setParsedHospitalDb] = useState<any | null>(null);
+  const [dbImportMode, setDbImportMode] = useState<'REPLACE' | 'MERGE'>('REPLACE');
+  const [isImportingDb, setIsImportingDb] = useState(false);
+  const [dbParseError, setDbParseError] = useState<string | null>(null);
+
   // Load Settings & Core Data
   const loadInitialData = async () => {
     try {
@@ -525,6 +532,187 @@ export const SettingsPage: React.FC = () => {
       .catch((err) => showNotification('error', `Export failed: ${err.message}`));
   };
 
+  // ─── Hospital Database Uploader & Preset Datasets ─────────────────────────
+  const SAMPLE_METRO_TEMPLATE = {
+    hospitalName: "Metropolitan Multi-Specialty Hospital",
+    hospitalCode: "METRO-HOSP-01",
+    operating_theatres: [
+      { id: "ot_01", code: "OT-01", name: "Operating Theatre 1", specialty: "General Surgery", currentStatus: "SURGERY_STARTED", expectedTurnoverMinutes: 25, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+      { id: "ot_02", code: "OT-02", name: "Operating Theatre 2", specialty: "Orthopedic Surgery", currentStatus: "AVAILABLE", expectedTurnoverMinutes: 30, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+      { id: "ot_03", code: "OT-03", name: "Operating Theatre 3", specialty: "Emergency & Trauma", currentStatus: "PREPARING", expectedTurnoverMinutes: 25, currentDelayMinutes: 18, riskLevel: "HIGH", lastUpdated: new Date().toISOString() },
+      { id: "ot_04", code: "OT-04", name: "Operating Theatre 4", specialty: "Cardiothoracic Surgery", currentStatus: "TURNOVER", expectedTurnoverMinutes: 25, currentDelayMinutes: 8, riskLevel: "MEDIUM", lastUpdated: new Date().toISOString() }
+    ],
+    patients: [
+      { id: "pat_1024", mrn: "MRN-2026-1024", name: "Arthur Pendelton", age: 54, gender: "M", wardId: "Ward 4B", bedNumber: "Bed 402", status: "PREPARING", primaryDiagnosis: "Acute Appendicitis", admissionDate: new Date().toISOString() },
+      { id: "pat_1025", mrn: "MRN-2026-1025", name: "Eleanor Sterling", age: 48, gender: "F", wardId: "Ward 3A", bedNumber: "Bed 310", status: "IN_SURGERY", primaryDiagnosis: "Cholelithiasis", admissionDate: new Date().toISOString() },
+      { id: "pat_1026", mrn: "MRN-2026-1026", name: "Robert Chen", age: 66, gender: "M", wardId: "Ward 2C", bedNumber: "Bed 205", status: "ADMITTED", primaryDiagnosis: "Coronary Artery Disease", admissionDate: new Date().toISOString() },
+      { id: "pat_1027", mrn: "MRN-2026-1027", name: "Maria Gonzalez", age: 39, gender: "F", wardId: "Ward 4B", bedNumber: "Bed 415", status: "READY_FOR_OT", primaryDiagnosis: "Total Knee Arthroplasty", admissionDate: new Date().toISOString() }
+    ],
+    surgeries: [
+      { id: "surg_1024", patientId: "pat_1024", otId: "ot_03", procedureName: "Emergency Appendectomy", surgeonName: "Dr. Robert Martinez", anesthesiologistName: "Dr. Lisa Wong", requiredPackType: "Appendectomy Set", scheduledStartTime: new Date(Date.now() + 1800000).toISOString(), expectedDurationMinutes: 75, priority: "EMERGENCY", status: "SCHEDULED", delayMinutes: 18, riskLevel: "HIGH" },
+      { id: "surg_1025", patientId: "pat_1025", otId: "ot_01", procedureName: "Laparoscopic Cholecystectomy", surgeonName: "Dr. Amanda Clark", anesthesiologistName: "Dr. Kevin Patel", requiredPackType: "Laparotomy Major Set", scheduledStartTime: new Date(Date.now() - 3600000).toISOString(), expectedDurationMinutes: 90, priority: "ELECTIVE", status: "IN_PROGRESS", delayMinutes: 0, riskLevel: "LOW" },
+      { id: "surg_1026", patientId: "pat_1026", otId: "ot_04", procedureName: "Coronary Artery Bypass (CABG)", surgeonName: "Dr. Vikram Seth", anesthesiologistName: "Dr. Kevin Patel", requiredPackType: "Cardiac Bypass Tray", scheduledStartTime: new Date(Date.now() + 5400000).toISOString(), expectedDurationMinutes: 240, priority: "URGENT", status: "SCHEDULED", delayMinutes: 8, riskLevel: "MEDIUM" }
+    ],
+    cssd_packs: [
+      { id: "cssd_001", packId: "CSSD-001", packType: "Appendectomy Set", sterilizationBatch: "BATCH-2026-0819-A", sterilizedAt: new Date(Date.now() - 86400000).toISOString(), expiresAt: new Date(Date.now() + 604800000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "AVAILABLE", currentLocation: "CSSD Sterile Room A-1" },
+      { id: "cssd_002", packId: "CSSD-002", packType: "Laparotomy Major Set", sterilizationBatch: "BATCH-2026-0818-B", sterilizedAt: new Date(Date.now() - 172800000).toISOString(), expiresAt: new Date(Date.now() + 518400000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "IN_USE", currentLocation: "OT-01" },
+      { id: "cssd_003", packId: "CSSD-003", packType: "Cardiac Bypass Tray", sterilizationBatch: "BATCH-2026-0819-C", sterilizedAt: new Date(Date.now() - 43200000).toISOString(), expiresAt: new Date(Date.now() + 648000000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "AVAILABLE", currentLocation: "CSSD Sterile Room B-3" },
+      { id: "cssd_004", packId: "CSSD-004", packType: "Orthopedic Arthroplasty Set", sterilizationBatch: "BATCH-2026-0817-A", sterilizedAt: new Date(Date.now() - 259200000).toISOString(), expiresAt: new Date(Date.now() + 432000000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "AVAILABLE", currentLocation: "CSSD Sterile Room A-2" }
+    ],
+    system_settings: {
+      hospitalName: "Metropolitan Multi-Specialty Hospital",
+      hospitalCode: "METRO-HOSP-01",
+      timezone: "Asia/Kolkata",
+      otDelayWarningMinutes: 10,
+      otDelayCriticalMinutes: 20,
+      turnoverWarningMinutes: 25,
+      transferWarningMinutes: 15,
+      aiEnabled: true
+    }
+  };
+
+  const handleLoadPresetTemplate = (type: 'metro' | 'trauma' | 'cardiac') => {
+    let templateData: any;
+    if (type === 'trauma') {
+      templateData = {
+        hospitalName: "Metro Trauma & Emergency Medical Center",
+        hospitalCode: "TRAUMA-EMERG-01",
+        operating_theatres: [
+          { id: "ot_01", code: "OT-01", name: "Trauma Resuscitation Suite 1", specialty: "Trauma & Emergency", currentStatus: "PREPARING", expectedTurnoverMinutes: 20, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+          { id: "ot_02", code: "OT-02", name: "Orthopedic Trauma Suite 2", specialty: "Orthopedic Trauma", currentStatus: "SURGERY_STARTED", expectedTurnoverMinutes: 25, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+          { id: "ot_03", code: "OT-03", name: "Emergency General Surgery 3", specialty: "General Emergency", currentStatus: "AVAILABLE", expectedTurnoverMinutes: 20, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+          { id: "ot_04", code: "OT-04", name: "Neurosurgical Suite 4", specialty: "Neurotrauma", currentStatus: "TURNOVER", expectedTurnoverMinutes: 25, currentDelayMinutes: 5, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+          { id: "ot_05", code: "OT-05", name: "Vascular Emergency Suite 5", specialty: "Vascular Surgery", currentStatus: "AVAILABLE", expectedTurnoverMinutes: 20, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+          { id: "ot_06", code: "OT-06", name: "Pediatric Emergency Suite 6", specialty: "Pediatric Surgery", currentStatus: "AVAILABLE", expectedTurnoverMinutes: 25, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() }
+        ],
+        patients: [
+          { id: "pat_2001", mrn: "MRN-2026-2001", name: "Marcus Vance", age: 34, gender: "M", wardId: "Emergency Ward", bedNumber: "Bed E-01", status: "READY_FOR_OT", primaryDiagnosis: "Polytrauma / Femur Fracture", admissionDate: new Date().toISOString() },
+          { id: "pat_2002", mrn: "MRN-2026-2002", name: "Sarah Connor", age: 42, gender: "F", wardId: "Trauma ICU", bedNumber: "Bed T-04", status: "IN_SURGERY", primaryDiagnosis: "Closed Head Injury", admissionDate: new Date().toISOString() },
+          { id: "pat_2003", mrn: "MRN-2026-2003", name: "David Kim", age: 29, gender: "M", wardId: "Emergency Ward", bedNumber: "Bed E-08", status: "PREPARING", primaryDiagnosis: "Acute Hemoperitoneum", admissionDate: new Date().toISOString() }
+        ],
+        surgeries: [
+          { id: "surg_2001", patientId: "pat_2001", otId: "ot_02", procedureName: "Open Reduction Internal Fixation (ORIF)", surgeonName: "Dr. Gregory House", anesthesiologistName: "Dr. Lisa Cuddy", requiredPackType: "Orthopedic Arthroplasty Set", scheduledStartTime: new Date(Date.now() - 1800000).toISOString(), expectedDurationMinutes: 120, priority: "EMERGENCY", status: "IN_PROGRESS", delayMinutes: 0, riskLevel: "LOW" },
+          { id: "surg_2002", patientId: "pat_2003", otId: "ot_01", procedureName: "Emergency Exploratory Laparotomy", surgeonName: "Dr. Robert Martinez", anesthesiologistName: "Dr. Lisa Wong", requiredPackType: "Laparotomy Major Set", scheduledStartTime: new Date(Date.now() + 1200000).toISOString(), expectedDurationMinutes: 90, priority: "EMERGENCY", status: "SCHEDULED", delayMinutes: 0, riskLevel: "LOW" }
+        ],
+        cssd_packs: [
+          { id: "cssd_201", packId: "CSSD-TRAUMA-01", packType: "Orthopedic Arthroplasty Set", sterilizationBatch: "BATCH-TR-01", sterilizedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 604800000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "IN_USE", currentLocation: "OT-02" },
+          { id: "cssd_202", packId: "CSSD-TRAUMA-02", packType: "Laparotomy Major Set", sterilizationBatch: "BATCH-TR-02", sterilizedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 604800000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "AVAILABLE", currentLocation: "CSSD Trauma Bay" },
+          { id: "cssd_203", packId: "CSSD-TRAUMA-03", packType: "Craniotomy Specialized Set", sterilizationBatch: "BATCH-TR-03", sterilizedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 604800000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "AVAILABLE", currentLocation: "CSSD Trauma Bay" }
+        ],
+        system_settings: {
+          hospitalName: "Metro Trauma & Emergency Medical Center",
+          hospitalCode: "TRAUMA-EMERG-01",
+          timezone: "Asia/Kolkata",
+          otDelayWarningMinutes: 5,
+          otDelayCriticalMinutes: 15,
+          turnoverWarningMinutes: 20,
+          transferWarningMinutes: 10,
+          aiEnabled: true
+        }
+      };
+    } else if (type === 'cardiac') {
+      templateData = {
+        hospitalName: "Cardiovascular & Transplant Surgical Institute",
+        hospitalCode: "CARDIO-INST-01",
+        operating_theatres: [
+          { id: "ot_01", code: "OT-01", name: "Hybrid Cardiac Suite 1", specialty: "Cardiothoracic", currentStatus: "SURGERY_STARTED", expectedTurnoverMinutes: 30, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+          { id: "ot_02", code: "OT-02", name: "Aortic Arch & Valve Suite 2", specialty: "Cardiovascular", currentStatus: "AVAILABLE", expectedTurnoverMinutes: 30, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() },
+          { id: "ot_03", code: "OT-03", name: "Transplant & Assist Suite 3", specialty: "Heart/Lung Transplant", currentStatus: "PREPARING", expectedTurnoverMinutes: 35, currentDelayMinutes: 10, riskLevel: "MEDIUM", lastUpdated: new Date().toISOString() },
+          { id: "ot_04", code: "OT-04", name: "Vascular Endovascular Suite 4", specialty: "Endovascular", currentStatus: "AVAILABLE", expectedTurnoverMinutes: 25, currentDelayMinutes: 0, riskLevel: "LOW", lastUpdated: new Date().toISOString() }
+        ],
+        patients: [
+          { id: "pat_3001", mrn: "MRN-2026-3001", name: "Alexander Wright", age: 62, gender: "M", wardId: "Cardiology Ward", bedNumber: "Bed C-102", status: "IN_SURGERY", primaryDiagnosis: "Triple Vessel CAD", admissionDate: new Date().toISOString() },
+          { id: "pat_3002", mrn: "MRN-2026-3002", name: "Helena Rostova", age: 58, gender: "F", wardId: "Cardiology Ward", bedNumber: "Bed C-108", status: "PREPARING", primaryDiagnosis: "Severe Aortic Stenosis", admissionDate: new Date().toISOString() }
+        ],
+        surgeries: [
+          { id: "surg_3001", patientId: "pat_3001", otId: "ot_01", procedureName: "Off-Pump CABG x3", surgeonName: "Dr. Vikram Seth", anesthesiologistName: "Dr. Kevin Patel", requiredPackType: "Cardiac Bypass Tray", scheduledStartTime: new Date(Date.now() - 3600000).toISOString(), expectedDurationMinutes: 240, priority: "URGENT", status: "IN_PROGRESS", delayMinutes: 0, riskLevel: "LOW" },
+          { id: "surg_3002", patientId: "pat_3002", otId: "ot_03", procedureName: "Transcatheter Aortic Valve Replacement (TAVR)", surgeonName: "Dr. Amanda Clark", anesthesiologistName: "Dr. Lisa Wong", requiredPackType: "Cardiac Bypass Tray", scheduledStartTime: new Date(Date.now() + 3600000).toISOString(), expectedDurationMinutes: 150, priority: "ELECTIVE", status: "SCHEDULED", delayMinutes: 10, riskLevel: "MEDIUM" }
+        ],
+        cssd_packs: [
+          { id: "cssd_301", packId: "CSSD-CARDIO-01", packType: "Cardiac Bypass Tray", sterilizationBatch: "BATCH-CV-01", sterilizedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 604800000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "IN_USE", currentLocation: "OT-01" },
+          { id: "cssd_302", packId: "CSSD-CARDIO-02", packType: "Cardiac Bypass Tray", sterilizationBatch: "BATCH-CV-02", sterilizedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 604800000).toISOString(), sterilityStatus: "STERILIZED", currentStatus: "AVAILABLE", currentLocation: "CSSD Cardiac Room" }
+        ],
+        system_settings: {
+          hospitalName: "Cardiovascular & Transplant Surgical Institute",
+          hospitalCode: "CARDIO-INST-01",
+          timezone: "Asia/Kolkata",
+          otDelayWarningMinutes: 10,
+          otDelayCriticalMinutes: 20,
+          turnoverWarningMinutes: 30,
+          transferWarningMinutes: 15,
+          aiEnabled: true
+        }
+      };
+    } else {
+      templateData = SAMPLE_METRO_TEMPLATE;
+    }
+
+    setParsedHospitalDb(templateData);
+    setDbUploadFile(new File([JSON.stringify(templateData, null, 2)], `preset_${type}_hospital.json`, { type: 'application/json' }));
+    setDbParseError(null);
+    showNotification('success', `Loaded ${templateData.hospitalName} dataset preview. Review below and click "Import & Apply Database" to activate.`);
+  };
+
+  const handleProcessDbFile = (file: File) => {
+    setDbUploadFile(file);
+    setDbParseError(null);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+        const parsed = JSON.parse(text);
+        if (typeof parsed !== 'object' || parsed === null) {
+          throw new Error('Root JSON element must be an object.');
+        }
+        setParsedHospitalDb(parsed);
+        showNotification('success', `Valid hospital database parsed: ${file.name}`);
+      } catch (err: any) {
+        setParsedHospitalDb(null);
+        setDbParseError(`Invalid JSON format: ${err.message}`);
+        showNotification('error', `Failed to parse file: ${err.message}`);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleExecuteDatabaseImport = async () => {
+    if (!isAdmin) {
+      setRestrictedActionName('Import Hospital Database');
+      setIsPermissionDeniedModalOpen(true);
+      return;
+    }
+    if (!parsedHospitalDb) {
+      showNotification('error', 'Please upload or select a valid hospital database JSON first.');
+      return;
+    }
+
+    try {
+      setIsImportingDb(true);
+      const res = await api.importHospitalDatabase(parsedHospitalDb, dbImportMode);
+      showNotification('success', res.message || 'Hospital database successfully imported and assigned across all options.');
+      loadInitialData();
+      setParsedHospitalDb(null);
+      setDbUploadFile(null);
+    } catch (err: any) {
+      showNotification('error', err.message || 'Failed to import hospital database.');
+    } finally {
+      setIsImportingDb(false);
+    }
+  };
+
+  const handleDownloadSampleTemplate = () => {
+    const jsonStr = JSON.stringify(SAMPLE_METRO_TEMPLATE, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `smartot-hospital-database-template.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    showNotification('success', 'Sample Hospital Database Template downloaded.');
+  };
+
   // Filter navigation items
   const filteredNavGroups = NAV_GROUPS.map((grp) => ({
     ...grp,
@@ -684,7 +872,7 @@ export const SettingsPage: React.FC = () => {
         )}
 
         {/* ══════════════════════════════════════════════════════════════════════
-            1. DATA MANAGEMENT CENTER (/settings/data-management)
+            1. DATA MANAGEMENT CENTER & HOSPITAL DATABASE UPLOADER (/settings/data-management)
         ══════════════════════════════════════════════════════════════════════ */}
         {activeSection === 'data-management' && (
           <div className="space-y-6 max-w-6xl">
@@ -692,23 +880,270 @@ export const SettingsPage: React.FC = () => {
               <div>
                 <h1 className="text-xl font-black text-slate-900 heading-serif flex items-center space-x-2">
                   <Database className="h-5 w-5 text-teal-600" />
-                  <span>Centralized Data Management Center</span>
+                  <span>Centralized Data Management & Hospital Database Uploader</span>
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Unified governance across Master Clinical Records, Sterile Inventory, Operating Theatres, and Audit Logs
+                  Import hospital datasets, auto-assign records across all operational modules, and govern clinical master data
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={handleDownloadSampleTemplate}
+                  className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition flex items-center space-x-1.5 shadow-sm"
+                  title="Download a clean hospital JSON schema template"
+                >
+                  <Download className="h-3.5 w-3.5 text-teal-600" />
+                  <span>Sample Template (.json)</span>
+                </button>
+
+                <button
+                  onClick={() => api.exportHospitalDatabase()}
+                  className="px-3 py-1.5 rounded-xl bg-teal-50 border border-teal-200 hover:bg-teal-100 text-teal-800 text-xs font-bold transition flex items-center space-x-1.5 shadow-sm"
+                  title="Download complete live hospital database snapshot"
+                >
+                  <FileCode className="h-3.5 w-3.5 text-teal-600" />
+                  <span>Export Live Database</span>
+                </button>
+
                 <button
                   onClick={() => requireAdmin('Reset Demo Environment', () => setIsResetConfirmModalOpen(true))}
-                  className="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition flex items-center space-x-1.5 shadow-sm"
+                  className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition flex items-center space-x-1.5 shadow-sm"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
-                  <span>Reset Demo Environment</span>
+                  <span>Reset Demo Data</span>
                   {!isAdmin && <Lock className="h-3 w-3 text-rose-500 ml-1" />}
                 </button>
               </div>
+            </div>
+
+            {/* ─── HERO UPLOADER & AUTO-ASSIGNMENT ENGINE ─── */}
+            <div className="glass-card p-6 border-2 border-teal-500/30 bg-gradient-to-br from-teal-50/40 via-white to-slate-50 space-y-5 shadow-md">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-teal-100 pb-4">
+                <div className="flex items-start space-x-3">
+                  <div className="p-3 rounded-2xl bg-teal-600 text-white shadow-md shadow-teal-500/20 shrink-0">
+                    <Upload className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-extrabold text-slate-900 heading-serif flex items-center flex-wrap gap-2">
+                      <span>Hospital Database Uploader & Auto-Assignment Engine</span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-300 whitespace-nowrap inline-flex items-center">
+                        1-Click Auto Sync
+                      </span>
+                    </h2>
+                    <p className="text-xs text-slate-600 mt-1 max-w-2xl leading-relaxed">
+                      Upload your hospital's complete database JSON to automatically populate and assign all <strong>Operating Theatres, Inpatient Admissions, Surgical Schedules, CSSD Sterile Packs, Staff Users, and System Thresholds</strong> across the entire SmartOT platform in real time.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Preset Loaders Dropdown / Quick Buttons */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+                  <span className="text-[11px] font-bold text-slate-500 self-center hidden lg:inline">Quick Presets:</span>
+                  <button
+                    onClick={() => handleLoadPresetTemplate('metro')}
+                    className="px-2.5 py-1.5 rounded-lg bg-white border border-teal-200 hover:bg-teal-50 text-teal-800 text-[11px] font-bold transition flex items-center justify-center space-x-1 shadow-sm"
+                  >
+                    <span>🏢 General Hospital</span>
+                  </button>
+                  <button
+                    onClick={() => handleLoadPresetTemplate('trauma')}
+                    className="px-2.5 py-1.5 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-rose-800 text-[11px] font-bold transition flex items-center justify-center space-x-1 shadow-sm"
+                  >
+                    <span>🚑 Trauma Center</span>
+                  </button>
+                  <button
+                    onClick={() => handleLoadPresetTemplate('cardiac')}
+                    className="px-2.5 py-1.5 rounded-lg bg-white border border-indigo-200 hover:bg-indigo-50 text-indigo-800 text-[11px] font-bold transition flex items-center justify-center space-x-1 shadow-sm"
+                  >
+                    <span>🫀 Cardiac Institute</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Upload Dropzone */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="hospital-db-file-input"
+                    className={`border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
+                      parsedHospitalDb
+                        ? 'border-emerald-400 bg-emerald-50/40 hover:bg-emerald-50/70'
+                        : 'border-slate-300 bg-white/60 hover:border-teal-400 hover:bg-teal-50/20'
+                    }`}
+                  >
+                    <input
+                      id="hospital-db-file-input"
+                      type="file"
+                      accept=".json"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleProcessDbFile(e.target.files[0]);
+                        }
+                      }}
+                      className="hidden"
+                    />
+
+                    <div className="p-3 rounded-full bg-teal-50 text-teal-700 mb-2">
+                      <FileCode className="h-6 w-6" />
+                    </div>
+
+                    {dbUploadFile ? (
+                      <div>
+                        <p className="text-xs font-black text-slate-900">{dbUploadFile.name}</p>
+                        <p className="text-[11px] text-emerald-700 font-semibold mt-0.5">
+                          ✓ File ready for import ({(dbUploadFile.size / 1024).toFixed(1)} KB)
+                        </p>
+                        <span className="inline-block mt-2 text-[10px] text-teal-700 bg-teal-100/70 px-2 py-0.5 rounded font-bold">
+                          Click to select a different JSON database file
+                        </span>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-xs font-black text-slate-800">
+                          Drop hospital database JSON here or <span className="text-teal-600 underline">browse files</span>
+                        </p>
+                        <p className="text-[11px] text-slate-500 mt-1">
+                          Supports full hospital schemas with Theatres, Patients, Surgeries, CSSD Packs & Staff
+                        </p>
+                      </div>
+                    )}
+                  </label>
+
+                  {dbParseError && (
+                    <div className="mt-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-center space-x-2">
+                      <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0" />
+                      <span>{dbParseError}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Import Mode & Actions Column */}
+                <div className="flex flex-col justify-between p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+                  <div>
+                    <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider block mb-2">
+                      Import Strategy Mode
+                    </label>
+                    <div className="space-y-2">
+                      <label className={`flex items-start space-x-2.5 p-2.5 rounded-xl border cursor-pointer transition ${
+                        dbImportMode === 'REPLACE' ? 'bg-teal-50/60 border-teal-300 text-teal-950' : 'bg-slate-50 border-slate-200 text-slate-700'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="importMode"
+                          value="REPLACE"
+                          checked={dbImportMode === 'REPLACE'}
+                          onChange={() => setDbImportMode('REPLACE')}
+                          className="mt-0.5 text-teal-600"
+                        />
+                        <div>
+                          <span className="text-xs font-bold block">Replace Complete Hospital Database</span>
+                          <span className="text-[10px] text-slate-500 block leading-snug mt-0.5">
+                            Clean facility setup: overwrites active hospital tables with the uploaded dataset.
+                          </span>
+                        </div>
+                      </label>
+
+                      <label className={`flex items-start space-x-2.5 p-2.5 rounded-xl border cursor-pointer transition ${
+                        dbImportMode === 'MERGE' ? 'bg-teal-50/60 border-teal-300 text-teal-950' : 'bg-slate-50 border-slate-200 text-slate-700'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="importMode"
+                          value="MERGE"
+                          checked={dbImportMode === 'MERGE'}
+                          onChange={() => setDbImportMode('MERGE')}
+                          className="mt-0.5 text-teal-600"
+                        />
+                        <div>
+                          <span className="text-xs font-bold block">Merge & Upsert Records</span>
+                          <span className="text-[10px] text-slate-500 block leading-snug mt-0.5">
+                            Updates existing IDs and inserts new records without clearing other tables.
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleExecuteDatabaseImport}
+                    disabled={!parsedHospitalDb || isImportingDb}
+                    className={`w-full py-2.5 px-4 rounded-xl font-black text-xs transition flex items-center justify-center space-x-2 shadow-md ${
+                      !parsedHospitalDb || isImportingDb
+                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        : 'bg-teal-600 hover:bg-teal-700 text-white shadow-teal-600/30'
+                    }`}
+                  >
+                    {isImportingDb ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        <span>Assigning Hospital Data...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        <span>Import & Apply to Entire Hospital</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Live Preview Metrics if Parsed */}
+              {parsedHospitalDb && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 rounded-2xl bg-white border border-teal-200 shadow-sm space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-slate-900 heading-serif flex items-center space-x-1.5">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <span>Parsed Dataset Schema Overview: <strong>{parsedHospitalDb.hospitalName || 'Hospital Database'}</strong></span>
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-500">Ready to commit</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-center">
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] text-slate-500 font-bold block uppercase">Operating Theatres</span>
+                      <strong className="text-sm font-black text-teal-700 heading-serif">
+                        {parsedHospitalDb.operating_theatres?.length || 0} Suites
+                      </strong>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] text-slate-500 font-bold block uppercase">Inpatients</span>
+                      <strong className="text-sm font-black text-teal-700 heading-serif">
+                        {parsedHospitalDb.patients?.length || 0} Records
+                      </strong>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] text-slate-500 font-bold block uppercase">Surgical Schedule</span>
+                      <strong className="text-sm font-black text-teal-700 heading-serif">
+                        {parsedHospitalDb.surgeries?.length || 0} Procedures
+                      </strong>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] text-slate-500 font-bold block uppercase">CSSD Sterile Packs</span>
+                      <strong className="text-sm font-black text-teal-700 heading-serif">
+                        {parsedHospitalDb.cssd_packs?.length || 0} Packs
+                      </strong>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] text-slate-500 font-bold block uppercase">Staff Accounts</span>
+                      <strong className="text-sm font-black text-teal-700 heading-serif">
+                        {parsedHospitalDb.users?.length || 0} Users
+                      </strong>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span className="text-[10px] text-slate-500 font-bold block uppercase">System Benchmarks</span>
+                      <strong className="text-sm font-black text-emerald-700 heading-serif">
+                        {parsedHospitalDb.system_settings ? 'Configured' : 'Defaults'}
+                      </strong>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Entity Metrics Grid */}
@@ -779,7 +1214,6 @@ export const SettingsPage: React.FC = () => {
                   tab: 'audit' as SettingsSection,
                 },
               ].map((card) => (
-
                 <div key={card.title} className="glass-card p-4 space-y-3 flex flex-col justify-between hover:shadow-md transition">
                   <div>
                     <div className="flex items-center justify-between">

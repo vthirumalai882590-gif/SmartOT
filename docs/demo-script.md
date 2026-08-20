@@ -1,66 +1,36 @@
-# SmartOT Command: Complete Scripted Demo Scenario Walkthrough
+# SmartOT 5–7 Minute Live Hackathon Presentation Script
 
-## Scenario Overview
-- **Target Inpatient**: Arthur Pendelton (`pat_1024` / `MRN-2026-1024`)
-- **Procedure**: Emergency Appendectomy
-- **Scheduled Room**: Operating Theatre 3 (`OT-03`) at 14:00
-- **Assigned Sterile Set**: `CSSD-021` (Appendectomy Set)
+## Overview
+This demo proves how SmartOT replaces disjointed paper checklists, whiteboard schedules, and telephone delay bottlenecks with **connected operational intelligence**.
 
 ---
 
-## Step-by-Step Walkthrough
+## ⏱️ Live Demo Timeline
 
-### 1. Hero Command Center Observation
-1. Sign in as **Administrator** (`admin@smartot.hospital` / `Admin@123password`).
-2. Observe Hero KPIs:
-   - OT Utilization: **82%**
-   - Delayed Cases: **2**
-   - Active Critical Alert: **"Missing Surgical Consent: Patient P-1024"**
-   - Current Bottleneck: **Patient Transfer & Incomplete Ward Consent**
-3. Notice **OT-03** card: Current status is `PREPARING` with `+18m Delay` and `HIGH RISK`.
+### Step 1: Command Center Overview (0:00 – 1:00)
+- **Action**: Open `http://localhost:5173`.
+- **Narration**: *"Welcome to SmartOT Command Center. At a glance, the operational director sees all 4 operating theatres in real time. We see OT-01 in surgery, OT-02 available, OT-04 in turnover, and OT-03 flagged in HIGH RISK state with an 18-minute delay."*
+- **Highlight**: Point out the **Live Hospital Flow** pipeline showing counts across Admissions → Wards → CSSD → Transfer → OT → Turnover.
 
-### 2. Ward Readiness & Digital Consent Verification
-1. Navigate to **Patients & Readiness** (`/patients`).
-2. Locate **Arthur Pendelton (P-1024)** in Pre-Op Ward 4B.
-3. Observe readiness status is **5/6 NOT READY** and Consent is **MISSING**.
-4. Open the checklist modal:
-   - Switch Consent status from `MISSING` to `VERIFIED`.
-   - Complete remaining checklist items.
-5. Patient status transitions to **6/6 READY FOR OT**.
-6. The critical alert in the Command Center auto-resolves.
+### Step 2: Operational Exception & AI Consultation (1:00 – 2:30)
+- **Action**: Click **AI Consultant** in top header or ask: *"Why is OT-03 delayed?"*
+- **Narration**: *"Rather than calling three departments, the surgical coordinator asks the SmartOT AI Operations Consultant. In real time, the AI queries live hospital telemetry: it identifies that Patient Arthur Pendelton (P-1024) in Pre-Op Ward 4B is missing surgical consent, holding up room staging. Notice the evidence breakdown and clear actionable next steps."*
+- **Highlight**: Emphasize zero hardcoding—the response reflects live database facts and includes strict operational safety disclaimers.
 
-### 3. CSSD QR Verification & Pack Assignment
-1. Navigate to **CSSD & QR Verification** (`/cssd`).
-2. Click **Launch QR Scanner / Verifier**.
-3. Scan **CSSD-021** (Appendectomy Set).
-4. System displays **GREEN: PACK VERIFIED** (Certified biological/chemical batch indicators, Valid sterility).
-5. Click **Confirm & Assign to OT-03**.
+### Step 3: Ward Action & Patient Readiness Resolution (2:30 – 3:45)
+- **Action**: Switch persona to **Ward Staff** using the top-right persona switcher. Navigate to **Patients** (`/patients`) and select **Arthur Pendelton (P-1024)**.
+- **Action**: Toggle **Surgical Consent** to **VERIFIED** and complete the checklist.
+- **Narration**: *"The ward nurse completes the consent sign-off. Immediately, Arthur's readiness transitions to 6/6 READY FOR OT. The critical consent alert on the dashboard auto-resolves, and the patient is cleared for transfer."*
 
-*(Optional test: Type `CSSD-099` into scanner to demonstrate **RED: PACK BLOCKED** due to expired sterile barrier).*
+### Step 4: Patient Transfer & QR Sterile Tray Verification (3:45 – 5:00)
+- **Action**: Trigger **Start Transfer** from Ward 4B to OT-03.
+- **Action**: Navigate to **CSSD** (`/cssd`) and open **QR Scanner**. Scan tray `CSSD-021` (Appendectomy Set).
+- **Narration**: *"The transfer tracking engine logs transit time against our 15-minute benchmark. In the theatre anteroom, the nurse scans the sterile tray's QR code. SmartOT validates batch sterilization certificates, ensures it is not expired, and confirms tray-to-procedure compatibility before the sterile drape is opened."*
 
-### 4. Patient Transfer Execution
-1. In Patients page, click **Initiate Patient Transfer**.
-2. OT-03 transitions to `PATIENT_TRANSFER` (Patient in transit).
-3. In OT Schedule or Command Center, click **Patient Arrived**.
-4. OT-03 transitions to `PATIENT_ARRIVED` and then `OT_READY`.
+### Step 5: Live State Progression & What-If Capacity Simulation (5:00 – 6:30)
+- **Action**: In OT Schedule, click **Start Surgery** on OT-03.
+- **Action**: Navigate to **Simulator** (`/simulator`). Drag turnover slider from 25m to 15m.
+- **Narration**: *"OT-03 advances to IN SURGERY, turning green across all command screens. Finally, hospital leadership uses the What-If Simulator to calculate capacity gains: reducing room turnover by 10 minutes recovers over 100 minutes of surgical capacity per day, unlocking 6.5 additional surgeries per week."*
 
-### 5. Surgery Execution & Turnover Overrun
-1. On OT-03 card, click **Start Surgery** (Status: `SURGERY_STARTED`).
-2. Click **Finish Surgery** (Status: `SURGERY_COMPLETED`).
-3. Click **Start Turnover** (Turnover benchmark timer begins: 25 minutes).
-4. Simulate a 35-minute turnover overrun by clicking **Mark Delayed**.
-5. Alert engine raises: **"Turnover Benchmark Overrun: OT-03"**.
-
-### 6. AI Operations Consultant Investigation
-1. Open the **AI Operations Consultant** drawer.
-2. Ask: *"Why is OT-03 delayed?"*
-3. Observe the structured advisory response:
-   - **SUMMARY**: Explains the pre-op consent bottleneck and subsequent turnover overrun.
-   - **LIKELY CONTRIBUTORS**: Attributes specific time deltas to Ward 4B hold and room turnaround.
-   - **EVIDENCE**: Cites timestamped event stream.
-   - **RECOMMENDED ACTIONS**: Suggests dispatching auxiliary turnover cleaning kits and standardizing pre-op T-30 checklists.
-
-### 7. What-If Capacity Simulation
-1. Navigate to **What-If Simulator** (`/simulator`).
-2. Adjust turnover slider from 0 to -10 minutes.
-3. Observe simulated suite utilization rise from **78.4% to 83.2%**, recovering **~105 minutes daily** and enabling **+6 additional surgeries weekly**.
+### Step 6: Summary & Closing (6:30 – 7:00)
+- **Narration**: *"Connect → Track → Understand → Predict → Recommend. SmartOT delivers a safer, faster, and intelligence-driven surgical enterprise. Thank you!"*

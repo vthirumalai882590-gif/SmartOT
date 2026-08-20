@@ -1,6 +1,18 @@
 import { db } from '../database/db';
 import { Patient, PatientReadiness, ConsentStatus, PatientStatus } from '../../../shared/src/types';
 
+// Explicit valid patient state machine transitions
+const VALID_PATIENT_TRANSITIONS: Record<PatientStatus, PatientStatus[]> = {
+  ADMITTED: ['PREPARING'],
+  PREPARING: ['READY_FOR_OT', 'ADMITTED'],         // can revert if readiness incomplete
+  READY_FOR_OT: ['IN_TRANSFER', 'PREPARING'],       // can revert if readiness changes
+  IN_TRANSFER: ['IN_OT'],                            // transfer cannot go backwards
+  IN_OT: ['IN_SURGERY', 'IN_TRANSFER'],              // can return if OT issue
+  IN_SURGERY: ['POST_OP'],                           // surgery is one-way
+  POST_OP: ['DISCHARGED'],
+  DISCHARGED: [],                                    // terminal state
+};
+
 export class PatientRepository {
   findAll(): Patient[] {
     const data = db.getData();
@@ -59,16 +71,20 @@ export class PatientRepository {
       (readiness.preopPrepCompleted ? 1 : 0);
 
     readiness.completedItemsCount = completed;
-    readiness.isReady = completed === 6 && readiness.consentStatus === 'VERIFIED';
+
+    // FIX: Use totalItemsCount from the record, not hard-coded 6
+    readiness.isReady = completed === readiness.totalItemsCount && readiness.consentStatus === 'VERIFIED';
     readiness.updatedAt = new Date().toISOString();
 
-    // Sync patient status
+    // Sync patient status via state machine (only valid transitions)
     const patient = data.patients.find((p) => p.id === patientId);
     if (patient) {
       if (readiness.isReady && patient.status === 'PREPARING') {
         patient.status = 'READY_FOR_OT';
+        patient.updatedAt = new Date().toISOString();
       } else if (!readiness.isReady && patient.status === 'READY_FOR_OT') {
         patient.status = 'PREPARING';
+        patient.updatedAt = new Date().toISOString();
       }
     }
 
@@ -80,11 +96,51 @@ export class PatientRepository {
     return this.updateReadiness(patientId, { consentStatus });
   }
 
-  updateStatus(patientId: string, status: PatientStatus): Patient | undefined {
+  /**
+   * FIX: updateStatus now enforces the patient state machine.
+   * Returns { success, patient } on success, or { success: false, error } on invalid transition.
+   * All controllers must use this method — direct `patient.status = X` is forbidden.
+   */
+  updateStatus(patientId: string, status: PatientStatus): { success: boolean; patient?: Patient; error?: string } {
+    const data = db.getData();
+    const patient = data.patients.find((p) => p.id === patientId);
+
+    if (!patient) {
+      return { success: false, error: `Patient "${patientId}" not found` };
+    }
+
+    const currentStatus = patient.status as PatientStatus;
+
+    // Allow no-op (same status) silently
+    if (currentStatus === status) {
+      return { success: true, patient };
+    }
+
+    const allowedNext = VALID_PATIENT_TRANSITIONS[currentStatus] || [];
+    if (!allowedNext.includes(status)) {
+      return {
+        success: false,
+        error: `Invalid patient state transition: "${currentStatus}" → "${status}". ` +
+               `Allowed transitions from "${currentStatus}": [${allowedNext.join(', ') || 'none'}].`,
+      };
+    }
+
+    patient.status = status;
+    patient.updatedAt = new Date().toISOString();
+    db.persist();
+    return { success: true, patient };
+  }
+
+  /**
+   * Force-set status bypassing state machine. Use ONLY for admin resets and test fixtures.
+   * Do NOT use from operational controllers.
+   */
+  forceUpdateStatus(patientId: string, status: PatientStatus): Patient | undefined {
     const data = db.getData();
     const patient = data.patients.find((p) => p.id === patientId);
     if (patient) {
       patient.status = status;
+      patient.updatedAt = new Date().toISOString();
       db.persist();
     }
     return patient;

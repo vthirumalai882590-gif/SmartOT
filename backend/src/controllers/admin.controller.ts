@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { db } from '../database/db';
 import { OperatingTheatre, CSSDPack, Patient, User } from '../../../shared/src/types';
 import { auditRepository } from '../repositories/audit.repository';
+import { alertEngine } from '../alerts/alert-engine';
 
 function genId(prefix: string): string {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
@@ -491,6 +492,148 @@ export class AdminController {
     }
   }
 
+  // ══════════════════════════════════════════════════════════════════════
+  // IMPORT COMPLETE HOSPITAL DATABASE
+  // ══════════════════════════════════════════════════════════════════════
+  public async importDatabase(req: Request, res: Response): Promise<void> {
+    const { database, mode = 'REPLACE' } = req.body;
+    if (!database || typeof database !== 'object') {
+      res.status(400).json({ success: false, error: 'Valid database payload object is required.' });
+      return;
+    }
+
+    try {
+      const current = db.getData() as any;
+      const prevStats = {
+        ots: current.operating_theatres?.length || 0,
+        patients: current.patients?.length || 0,
+        surgeries: current.surgeries?.length || 0,
+        cssd: current.cssd_packs?.length || 0,
+        users: current.users?.length || 0,
+      };
+
+      if (mode === 'REPLACE') {
+        if (Array.isArray(database.operating_theatres) && database.operating_theatres.length > 0) {
+          current.operating_theatres = database.operating_theatres;
+        }
+        if (Array.isArray(database.patients) && database.patients.length > 0) {
+          current.patients = database.patients;
+        }
+        if (Array.isArray(database.patient_readiness) && database.patient_readiness.length > 0) {
+          current.patient_readiness = database.patient_readiness;
+        } else if (Array.isArray(database.patients)) {
+          // Auto-generate readiness if omitted
+          current.patient_readiness = database.patients.map((p: any) => ({
+            id: `ready_${p.id}`,
+            patientId: p.id,
+            admissionCompleted: true,
+            consentStatus: p.status === 'READY_FOR_OT' || p.status === 'IN_OT' || p.status === 'IN_SURGERY' ? 'VERIFIED' : 'PENDING',
+            documentationCompleted: p.status === 'READY_FOR_OT' || p.status === 'IN_OT' || p.status === 'IN_SURGERY',
+            reportsAvailable: true,
+            doctorConfirmed: true,
+            preopPrepCompleted: p.status === 'READY_FOR_OT' || p.status === 'IN_OT' || p.status === 'IN_SURGERY',
+            completedItemsCount: p.status === 'READY_FOR_OT' || p.status === 'IN_OT' || p.status === 'IN_SURGERY' ? 6 : 4,
+            totalItemsCount: 6,
+            isReady: p.status === 'READY_FOR_OT' || p.status === 'IN_OT' || p.status === 'IN_SURGERY',
+            updatedAt: new Date().toISOString(),
+          }));
+        }
+
+        if (Array.isArray(database.surgeries)) {
+          current.surgeries = database.surgeries;
+        }
+        if (Array.isArray(database.cssd_packs)) {
+          current.cssd_packs = database.cssd_packs;
+        }
+        if (Array.isArray(database.users) && database.users.length > 0) {
+          current.users = database.users;
+        }
+        if (database.system_settings && typeof database.system_settings === 'object') {
+          current.system_settings = { ...getSettings(), ...database.system_settings };
+        }
+      } else {
+        // MERGE mode
+        if (Array.isArray(database.operating_theatres)) {
+          database.operating_theatres.forEach((item: any) => {
+            const idx = current.operating_theatres.findIndex((o: any) => o.id === item.id || o.code === item.code);
+            if (idx !== -1) current.operating_theatres[idx] = { ...current.operating_theatres[idx], ...item };
+            else current.operating_theatres.push(item);
+          });
+        }
+        if (Array.isArray(database.patients)) {
+          database.patients.forEach((item: any) => {
+            const idx = current.patients.findIndex((p: any) => p.id === item.id || p.mrn === item.mrn);
+            if (idx !== -1) current.patients[idx] = { ...current.patients[idx], ...item };
+            else current.patients.push(item);
+          });
+        }
+        if (Array.isArray(database.surgeries)) {
+          database.surgeries.forEach((item: any) => {
+            const idx = current.surgeries.findIndex((s: any) => s.id === item.id);
+            if (idx !== -1) current.surgeries[idx] = { ...current.surgeries[idx], ...item };
+            else current.surgeries.push(item);
+          });
+        }
+        if (Array.isArray(database.cssd_packs)) {
+          database.cssd_packs.forEach((item: any) => {
+            const idx = current.cssd_packs.findIndex((c: any) => c.id === item.id || c.packId === item.packId);
+            if (idx !== -1) current.cssd_packs[idx] = { ...current.cssd_packs[idx], ...item };
+            else current.cssd_packs.push(item);
+          });
+        }
+      }
+
+      db.persist();
+
+      // Trigger Alert Engine re-evaluation
+      await alertEngine.evaluateAllRules();
+
+      const newStats = {
+        ots: current.operating_theatres?.length || 0,
+        patients: current.patients?.length || 0,
+        surgeries: current.surgeries?.length || 0,
+        cssd: current.cssd_packs?.length || 0,
+        users: current.users?.length || 0,
+      };
+
+      createAudit(req, 'IMPORT_HOSPITAL_DATABASE', 'SYSTEM', 'all', prevStats, newStats);
+
+      res.json({
+        success: true,
+        data: {
+          mode,
+          stats: newStats,
+          importedAt: new Date().toISOString(),
+        },
+        message: `Hospital database successfully imported and assigned across all ${newStats.ots} Theatres, ${newStats.patients} Inpatients, ${newStats.surgeries} Surgeries, and ${newStats.cssd} Sterile Packs.`,
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: `Failed to import database: ${err.message}` });
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // EXPORT FULL HOSPITAL DATABASE SNAPSHOT
+  // ══════════════════════════════════════════════════════════════════════
+  public exportFullDatabase(req: Request, res: Response): void {
+    const data = db.getData() as any;
+    const exportPayload = {
+      hospitalName: data.system_settings?.hospitalName || 'SmartOT Command Central Hospital',
+      exportTimestamp: new Date().toISOString(),
+      schemaVersion: '1.0.0',
+      operating_theatres: data.operating_theatres || [],
+      patients: data.patients || [],
+      patient_readiness: data.patient_readiness || [],
+      surgeries: data.surgeries || [],
+      cssd_packs: data.cssd_packs || [],
+      users: (data.users || []).map((u: any) => ({ ...u, password: '[redacted]' })),
+      system_settings: data.system_settings || {},
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename=smartot-hospital-database-${Date.now()}.json`);
+    res.json(exportPayload);
+  }
 
   // ══════════════════════════════════════════════════════════════════════
   // RESET DEMO DATA

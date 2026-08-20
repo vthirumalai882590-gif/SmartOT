@@ -46,6 +46,7 @@ export interface Patient {
   primaryDiagnosis: string;
   readiness?: PatientReadiness;
   activeSurgeryId?: string;
+  updatedAt?: string;   // FIX: added for state machine audit
 }
 
 export type OTState =
@@ -102,6 +103,8 @@ export interface Surgery {
   delayReason?: string;
   riskLevel: DelayRiskLevel;
   riskReasons?: string[];
+  riskScore?: number;           // FIX: computed risk score (0-100)
+  downstreamImpacts?: string[]; // FIX: downstream cases affected
   createdAt: string;
 }
 
@@ -111,14 +114,149 @@ export type CSSDPackStatus =
   | 'STERILIZED'
   | 'STORED'
   | 'AVAILABLE'
+  | 'RESERVED'
   | 'ASSIGNED'
   | 'IN_USE'
   | 'RETURNED'
+  | 'RETURNED_TO_CSSD'
+  | 'RECEIVED'
+  | 'QUEUED'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'RELEASE_PENDING'
+  | 'RELEASED'
+  | 'REJECTED'
+  | 'QUARANTINED'
   | 'REPROCESSING'
   | 'EXPIRED'
-  | 'BLOCKED';
+  | 'BLOCKED'
+  | 'STERILE';
 
 export type SterilityStatus = 'STERILIZED' | 'UNSTERILIZED' | 'EXPIRED';
+
+export type CSSDItemCategory =
+  | 'Surgical Instrument'
+  | 'Instrument Set'
+  | 'Surgical Tray'
+  | 'Reusable Device'
+  | 'Endoscopy Equipment'
+  | 'Metal Instrument'
+  | 'Specialized Instrument'
+  | 'Other';
+
+export type SterilizationJobStatus =
+  | 'RECEIVED'
+  | 'QUEUED'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'RELEASE_PENDING'
+  | 'RELEASED'
+  | 'REJECTED'
+  | 'QUARANTINED';
+
+export interface CSSDItem {
+  id: string;
+  name: string;
+  qrCode: string;
+  category: CSSDItemCategory | string;
+  quantity: number;
+  location: string;
+  currentStatus: CSSDPackStatus;
+  lastSterilizedAt?: string;
+  sterilizationMethod?: string;
+  cycleReference?: string;
+  condition: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'REQUIRES_MAINTENANCE' | 'DAMAGED';
+  releasedBy?: string;
+  releasedAt?: string;
+  manufacturer?: string;
+  model?: string;
+  serialNumber?: string;
+  assignedOtId?: string;
+  assignedSurgeryId?: string;
+  assignedPatientId?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SterilizationJob {
+  id: string;
+  jobId: string; // e.g. J-101
+  instrumentId: string;
+  instrumentName: string;
+  packId?: string;
+  qrCode: string;
+  quantity: number;
+  sourceDepartment: string;
+  sourceOT?: string;
+  associatedSurgeryId?: string;
+  associatedSurgeryName?: string;
+  submittedBy: string;
+  submittedAt: string;
+  receivedBy?: string;
+  receivedAt?: string;
+  status: SterilizationJobStatus;
+  method: string;
+  cycleReference: string;
+  processingStartedAt?: string;
+  expectedCompletionAt?: string;
+  processingCompletedAt?: string;
+  releasedAt?: string;
+  releasedBy?: string;
+  rejectionReason?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SterilizationCycleProfile {
+  id: string;
+  method: string;
+  cycleName: string;
+  expectedDurationMinutes: number;
+  preparationDurationMinutes: number;
+  processingDurationMinutes: number;
+  coolingDurationMinutes: number;
+  totalExpectedDurationMinutes: number;
+}
+
+export interface CSSDReleaseRecord {
+  id: string;
+  jobId: string;
+  instrumentId: string;
+  cycleCompleted: boolean;
+  packagingAcceptable: boolean;
+  indicatorVerified: boolean;
+  releaseDecision: 'RELEASED' | 'REJECTED' | 'QUARANTINED';
+  notes?: string;
+  releasedBy: string;
+  releasedAt: string;
+}
+
+export interface CSSDMetrics {
+  sterileItemsAvailable: number;
+  itemsInUse: number;
+  waitingForSterilization: number;
+  currentlyProcessing: number;
+  completedToday: number;
+  releasePending: number;
+  rejectedOrQuarantined: number;
+  averageProcessingTimeMinutes: number;
+  delayedJobsCount: number;
+}
+
+export interface CSSDItemEvent {
+  id: string;
+  itemId: string;
+  jobId?: string;
+  eventType: WorkflowEventType | string;
+  fromStatus?: string;
+  toStatus?: string;
+  actorId?: string;
+  actorName?: string;
+  timestamp: string;
+  notes?: string;
+}
 
 export interface CSSDPack {
   id: string;
@@ -133,6 +271,16 @@ export interface CSSDPack {
   assignedOtId?: string;
   assignedSurgeryId?: string;
   assignedPatientId?: string;
+  quantity?: number;
+  category?: string;
+  condition?: string;
+  manufacturer?: string;
+  model?: string;
+  serialNumber?: string;
+  releasedBy?: string;
+  releasedAt?: string;
+  lastSterilizationMethod?: string;
+  cycleReference?: string;
   notes?: string;
   updatedAt: string;
 }
@@ -140,11 +288,13 @@ export interface CSSDPack {
 export interface QRVerificationResult {
   valid: boolean;
   packId: string;
-  pack?: CSSDPack;
+  pack?: CSSDPack | CSSDItem;
   status: 'VERIFIED' | 'BLOCKED';
   message: string;
   reasons: string[];
   suggestedAction?: string;
+  latestEvent?: WorkflowEvent | null;
+  activeJob?: SterilizationJob | null;
 }
 
 export type WorkflowEventType =
@@ -167,6 +317,16 @@ export type WorkflowEventType =
   | 'CSSD_PACK_REPROCESSING'
   | 'CSSD_PACK_EXPIRED'
   | 'CSSD_PACK_BLOCKED'
+  | 'CSSD_ITEM_CREATED'
+  | 'CSSD_ITEM_RECEIVED'
+  | 'STERILIZATION_JOB_CREATED'
+  | 'STERILIZATION_STARTED'
+  | 'STERILIZATION_COMPLETED'
+  | 'STERILIZATION_RELEASED'
+  | 'STERILIZATION_REJECTED'
+  | 'STERILIZATION_QUARANTINED'
+  | 'CSSD_PACK_DISPATCHED'
+  | 'CSSD_ITEM_RETURNED_TO_INVENTORY'
   | 'OT_STATE_CHANGED'
   | 'OT_MANUAL_OVERRIDE'
   | 'OT_DELAY_DETECTED'
@@ -179,6 +339,8 @@ export type WorkflowEventType =
   | 'OT_AVAILABLE'
   | 'ALERT_TRIGGERED'
   | 'ALERT_RESOLVED'
+  | 'READINESS_UPDATED'
+  | 'OT_STATUS_CHANGED'
   | 'AI_RECOMMENDATION_GENERATED';
 
 export interface WorkflowEvent {
@@ -288,6 +450,7 @@ export interface NextBestAction {
 export interface AIOperationsContext {
   hospitalName: string;
   currentTime: string;
+  operationalDisclaimer?: string;  // FIX: advisory disclaimer for AI
   kpis: {
     otUtilization: number;
     activeSurgeries: number;
@@ -295,12 +458,16 @@ export interface AIOperationsContext {
     delayedCases: number;
     highRiskCases: number;
     cssdAvailability: number;
+    openAlertsCount?: number;
+    currentBottleneck?: string;
   };
   otStatuses: Array<{
     code: string;
     status: OTState;
-    currentPatient?: string;
-    currentProcedure?: string;
+    currentPatient?: string;          // legacy — may contain name
+    currentPatientId?: string | null; // FIX: privacy-preserving identifier
+    currentSurgeryId?: string | null; // FIX: surgery identifier
+    currentProcedure?: string | null;
     delayMinutes: number;
     riskLevel: DelayRiskLevel;
   }>;
@@ -309,12 +476,19 @@ export interface AIOperationsContext {
     severity: AlertSeverity;
     title: string;
     description: string;
+    entityType?: string;
+    entityId?: string;
     responsibleRole: UserRole;
   }>;
   recentEvents: Array<{
     eventType: WorkflowEventType;
     timestamp: string;
-    summary: string;
+    summary?: string;             // optional — generated by legacy builder
+    department?: string;
+    entityType?: string;
+    entityId?: string;
+    actorName?: string;
+    metadata?: Record<string, any>;
   }>;
   bottlenecks: BottleneckItem[];
   nextBestActions: NextBestAction[];

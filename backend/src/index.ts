@@ -8,6 +8,7 @@ import router from './routes';
 import { errorHandler } from './middleware/error.middleware';
 import { seedDatabase } from './database/seed';
 import { alertEngine } from './alerts/alert-engine';
+import { postgresClient } from './database/postgres';
 
 // Load environment configuration from candidate locations
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -17,31 +18,35 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-// Universal CORS Middleware & Preflight Handler
-app.use((req, res, next) => {
-  const origin = req.headers.origin as string;
-  if (origin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
+// ⚠️ SECURITY: CORS is controlled by the CORS_ORIGIN environment variable.
+// In development, localhost origins are allowed. In production, only the
+// configured allowlist is permitted. Never allow all origins in production.
+const ALLOWED_ORIGINS_RAW = process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:5174';
+const ALLOWED_ORIGINS = ALLOWED_ORIGINS_RAW.split(',').map((o) => o.trim()).filter(Boolean);
 
-app.use(
-  cors({
-    origin: (origin, callback) => callback(null, true),
-    credentials: true,
-  })
-);
-app.options('*', cors());
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g., server-to-server, curl in dev)
+    if (!origin) return callback(null, true);
+
+    const isLocalhost = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    const isAllowed = ALLOWED_ORIGINS.includes(origin) || (process.env.NODE_ENV !== 'production' && isLocalhost);
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    console.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -92,6 +97,19 @@ async function startServer() {
     console.log('----------------------------------------------------');
     console.log('⚡ SMARTOT COMMAND — HOSPITAL OPERATIONS PLATFORM ⚡');
     console.log('----------------------------------------------------');
+
+    // Attempt PostgreSQL connection & schema migrations
+    const pgConnected = await postgresClient.connectAndMigrate();
+
+    // ⚠️ SECURITY & DATA INTEGRITY: In production, PostgreSQL is mandatory.
+    // Silent fallback to JSON in production is forbidden.
+    if (process.env.NODE_ENV === 'production' && !pgConnected) {
+      console.error(
+        'FATAL: PostgreSQL database is required in production environment (NODE_ENV=production) ' +
+        'but could not be connected. Set DATABASE_URL or PGHOST/PGUSER/PGPASSWORD in your environment.'
+      );
+      process.exit(1);
+    }
 
     // Auto-seed database if fresh
     await seedDatabase(false);

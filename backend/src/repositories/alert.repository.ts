@@ -19,15 +19,44 @@ export class AlertRepository {
     return db.getData().alerts.filter((a) => a.responsibleRole === role);
   }
 
+  /**
+   * FIX: Idempotent alert creation.
+   * Strategy 1: Same alert ID already exists → return existing (covers alert engine's stable IDs like alt_consent_surg_01)
+   * Strategy 2: Same entityId + entityType + responsibleRole + OPEN status → update timestamp, return existing (prevents soft dupes)
+   * No new alert is created if either check passes.
+   */
   create(alert: Alert): Alert {
     const data = db.getData();
-    // Prevent duplicate open alerts for the same entity and title
-    const existing = data.alerts.find(
-      (a) => a.entityId === alert.entityId && a.title === alert.title && a.status === 'OPEN'
-    );
-    if (existing) {
-      return existing;
+
+    // Check 1: Exact ID match — alert engine uses stable predictable IDs
+    const byId = data.alerts.find((a) => a.id === alert.id);
+    if (byId) {
+      // If the same alert exists but was resolved, re-open it with updated timestamp
+      if (byId.status === 'RESOLVED') {
+        byId.status = 'OPEN';
+        byId.createdAt = new Date().toISOString();
+        byId.resolvedAt = undefined;
+        byId.resolvedBy = undefined;
+        byId.title = alert.title;
+        byId.description = alert.description;
+        db.persist();
+      }
+      return byId;
     }
+
+    // Check 2: Soft dedup — same entity, same role, same title pattern, already OPEN
+    const softDupe = data.alerts.find(
+      (a) =>
+        a.entityId === alert.entityId &&
+        a.entityType === alert.entityType &&
+        a.responsibleRole === alert.responsibleRole &&
+        a.title === alert.title &&
+        (a.status === 'OPEN' || a.status === 'ACKNOWLEDGED')
+    );
+    if (softDupe) {
+      return softDupe;
+    }
+
     data.alerts.unshift(alert);
     db.persist();
     return alert;
@@ -45,6 +74,27 @@ export class AlertRepository {
       db.persist();
     }
     return alert;
+  }
+
+  /**
+   * Auto-resolve all OPEN alerts matching entityId + title fragment.
+   * Used by alert engine to resolve alerts when the underlying condition clears.
+   */
+  autoResolveByEntity(entityId: string, titleFragment: string, resolvedBy: string): void {
+    const data = db.getData();
+    data.alerts
+      .filter(
+        (a) =>
+          a.entityId === entityId &&
+          a.title.includes(titleFragment) &&
+          (a.status === 'OPEN' || a.status === 'ACKNOWLEDGED')
+      )
+      .forEach((a) => {
+        a.status = 'RESOLVED';
+        a.resolvedAt = new Date().toISOString();
+        a.resolvedBy = resolvedBy;
+      });
+    db.persist();
   }
 }
 

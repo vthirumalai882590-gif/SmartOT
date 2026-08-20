@@ -401,30 +401,38 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onOpenAIConsultant, on
             </div>
           </div>
 
-          {/* Flow stages — horizontal scroll on mobile, grid on desktop */}
+          {/* Flow stages — horizontal scroll on mobile, responsive flex on desktop */}
           <div className="overflow-x-auto -mx-1 pb-2">
-            <div className="flex items-center gap-0 min-w-max px-1">
+            <div className="flex items-center justify-between min-w-[840px] w-full px-1 py-1">
               {flowStages.map((stage, idx) => (
                 <React.Fragment key={stage.id}>
                   {/* Stage card */}
                   <motion.div
-                    whileHover={{ scale: 1.04, y: -2 }}
-                    className={`flex flex-col items-center text-center w-28 p-3 rounded-xl border ${stage.bgColor} ${stage.borderColor} shadow-sm cursor-pointer transition-all`}
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    className={`flex-1 min-w-[108px] max-w-[136px] h-[168px] p-3 rounded-2xl border ${stage.bgColor} ${stage.borderColor} shadow-sm cursor-pointer transition-all flex flex-col items-center justify-between select-none`}
                   >
-                    <div className={`p-2 rounded-lg ${stage.bgColor} border ${stage.borderColor} mb-2`}>
-                      <stage.icon className={`h-5 w-5 ${stage.color}`} />
+                    <div className={`p-2 rounded-xl ${stage.bgColor} border ${stage.borderColor} shrink-0`}>
+                      <stage.icon className={`h-4.5 w-4.5 ${stage.color}`} />
                     </div>
-                    <div className={`text-xl font-black ${stage.color}`}>{stage.count}{stage.id === 'cssd' ? '%' : ''}</div>
-                    <div className={`text-[11px] font-bold mt-0.5 ${stage.color}`}>{stage.label}</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5 leading-tight">{stage.sublabel}</div>
+                    <div className={`text-xl font-black tracking-tight ${stage.color} shrink-0`}>
+                      {stage.count}{stage.id === 'cssd' ? '%' : ''}
+                    </div>
+                    <div className="w-full text-center space-y-0.5">
+                      <div className={`text-[11px] font-bold leading-tight ${stage.color} line-clamp-1`}>
+                        {stage.label}
+                      </div>
+                      <div className="text-[10px] text-slate-500 leading-tight line-clamp-1">
+                        {stage.sublabel}
+                      </div>
+                    </div>
                     {/* Live indicator dot */}
-                    <div className={`h-1.5 w-1.5 rounded-full mt-2 ${countBgClass(stage)}`} />
+                    <div className={`h-1.5 w-1.5 rounded-full ${countBgClass(stage)} shrink-0`} />
                   </motion.div>
 
                   {/* Arrow between stages */}
                   {idx < flowStages.length - 1 && (
-                    <div className="flex flex-col items-center px-1">
-                      <ChevronRight className="h-5 w-5 text-slate-300" />
+                    <div className="flex items-center justify-center shrink-0 px-0.5 text-slate-300">
+                      <ChevronRight className="h-4 w-4" />
                     </div>
                   )}
                 </React.Fragment>
@@ -433,16 +441,19 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onOpenAIConsultant, on
           </div>
 
           {/* Summary bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-slate-200/80">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-200/80">
             {[
-              { label: 'Patients in System', value: (kpis?.readyPatients || 8) + (kpis?.activeSurgeries || 1) + 5, color: 'text-indigo-700' },
-              { label: 'Active Surgeries', value: kpis?.activeSurgeries || 1, color: 'text-teal-700' },
-              { label: 'OTs in Turnover', value: ots.filter((o: any) => o.currentStatus === 'TURNOVER').length, color: 'text-orange-700' },
-              { label: 'OTs Available', value: ots.filter((o: any) => o.currentStatus === 'AVAILABLE').length, color: 'text-emerald-700' },
+              { label: 'Patients in System', value: (kpis?.readyPatients || 8) + (kpis?.activeSurgeries || 1) + 5, color: 'text-indigo-700', bg: 'bg-indigo-50/50', border: 'border-indigo-100' },
+              { label: 'Active Surgeries', value: kpis?.activeSurgeries || 1, color: 'text-teal-700', bg: 'bg-teal-50/50', border: 'border-teal-100' },
+              { label: 'OTs in Turnover', value: ots.filter((o: any) => o.currentStatus === 'TURNOVER').length, color: 'text-orange-700', bg: 'bg-orange-50/50', border: 'border-orange-100' },
+              { label: 'OTs Available', value: ots.filter((o: any) => o.currentStatus === 'AVAILABLE').length, color: 'text-emerald-700', bg: 'bg-emerald-50/50', border: 'border-emerald-100' },
             ].map((item) => (
-              <div key={item.label} className="text-center">
-                <div className={`text-2xl font-black ${item.color}`}>{item.value}</div>
-                <div className="text-[10px] text-slate-500 font-semibold">{item.label}</div>
+              <div
+                key={item.label}
+                className={`text-center py-2.5 px-3 rounded-xl ${item.bg} border ${item.border} shadow-xs flex flex-col items-center justify-center`}
+              >
+                <div className={`text-2xl font-black tracking-tight ${item.color}`}>{item.value}</div>
+                <div className="text-[11px] text-slate-600 font-semibold mt-0.5">{item.label}</div>
               </div>
             ))}
           </div>

@@ -66,6 +66,9 @@ export const ScenarioRunnerModal: React.FC<ScenarioRunnerModalProps> = ({
           packId: 'CSSD-021',
           targetOT: 'OT-03',
           requiredPackType: 'Appendectomy Set',
+          surgeryId: 'surg_1024',
+          patientId: 'pat_1024',
+          otId: 'ot_03',
         });
         addLog(`QR Verification Result: ${verification.status} (${verification.message})`);
         addLog('Assigning sterile pack CSSD-021 to Operating Theatre OT-03...');
@@ -73,6 +76,7 @@ export const ScenarioRunnerModal: React.FC<ScenarioRunnerModalProps> = ({
           targetStatus: 'ASSIGNED',
           assignedOtId: 'ot_03',
           assignedSurgeryId: 'surg_1024',
+          assignedPatientId: 'pat_1024',
           currentLocation: 'OT-03 Sterile Anteroom',
         });
         addLog('Pack successfully assigned and staged for procedure.');
