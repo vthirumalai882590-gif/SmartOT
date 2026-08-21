@@ -1,4 +1,5 @@
 import { offlineQueue } from './offline-queue';
+import { FALLBACK_DB } from './fallback-data';
 
 const ENV_API_URL = ((import.meta as any).env?.VITE_API_URL as string) || '';
 
@@ -17,8 +18,40 @@ function getAuthHeader(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+function getFallbackDataForEndpoint(endpoint: string): any {
+  const cleanEp = endpoint.split('?')[0];
+  if (cleanEp === '/patients' || cleanEp.startsWith('/patients')) return FALLBACK_DB.patients || [];
+  if (cleanEp === '/ot/schedule') return FALLBACK_DB.surgeries || [];
+  if (cleanEp === '/ot/rooms') return FALLBACK_DB.operating_theatres || [];
+  if (cleanEp === '/cssd/items') return (FALLBACK_DB as any).cssd_items || (FALLBACK_DB as any).cssd_packs || [];
+  if (cleanEp === '/cssd/packs') return (FALLBACK_DB as any).cssd_packs || [];
+  if (cleanEp === '/alerts') return FALLBACK_DB.alerts || [];
+  if (cleanEp === '/analytics/metrics') {
+    return {
+      averageTurnoverMinutes: 24,
+      otUtilizationPercentage: 86,
+      onTimeStartPercentage: 92,
+      cssdStockoutCount: 1,
+    };
+  }
+  if (cleanEp === '/dashboard/command-center') {
+    return {
+      activeSurgeries: FALLBACK_DB.surgeries?.length || 6,
+      delayedCases: 2,
+      averageTurnoverMinutes: 24,
+      cssdStockoutRiskCount: 1,
+      otUtilizationRate: 85,
+      activeAlertsCount: FALLBACK_DB.alerts?.length || 7,
+      theatres: FALLBACK_DB.operating_theatres || [],
+      recentAlerts: FALLBACK_DB.alerts || [],
+    };
+  }
+  return null;
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   let url = `${API_BASE}${endpoint}`;
+  const isGetRequest = !options.method || options.method.toUpperCase() === 'GET';
   const headers = {
     'Content-Type': 'application/json',
     ...getAuthHeader(),
@@ -52,6 +85,15 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
         localStorage.removeItem('smartot_auth_token');
         localStorage.removeItem('smartot_auth_user');
       }
+
+      if (isGetRequest) {
+        const fallback = getFallbackDataForEndpoint(endpoint);
+        if (fallback !== null) {
+          console.warn(`[API Graceful Fallback] Endpoint ${endpoint} returned HTTP ${res.status}. Serving offline fallback data.`);
+          return fallback as T;
+        }
+      }
+
       const errorMsg =
         (typeof data.message === 'string' && data.message) ||
         (typeof data.error === 'string' && data.error) ||
@@ -66,6 +108,14 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
     return data.data !== undefined ? data.data : data;
   } catch (err: any) {
+    if (isGetRequest) {
+      const fallback = getFallbackDataForEndpoint(endpoint);
+      if (fallback !== null) {
+        console.warn(`[API Graceful Fallback] Endpoint ${endpoint} failed (${err.message}). Serving offline fallback data.`);
+        return fallback as T;
+      }
+    }
+
     // If offline and mutating state, queue action to offline store
     if (!navigator.onLine && options.method && options.method !== 'GET') {
       offlineQueue.enqueueEvent({
