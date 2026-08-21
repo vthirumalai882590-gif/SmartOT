@@ -18,9 +18,39 @@ function getAuthHeader(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+function getCustomPatients(): any[] {
+  try {
+    const saved = localStorage.getItem('smartot_custom_patients');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCustomPatient(patient: any) {
+  try {
+    if (!patient || (!patient.id && !patient.mrn)) return;
+    const existing = getCustomPatients();
+    const updated = [patient, ...existing.filter((p: any) => p.id !== patient.id && p.mrn !== patient.mrn)];
+    localStorage.setItem('smartot_custom_patients', JSON.stringify(updated));
+  } catch (e) {
+    console.warn('Failed to save custom patient to localStorage', e);
+  }
+}
+
 function getFallbackDataForEndpoint(endpoint: string): any {
   const cleanEp = endpoint.split('?')[0];
-  if (cleanEp === '/patients' || cleanEp.startsWith('/patients')) return FALLBACK_DB.patients || [];
+  if (cleanEp === '/patients' || cleanEp.startsWith('/patients')) {
+    const custom = getCustomPatients();
+    const dbPatients = FALLBACK_DB.patients || [];
+    const merged = [...custom];
+    for (const p of dbPatients) {
+      if (!merged.some((m) => m.id === p.id || m.mrn === p.mrn)) {
+        merged.push(p);
+      }
+    }
+    return merged;
+  }
   if (cleanEp === '/ot/schedule') return FALLBACK_DB.surgeries || [];
   if (cleanEp === '/ot/rooms') return FALLBACK_DB.operating_theatres || [];
   if (cleanEp === '/cssd/items') return (FALLBACK_DB as any).cssd_items || (FALLBACK_DB as any).cssd_packs || [];
@@ -143,7 +173,21 @@ export const api = {
   getCommandCenter: () => request<any>('/dashboard/command-center'),
 
   // Patients
-  getPatients: () => request<any[]>('/patients'),
+  getPatients: async () => {
+    try {
+      const serverPatients = await request<any[]>('/patients');
+      const custom = getCustomPatients();
+      const merged = [...custom];
+      for (const p of (serverPatients || [])) {
+        if (!merged.some((m) => m.id === p.id || m.mrn === p.mrn)) {
+          merged.push(p);
+        }
+      }
+      return merged;
+    } catch {
+      return getFallbackDataForEndpoint('/patients');
+    }
+  },
   getPatientById: async (id: string) => {
     try {
       return await request<any>(`/patients/${id}`);
@@ -152,11 +196,46 @@ export const api = {
       return all.find((p: any) => p.id === id || p.mrn === id) || all[0];
     }
   },
-  createPatient: (data: any) =>
-    request<any>('/patients', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+  createPatient: async (data: any) => {
+    try {
+      const created = await request<any>('/patients', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      if (created) saveCustomPatient(created);
+      return created;
+    } catch (err) {
+      const localPatient = {
+        id: `pat_${Date.now()}`,
+        mrn: data.mrn,
+        name: data.name,
+        age: data.age || 45,
+        gender: data.gender || 'M',
+        wardId: data.wardId || 'Ward 4B',
+        bedNumber: data.bedNumber || 'Bed 401',
+        status: 'PRE_OP_INPATIENT',
+        primaryDiagnosis: data.primaryDiagnosis || 'Acute Appendicitis',
+        readiness: {
+          id: `readiness_${Date.now()}`,
+          patientId: `pat_${Date.now()}`,
+          admissionCompleted: true,
+          consentStatus: 'PENDING',
+          documentationCompleted: false,
+          reportsAvailable: false,
+          doctorConfirmed: false,
+          preopPrepCompleted: false,
+          completedItemsCount: 1,
+          totalItemsCount: 6,
+          isReady: false,
+          updatedAt: new Date().toISOString(),
+        },
+        admissionDate: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      saveCustomPatient(localPatient);
+      return localPatient;
+    }
+  },
   updatePatientReadiness: (id: string, updates: any) =>
     request<any>(`/patients/${id}/readiness`, {
       method: 'POST',

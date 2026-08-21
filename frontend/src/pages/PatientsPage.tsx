@@ -102,9 +102,17 @@ export const PatientsPage: React.FC = () => {
   const loadPatients = async () => {
     try {
       const data = await api.getPatients();
-      setPatients(data);
+      setPatients((prev) => {
+        const merged = [...(data || [])];
+        for (const p of prev) {
+          if (!merged.some((m: any) => m.id === p.id || m.mrn === p.mrn)) {
+            merged.unshift(p);
+          }
+        }
+        return merged;
+      });
       if (selectedPatient) {
-        const updated = data.find((p: any) => p.id === selectedPatient.id);
+        const updated = (data || []).find((p: any) => p.id === selectedPatient.id);
         if (updated) setSelectedPatient(updated);
       }
     } catch (err) {
