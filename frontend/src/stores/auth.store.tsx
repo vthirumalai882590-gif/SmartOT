@@ -25,10 +25,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // ─── Session key (sessionStorage clears on new tab/window/fresh URL visit) ───
 const SESSION_KEY = 'smartot_session_active';
 
+const DEFAULT_DEMO_USER: User = {
+  id: 'usr_admin_01',
+  email: 'admin@smartot.hospital',
+  name: 'Dr. Sarah Jenkins',
+  role: 'ADMINISTRATOR',
+  department: 'Hospital Administration',
+  createdAt: '2026-08-01T08:00:00Z',
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('smartot_auth_user');
-    return saved ? JSON.parse(saved) : null;
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {}
+    }
+    return DEFAULT_DEMO_USER;
   });
   const [token, setToken] = useState<string | null>(
     () => localStorage.getItem('smartot_auth_token')
