@@ -97,7 +97,18 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
       </div>
 
       {/* Item 1: Digital Consent Status */}
-      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+      <div
+        onClick={() => {
+          if (disabled) return;
+          const nextConsent: Record<ConsentStatus, ConsentStatus> = {
+            PENDING: 'VERIFIED',
+            VERIFIED: 'MISSING',
+            MISSING: 'VERIFIED',
+          };
+          onConsentChange(nextConsent[readiness.consentStatus] || 'VERIFIED');
+        }}
+        className="p-4 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200 flex items-center justify-between cursor-pointer transition shadow-sm select-none"
+      >
         <div className="flex items-start space-x-3">
           <div className="p-2 rounded-lg bg-teal-100 text-teal-700 mt-0.5 shadow-sm">
             <ShieldCheck className="h-5 w-5" />
@@ -105,17 +116,17 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
           <div>
             <p className="text-sm font-bold text-slate-900 heading-serif">Surgical & Anesthetic Consent Status</p>
             <p className="text-xs text-slate-500">
-              Operational confirmation of signed procedural consent documentation
+              Click row to cycle status (VERIFIED / PENDING / MISSING) or select below
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
           <select
             value={readiness.consentStatus}
             disabled={disabled}
             onChange={(e) => onConsentChange(e.target.value as ConsentStatus)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition focus:outline-none shadow-sm ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition focus:outline-none shadow-sm cursor-pointer ${
               readiness.consentStatus === 'VERIFIED'
                 ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                 : readiness.consentStatus === 'PENDING'

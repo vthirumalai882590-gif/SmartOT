@@ -51,7 +51,33 @@ export const PatientsPage: React.FC = () => {
     try {
       const created = await api.createPatient(addPatientForm);
       if (created && (created.id || created.mrn)) {
-        alert(`Patient ${created.name || addPatientForm.name} (${created.mrn || addPatientForm.mrn}) created successfully and added to database.`);
+        // Optimistically insert newly registered patient at the top of the table
+        const fullPatientRecord: Patient = {
+          id: created.id || `pat_${Date.now()}`,
+          mrn: created.mrn || addPatientForm.mrn,
+          name: created.name || addPatientForm.name,
+          age: created.age || addPatientForm.age || 45,
+          gender: created.gender || addPatientForm.gender || 'M',
+          wardId: created.wardId || addPatientForm.wardId,
+          bedNumber: created.bedNumber || addPatientForm.bedNumber,
+          primaryDiagnosis: created.primaryDiagnosis || addPatientForm.primaryDiagnosis,
+          status: created.status || 'PRE_OP_INPATIENT',
+          readiness: created.readiness || {
+            admissionCompleted: true,
+            documentationCompleted: false,
+            reportsAvailable: false,
+            doctorConfirmed: false,
+            preopPrepCompleted: false,
+            consentStatus: 'PENDING',
+            completedItemsCount: 1,
+            totalItemsCount: 6,
+            isReady: false,
+          },
+          admissionDate: created.admissionDate || new Date().toISOString(),
+          updatedAt: created.updatedAt || new Date().toISOString(),
+        };
+
+        setPatients((prev) => [fullPatientRecord, ...prev.filter((p) => p.id !== fullPatientRecord.id)]);
         setIsAddPatientModalOpen(false);
         setAddPatientForm({
           mrn: '',
@@ -62,8 +88,9 @@ export const PatientsPage: React.FC = () => {
           bedNumber: 'Bed 401',
           primaryDiagnosis: 'Acute Appendicitis',
         });
-        await loadPatients();
-        setSelectedPatient(created);
+        setSelectedPatient(fullPatientRecord);
+        alert(`Patient ${fullPatientRecord.name} (${fullPatientRecord.mrn}) created successfully and added to database.`);
+        loadPatients();
       } else {
         alert('Failed to create patient: Database did not return a valid patient record.');
       }
@@ -302,6 +329,9 @@ export const PatientsPage: React.FC = () => {
                       <p className="font-bold text-slate-900 text-xs flex items-center space-x-1">
                         <span>{p.name}</span>
                         <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 text-teal-600 transition" />
+                      </p>
+                      <p className="text-[10px] text-slate-500 font-medium">
+                        Age: <span className="font-bold text-slate-700">{p.age || 45} y/o</span> • {p.gender === 'M' ? 'Male' : p.gender === 'F' ? 'Female' : 'Other'}
                       </p>
                     </td>
 
