@@ -133,11 +133,12 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
       {/* Remaining 5 Checklist Checkboxes */}
       <div className="space-y-2.5">
         {checklistItems.map((item) => (
-          <label
+          <div
             key={item.id}
-            className={`flex items-start space-x-3 p-3 rounded-xl border transition-all cursor-pointer shadow-sm ${
+            onClick={() => !disabled && onUpdateItem(item.id, !item.checked)}
+            className={`flex items-start space-x-3 p-3 rounded-xl border transition-all cursor-pointer shadow-sm select-none ${
               item.checked
-                ? 'bg-white border-teal-300 text-slate-900'
+                ? 'bg-white border-teal-500 ring-1 ring-teal-500/20 text-slate-900'
                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
             }`}
           >
@@ -145,8 +146,11 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
               type="checkbox"
               checked={item.checked}
               disabled={disabled}
-              onChange={(e) => onUpdateItem(item.id, e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+              onChange={(e) => {
+                e.stopPropagation();
+                onUpdateItem(item.id, e.target.checked);
+              }}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer"
             />
             <div className="text-xs">
               <span className={`font-bold ${item.checked ? 'text-slate-900' : 'text-slate-700'}`}>
@@ -154,7 +158,7 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
               </span>
               <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
             </div>
-          </label>
+          </div>
         ))}
       </div>
     </div>

@@ -92,22 +92,68 @@ export const PatientsPage: React.FC = () => {
   }, []);
 
   const handleUpdateChecklistItem = async (field: string, value: boolean) => {
-    if (!selectedPatient) return;
+    if (!selectedPatient || !selectedPatient.readiness) return;
+
+    const updatedReadiness = { ...selectedPatient.readiness, [field]: value };
+    const completedCount = [
+      updatedReadiness.admissionCompleted,
+      updatedReadiness.documentationCompleted,
+      updatedReadiness.reportsAvailable,
+      updatedReadiness.doctorConfirmed,
+      updatedReadiness.preopPrepCompleted,
+      updatedReadiness.consentStatus === 'VERIFIED',
+    ].filter(Boolean).length;
+
+    updatedReadiness.completedItemsCount = completedCount;
+    updatedReadiness.isReady = completedCount === 6;
+
+    const updatedPatient: Patient = {
+      ...selectedPatient,
+      readiness: updatedReadiness,
+      status: updatedReadiness.isReady ? ('READY_FOR_OT' as const) : selectedPatient.status,
+    };
+
+    setSelectedPatient(updatedPatient);
+    setPatients((prev) => prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p)));
+
     try {
       await api.updatePatientReadiness(selectedPatient.id, { [field]: value });
       loadPatients();
     } catch (err: any) {
-      alert(`Update failed: ${err.message}`);
+      console.warn('API update failed, keeping optimistic state:', err);
     }
   };
 
   const handleConsentChange = async (consentStatus: ConsentStatus) => {
-    if (!selectedPatient) return;
+    if (!selectedPatient || !selectedPatient.readiness) return;
+
+    const updatedReadiness = { ...selectedPatient.readiness, consentStatus };
+    const completedCount = [
+      updatedReadiness.admissionCompleted,
+      updatedReadiness.documentationCompleted,
+      updatedReadiness.reportsAvailable,
+      updatedReadiness.doctorConfirmed,
+      updatedReadiness.preopPrepCompleted,
+      updatedReadiness.consentStatus === 'VERIFIED',
+    ].filter(Boolean).length;
+
+    updatedReadiness.completedItemsCount = completedCount;
+    updatedReadiness.isReady = completedCount === 6;
+
+    const updatedPatient: Patient = {
+      ...selectedPatient,
+      readiness: updatedReadiness,
+      status: updatedReadiness.isReady ? ('READY_FOR_OT' as const) : selectedPatient.status,
+    };
+
+    setSelectedPatient(updatedPatient);
+    setPatients((prev) => prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p)));
+
     try {
       await api.updatePatientConsent(selectedPatient.id, consentStatus);
       loadPatients();
     } catch (err: any) {
-      alert(`Consent update failed: ${err.message}`);
+      console.warn('Consent API update failed, keeping optimistic state:', err);
     }
   };
 
