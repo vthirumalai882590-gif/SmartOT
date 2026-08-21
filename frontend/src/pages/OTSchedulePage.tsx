@@ -615,6 +615,24 @@ export const OTSchedulePage: React.FC = () => {
       await loadData();
       return true;
     } catch (err: any) {
+      if (err.reasons && Array.isArray(err.reasons) && !isOverride) {
+        const confirmOverride = window.confirm(
+          `Clinical Validation Gate Warning:\n• ` +
+          err.reasons.join('\n• ') +
+          `\n\nWould you like to perform an Operational Override to force state transition to ${targetState}?`
+        );
+        if (confirmOverride) {
+          await api.transitionOTState(otId, {
+            targetState,
+            surgeryId,
+            delayReason,
+            isOverride: true,
+            overrideReason: 'Operational Admin Override via Command Board',
+          });
+          await loadData();
+          return true;
+        }
+      }
       throw err;
     }
   };
