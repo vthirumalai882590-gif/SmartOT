@@ -1432,6 +1432,20 @@
   ],
   "audit_logs": [
     {
+      "id": "aud_1787338919594_vist",
+      "timestamp": "2026-08-21T19:01:59.594Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
+    {
       "id": "aud_01",
       "timestamp": "2026-08-11T08:00:00Z",
       "actorId": "usr_admin_01",
