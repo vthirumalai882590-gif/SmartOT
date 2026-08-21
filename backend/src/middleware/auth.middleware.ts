@@ -51,15 +51,15 @@ export function authorize(...allowedRoles: UserRole[]) {
       return;
     }
 
-    if (!allowedRoles.includes(req.user.role as UserRole)) {
-      res.status(403).json({
-        success: false,
-        error: 'FORBIDDEN',
-        message: `Role "${req.user.role}" does not have permission to perform this operational action`,
-      });
+    if (req.user.role === 'ADMINISTRATOR' || allowedRoles.includes(req.user.role as UserRole)) {
+      next();
       return;
     }
 
-    next();
+    res.status(403).json({
+      success: false,
+      error: 'FORBIDDEN',
+      message: `Role "${req.user.role}" does not have permission to perform this operational action`,
+    });
   };
 }

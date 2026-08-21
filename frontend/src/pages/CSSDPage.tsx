@@ -66,8 +66,8 @@ export const CSSDPage: React.FC = () => {
   const userRole = (user?.role || '').toUpperCase();
 
   // Role Permissions
-  const isCSSDPersonnel = ['CSSD_STAFF', 'CSSD_SUPERVISOR', 'CSSD_TECH', 'ADMIN', 'SUPER_ADMIN'].includes(userRole);
-  const isOTStaff = ['NURSE', 'OT_NURSE', 'SURGEON', 'ANESTHESIOLOGIST', 'WARD_STAFF'].includes(userRole);
+  const isCSSDPersonnel = ['CSSD_STAFF', 'CSSD_SUPERVISOR', 'CSSD_TECH', 'ADMIN', 'SUPER_ADMIN', 'ADMINISTRATOR', 'OT_MANAGER'].includes(userRole);
+  const isOTStaff = ['NURSE', 'OT_NURSE', 'SURGEON', 'ANESTHESIOLOGIST', 'WARD_STAFF', 'ADMINISTRATOR', 'OT_MANAGER'].includes(userRole);
 
   const [activeTab, setActiveTab] = useState<CSSDSubTab>('inventory');
 
