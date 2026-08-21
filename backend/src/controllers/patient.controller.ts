@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { db } from '../database/db';
 import { patientRepository } from '../repositories/patient.repository';
 import { patientStateService } from '../services/patient-state.service';
 import { eventEngine } from '../events/event-engine';
@@ -10,6 +11,68 @@ export class PatientController {
   public async getPatients(req: AuthenticatedRequest, res: Response): Promise<void> {
     const patients = patientRepository.findAll();
     res.json({ success: true, data: patients });
+  }
+
+  public async createPatient(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const body = req.body;
+    if (!body.name || !body.mrn) {
+      res.status(400).json({ success: false, error: 'INVALID_INPUT', message: 'Patient name and MRN are required.' });
+      return;
+    }
+    const data = db.getData();
+    const exists = data.patients.find((p) => p.mrn === body.mrn);
+    if (exists) {
+      res.status(409).json({ success: false, error: 'PATIENT_EXISTS', message: `Patient with MRN "${body.mrn}" already exists.` });
+      return;
+    }
+    const now = new Date().toISOString();
+    const newPatient: any = {
+      id: `pat_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      mrn: body.mrn,
+      name: body.name,
+      age: body.age || 0,
+      gender: body.gender || 'M',
+      wardId: body.wardId || 'Ward 4B',
+      bedNumber: body.bedNumber || 'TBD',
+      admissionDate: body.admissionDate || now,
+      status: 'ADMITTED',
+      primaryDiagnosis: body.primaryDiagnosis || 'Pending',
+      archived: false,
+      createdAt: now,
+    };
+    data.patients.push(newPatient);
+
+    (data as any).patient_readiness = (data as any).patient_readiness || [];
+    const readiness = {
+      id: `ready_${newPatient.id}`,
+      patientId: newPatient.id,
+      admissionCompleted: true,
+      consentStatus: 'PENDING',
+      documentationCompleted: false,
+      reportsAvailable: false,
+      doctorConfirmed: false,
+      preopPrepCompleted: false,
+      completedItemsCount: 1,
+      totalItemsCount: 6,
+      isReady: false,
+      updatedAt: now,
+    };
+    (data as any).patient_readiness.push(readiness);
+    db.persist();
+
+    const actor = req.user || { userId: 'system', email: 'system@smartot.hospital', role: 'WARD_STAFF', department: 'Ward' };
+    auditRepository.log({
+      actorId: actor.userId,
+      actorName: actor.email,
+      action: 'CREATE_PATIENT',
+      entityType: 'PATIENT',
+      entityId: newPatient.id,
+      previousState: null,
+      newState: newPatient,
+      ipAddress: req.ip,
+    });
+
+    res.json({ success: true, data: { ...newPatient, readiness }, message: `Patient ${newPatient.name} (${newPatient.mrn}) created successfully.` });
   }
 
   public async getPatientsReadiness(req: AuthenticatedRequest, res: Response): Promise<void> {

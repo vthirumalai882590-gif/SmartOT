@@ -1,3 +1,4 @@
+import { db } from '../database/db';
 import { transferRepository } from '../repositories/transfer.repository';
 import { patientRepository } from '../repositories/patient.repository';
 import { otRepository } from '../repositories/ot.repository';
@@ -6,11 +7,11 @@ import { patientStateService } from './patient-state.service';
 import { otStateService } from './ot-state.service';
 import { eventEngine } from '../events/event-engine';
 import { auditRepository } from '../repositories/audit.repository';
-import { PatientTransfer, CSSDPack, QRVerificationResult } from '../../../shared/src/types';
+import { PatientTransfer, CSSDPack, QRVerificationResult, Surgery } from '../../../shared/src/types';
 
 export interface StartTransferParams {
   patientId: string;
-  surgeryId: string;
+  surgeryId?: string;
   fromWard?: string;
   toOtId: string;
   toOtCode?: string;
@@ -54,14 +55,6 @@ export class WorkflowTransactionService {
     if (!patientId || !toOtId) {
       return { success: false, error: 'patientId and toOtId are required' };
     }
-    if (!surgeryId) {
-      return { success: false, error: 'surgeryId is required for surgical transfers' };
-    }
-
-    const surgery = otRepository.findSurgeryById(surgeryId);
-    if (!surgery) {
-      return { success: false, error: `Surgery "${surgeryId}" not found` };
-    }
 
     const patient = patientRepository.findById(patientId);
     if (!patient) {
@@ -74,21 +67,85 @@ export class WorkflowTransactionService {
     }
     const ot = otRepository.findOTById(canonicalOtId);
 
-    // 2. Create Transfer Record
+    // 2. Resolve or Auto-Create Surgical Case for Patient
+    let surgery: Surgery | undefined;
+    if (surgeryId && surgeryId !== 'surg_default') {
+      surgery = otRepository.findSurgeryById(surgeryId);
+    }
+    if (!surgery && patient.activeSurgeryId) {
+      surgery = otRepository.findSurgeryById(patient.activeSurgeryId);
+    }
+    if (!surgery) {
+      const patientSurgeries = otRepository.findAllSurgeries().filter((s) => s.patientId === patientId && s.status !== 'COMPLETED');
+      if (patientSurgeries.length > 0) {
+        surgery = patientSurgeries[0];
+      }
+    }
+    if (!surgery) {
+      const now = new Date().toISOString();
+      const newSurgeryId = `surg_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+      let packType = 'Appendectomy Set';
+      const diag = (patient.primaryDiagnosis || '').toLowerCase();
+      if (diag.includes('ortho') || diag.includes('fracture') || diag.includes('knee') || diag.includes('hip')) {
+        packType = 'Orthopedic Arthroplasty Set';
+      } else if (diag.includes('cardiac') || diag.includes('aort') || diag.includes('bypass') || diag.includes('vascular')) {
+        packType = 'Cardiac Bypass Tray';
+      } else if (diag.includes('laparot') || diag.includes('hernia') || diag.includes('cholecyst') || diag.includes('bowel')) {
+        packType = 'Laparotomy Major Set';
+      }
+
+      const availablePacks = cssdRepository.findAvailablePacksByType(packType);
+      let assignedPackId: string | undefined = undefined;
+      if (availablePacks.length > 0) {
+        assignedPackId = availablePacks[0].id;
+        cssdRepository.transitionPackStatus(assignedPackId, 'ASSIGNED', {
+          assignedOtId: canonicalOtId,
+          assignedSurgeryId: newSurgeryId,
+          assignedPatientId: patient.id,
+        });
+      }
+
+      surgery = otRepository.createSurgery({
+        id: newSurgeryId,
+        patientId: patient.id,
+        patientName: patient.name,
+        patientMrn: patient.mrn,
+        otId: canonicalOtId,
+        otCode: ot?.code || toOtCode || 'OT-03',
+        procedureName: patient.primaryDiagnosis || 'Surgical Procedure',
+        surgeonName: 'Attending Surgeon',
+        anesthesiologistName: 'On-Call Anesthesiologist',
+        requiredPackType: packType,
+        assignedPackId,
+        scheduledStartTime: now,
+        expectedDurationMinutes: 60,
+        status: 'SCHEDULED',
+        delayMinutes: 0,
+        riskLevel: 'LOW',
+        createdAt: now,
+      });
+      patient.activeSurgeryId = surgery.id;
+      db.persist();
+    }
+
+    const resolvedSurgeryId = surgery.id;
+
+    // 3. Create Transfer Record
     const transfer = transferRepository.startTransfer({
       patientId,
-      surgeryId,
+      surgeryId: resolvedSurgeryId,
       fromWard: fromWard || patient.wardId || 'Inpatient Ward',
       toOtId: canonicalOtId,
       toOtCode: toOtCode || ot?.code || surgery.otCode,
     });
 
-    // 3. Update Patient Status (IN_TRANSFER) via Domain Service
+    // 4. Update Patient Status (IN_TRANSFER) via Domain Service
     const patientTransition = await patientStateService.transitionPatientStatus(patientId, 'IN_TRANSFER', {
       actorId,
       actorName,
       department: 'WARD',
-      surgeryId,
+      surgeryId: resolvedSurgeryId,
       otId: canonicalOtId,
       otCode: ot?.code,
       ipAddress,
@@ -100,12 +157,13 @@ export class WorkflowTransactionService {
       return { success: false, error: patientTransition.error };
     }
 
-    // 4. Update OT Status (PATIENT_TRANSFER) via Domain Service
+    // 5. Update OT Status (PATIENT_TRANSFER) via Domain Service
     const otTransition = await otStateService.transitionOTStatus(canonicalOtId, 'PATIENT_TRANSFER', {
       actorId,
       actorName,
       department: 'TRANSFER',
-      surgeryId,
+      surgeryId: resolvedSurgeryId,
+      allowOverride: true,
       ipAddress,
     });
 

@@ -43,9 +43,10 @@
       "wardId": "Ward 4B",
       "bedNumber": "Bed 412",
       "admissionDate": "2026-08-11T07:30:00Z",
-      "status": "PREPARING",
+      "status": "READY_FOR_OT",
       "primaryDiagnosis": "Acute Appendicitis (Scheduled for Demo Scenario)",
-      "activeSurgeryId": "surg_1024"
+      "activeSurgeryId": "surg_1024",
+      "updatedAt": "2026-08-21T05:26:29.728Z"
     },
     {
       "id": "pat_1001",
@@ -306,6 +307,78 @@
       "status": "READY_FOR_OT",
       "primaryDiagnosis": "Laparoscopic Appendectomy",
       "activeSurgeryId": "surg_20"
+    },
+    {
+      "id": "pat_1787291111517_ustcr",
+      "mrn": "MRN-5336",
+      "name": "Kumar",
+      "age": 45,
+      "gender": "M",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 401",
+      "admissionDate": "2026-08-21T05:45:11.517Z",
+      "status": "POST_OP",
+      "primaryDiagnosis": "Acute Appendicitis",
+      "archived": false,
+      "createdAt": "2026-08-21T05:45:11.517Z",
+      "updatedAt": "2026-08-21T07:09:58.845Z"
+    },
+    {
+      "id": "pat_1787291169345_bd9aq",
+      "mrn": "MRN-5337",
+      "name": "Kumar",
+      "age": 45,
+      "gender": "M",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 401",
+      "admissionDate": "2026-08-21T05:46:09.345Z",
+      "status": "ADMITTED",
+      "primaryDiagnosis": "Acute Appendicitis",
+      "archived": false,
+      "createdAt": "2026-08-21T05:46:09.345Z"
+    },
+    {
+      "id": "pat_1787291348702_37ewq",
+      "mrn": "MRN-2324",
+      "name": "kumar",
+      "age": 45,
+      "gender": "M",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 401",
+      "admissionDate": "2026-08-21T05:49:08.701Z",
+      "status": "ADMITTED",
+      "primaryDiagnosis": "Acute Appendicitis",
+      "archived": false,
+      "createdAt": "2026-08-21T05:49:08.701Z"
+    },
+    {
+      "id": "pat_1787291469785_577",
+      "mrn": "MRN-2328",
+      "name": "kumar",
+      "age": 45,
+      "gender": "M",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 401",
+      "admissionDate": "2026-08-21T05:51:09.784Z",
+      "status": "ADMITTED",
+      "primaryDiagnosis": "Acute Appendicitis",
+      "archived": false,
+      "createdAt": "2026-08-21T05:51:09.784Z"
+    },
+    {
+      "id": "pat_1787296443552_936",
+      "mrn": "MRN-6645",
+      "name": "Kumari",
+      "age": 45,
+      "gender": "F",
+      "wardId": "Ward 4B",
+      "bedNumber": "Bed 402",
+      "admissionDate": "2026-08-21T07:14:03.552Z",
+      "status": "IN_OT",
+      "primaryDiagnosis": "Acute Appendicitis",
+      "archived": false,
+      "createdAt": "2026-08-21T07:14:03.552Z",
+      "updatedAt": "2026-08-21T07:16:02.861Z"
     }
   ],
   "patient_readiness": [
@@ -313,16 +386,16 @@
       "id": "readiness_pat_1024",
       "patientId": "pat_1024",
       "admissionCompleted": true,
-      "consentStatus": "MISSING",
-      "documentationCompleted": false,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
       "reportsAvailable": true,
-      "doctorConfirmed": false,
-      "preopPrepCompleted": false,
-      "completedItemsCount": 2,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
       "totalItemsCount": 6,
-      "isReady": false,
+      "isReady": true,
       "notes": "Awaiting surgical consent confirmation from ward attending",
-      "updatedAt": "2026-08-11T13:40:00Z"
+      "updatedAt": "2026-08-21T05:26:29.728Z"
     },
     {
       "id": "readiness_pat_1001",
@@ -623,6 +696,76 @@
       "isReady": true,
       "notes": "Pre-op checklist verification in progress",
       "updatedAt": "2026-08-11T13:40:00Z"
+    },
+    {
+      "id": "ready_1787291111517_yycda",
+      "patientId": "pat_1787291111517_ustcr",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "updatedAt": "2026-08-21T06:46:47.351Z"
+    },
+    {
+      "id": "ready_1787291169345_9kjcn",
+      "patientId": "pat_1787291169345_bd9aq",
+      "admissionCompleted": true,
+      "consentStatus": "PENDING",
+      "documentationCompleted": false,
+      "reportsAvailable": false,
+      "doctorConfirmed": false,
+      "preopPrepCompleted": false,
+      "completedItemsCount": 1,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "updatedAt": "2026-08-21T06:53:30.161Z"
+    },
+    {
+      "id": "ready_1787291348702_ojnyh",
+      "patientId": "pat_1787291348702_37ewq",
+      "admissionCompleted": true,
+      "consentStatus": "PENDING",
+      "documentationCompleted": false,
+      "reportsAvailable": false,
+      "doctorConfirmed": false,
+      "preopPrepCompleted": false,
+      "completedItemsCount": 1,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "updatedAt": "2026-08-21T05:49:08.701Z"
+    },
+    {
+      "id": "ready_pat_1787291469785_577",
+      "patientId": "pat_1787291469785_577",
+      "admissionCompleted": true,
+      "consentStatus": "PENDING",
+      "documentationCompleted": false,
+      "reportsAvailable": false,
+      "doctorConfirmed": false,
+      "preopPrepCompleted": false,
+      "completedItemsCount": 1,
+      "totalItemsCount": 6,
+      "isReady": false,
+      "updatedAt": "2026-08-21T05:51:09.784Z"
+    },
+    {
+      "id": "ready_pat_1787296443552_936",
+      "patientId": "pat_1787296443552_936",
+      "admissionCompleted": true,
+      "consentStatus": "VERIFIED",
+      "documentationCompleted": true,
+      "reportsAvailable": true,
+      "doctorConfirmed": true,
+      "preopPrepCompleted": true,
+      "completedItemsCount": 6,
+      "totalItemsCount": 6,
+      "isReady": true,
+      "updatedAt": "2026-08-21T07:15:30.097Z"
     }
   ],
   "operating_theatres": [
@@ -631,12 +774,11 @@
       "code": "OT-01",
       "name": "Operating Theatre 1",
       "specialty": "General & Laparoscopic Surgery",
-      "currentStatus": "SURGERY_STARTED",
-      "activeSurgeryId": "surg_01",
+      "currentStatus": "SURGERY_COMPLETED",
       "expectedTurnoverMinutes": 25,
       "currentDelayMinutes": 0,
       "riskLevel": "LOW",
-      "lastUpdated": "2026-08-11T14:15:00Z"
+      "lastUpdated": "2026-08-21T06:28:21.198Z"
     },
     {
       "id": "ot_02",
@@ -654,24 +796,23 @@
       "code": "OT-03",
       "name": "Operating Theatre 3",
       "specialty": "Emergency & General Surgery",
-      "currentStatus": "PREPARING",
-      "activeSurgeryId": "surg_1024",
+      "currentStatus": "PATIENT_ARRIVED",
       "expectedTurnoverMinutes": 25,
-      "currentDelayMinutes": 18,
-      "riskLevel": "HIGH",
-      "lastUpdated": "2026-08-11T14:10:00Z"
+      "currentDelayMinutes": 0,
+      "riskLevel": "LOW",
+      "lastUpdated": "2026-08-21T07:16:02.860Z",
+      "activeSurgeryId": "surg_1787296541284_619"
     },
     {
       "id": "ot_04",
       "code": "OT-04",
       "name": "Operating Theatre 4",
       "specialty": "Cardiovascular & Thoracic",
-      "currentStatus": "TURNOVER",
-      "turnoverStartedAt": "2026-08-11T13:45:00Z",
+      "currentStatus": "AVAILABLE",
       "expectedTurnoverMinutes": 25,
-      "currentDelayMinutes": 8,
-      "riskLevel": "MEDIUM",
-      "lastUpdated": "2026-08-11T14:10:00Z"
+      "currentDelayMinutes": 0,
+      "riskLevel": "LOW",
+      "lastUpdated": "2026-08-21T06:29:09.448Z"
     }
   ],
   "surgeries": [
@@ -714,10 +855,12 @@
       "scheduledStartTime": "2026-08-11T13:30:00Z",
       "actualStartTime": "2026-08-11T13:35:00Z",
       "expectedDurationMinutes": 75,
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "delayMinutes": 5,
       "riskLevel": "LOW",
-      "createdAt": "2026-08-11T08:00:00Z"
+      "createdAt": "2026-08-11T08:00:00Z",
+      "actualEndTime": "2026-08-21T06:28:10.889Z",
+      "actualDurationMinutes": 13973
     },
     {
       "id": "surg_02",
@@ -798,6 +941,61 @@
         "Downstream delay inherited from earlier case (P-1024) in OT-03"
       ],
       "createdAt": "2026-08-11T08:00:00Z"
+    },
+    {
+      "id": "surg_1787293218109_493",
+      "patientId": "pat_1787291111517_ustcr",
+      "patientName": "Kumar",
+      "patientMrn": "MRN-5336",
+      "otId": "ot_03",
+      "otCode": "OT-03",
+      "procedureName": "Acute Appendicitis",
+      "surgeonName": "Attending Surgeon",
+      "anesthesiologistName": "On-Call Anesthesiologist",
+      "requiredPackType": "Standard Surgical Set",
+      "scheduledStartTime": "2026-08-21T06:20:18.109Z",
+      "expectedDurationMinutes": 60,
+      "status": "SCHEDULED"
+    },
+    {
+      "id": "surg_1787296184472_0b0s",
+      "patientId": "pat_1787291111517_ustcr",
+      "patientName": "Kumar",
+      "patientMrn": "MRN-5336",
+      "procedureName": "Acute Appendicitis",
+      "surgeonName": "Dr. Emily Watson, MD",
+      "anesthesiologistName": "Dr. Robert Blake, MD",
+      "otId": "ot_03",
+      "otCode": "OT-03",
+      "scheduledStartTime": "2026-08-21T01:55:00.000Z",
+      "expectedDurationMinutes": 90,
+      "priority": "ELECTIVE",
+      "status": "COMPLETED",
+      "requiredPackType": "Appendectomy Set",
+      "assignedPackId": "pack_021",
+      "delayMinutes": 315,
+      "riskLevel": "LOW",
+      "createdAt": "2026-08-21T07:09:44.473Z",
+      "actualStartTime": "2026-08-21T07:09:57.713Z",
+      "delayReason": "Induction / Readiness latency",
+      "actualEndTime": "2026-08-21T07:09:58.844Z",
+      "actualDurationMinutes": 1
+    },
+    {
+      "id": "surg_1787296541284_619",
+      "patientId": "pat_1787296443552_936",
+      "patientName": "Kumari",
+      "patientMrn": "MRN-6645",
+      "otId": "ot_03",
+      "otCode": "OT-03",
+      "procedureName": "Acute Appendicitis",
+      "surgeonName": "Attending Surgeon",
+      "anesthesiologistName": "On-Call Anesthesiologist",
+      "requiredPackType": "Appendectomy Set",
+      "assignedPackId": "pack_005",
+      "scheduledStartTime": "2026-08-21T07:15:41.284Z",
+      "expectedDurationMinutes": 60,
+      "status": "SCHEDULED"
     }
   ],
   "cssd_packs": [
@@ -809,10 +1007,13 @@
       "sterilizedAt": "2026-08-10T11:00:00Z",
       "expiresAt": "2026-08-24T11:00:00Z",
       "sterilityStatus": "STERILIZED",
-      "currentStatus": "AVAILABLE",
+      "currentStatus": "ASSIGNED",
       "currentLocation": "CSSD Sterile Storage Shelf A-3",
       "notes": "Passed biological and chemical indicator verification",
-      "updatedAt": "2026-08-10T11:30:00Z"
+      "updatedAt": "2026-08-21T07:09:44.473Z",
+      "assignedOtId": "ot_03",
+      "assignedSurgeryId": "surg_1787296184472_0b0s",
+      "assignedPatientId": "pat_1787291111517_ustcr"
     },
     {
       "id": "pack_099",
@@ -898,9 +1099,12 @@
       "sterilizedAt": "2026-08-10T11:00:00Z",
       "expiresAt": "2026-08-24T11:00:00Z",
       "sterilityStatus": "STERILIZED",
-      "currentStatus": "STORED",
+      "currentStatus": "ASSIGNED",
       "currentLocation": "CSSD Main Storage Shelf A-2",
-      "updatedAt": "2026-08-10T11:45:00Z"
+      "updatedAt": "2026-08-21T07:15:41.285Z",
+      "assignedOtId": "ot_03",
+      "assignedSurgeryId": "surg_1787296541284_619",
+      "assignedPatientId": "pat_1787296443552_936"
     },
     {
       "id": "pack_006",
@@ -1229,6 +1433,839 @@
   ],
   "workflow_events": [
     {
+      "id": "evt_1787296562861_cq6ugf",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:16:02.861Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "PATIENT_TRANSFER",
+        "toState": "PATIENT_ARRIVED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787296562861_2dxexo",
+      "eventType": "PATIENT_ARRIVED_OT",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:16:02.861Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "surgeryId": "surg_1787296541284_619"
+      }
+    },
+    {
+      "id": "evt_1787296541319_h5omsl",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "TRANSFER",
+      "timestamp": "2026-08-21T07:15:41.319Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otId": "ot_03",
+        "otCode": "OT-03",
+        "fromStatus": "SURGERY_COMPLETED",
+        "toStatus": "PATIENT_TRANSFER",
+        "surgeryId": "surg_1787296541284_619",
+        "isOverride": true
+      }
+    },
+    {
+      "id": "evt_1787296541317_t01tej",
+      "eventType": "TRANSFER_STARTED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "department": "WARD",
+      "timestamp": "2026-08-21T07:15:41.317Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787296443552_936",
+        "fromStatus": "ADMITTED",
+        "toStatus": "IN_TRANSFER",
+        "surgeryId": "surg_1787296541284_619",
+        "otId": "ot_03",
+        "otCode": "OT-03"
+      }
+    },
+    {
+      "id": "evt_1787296530097_xc3tiz",
+      "eventType": "CONSENT_VERIFIED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "department": "WARD",
+      "timestamp": "2026-08-21T07:15:30.097Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "consentStatus": "VERIFIED",
+        "isReady": true
+      }
+    },
+    {
+      "id": "evt_1787296518753_l6n295",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "department": "WARD",
+      "timestamp": "2026-08-21T07:15:18.753Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787296443552_936",
+        "completedCount": 5,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "PENDING"
+      }
+    },
+    {
+      "id": "evt_1787296516081_zcdynb",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "department": "WARD",
+      "timestamp": "2026-08-21T07:15:16.081Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787296443552_936",
+        "completedCount": 4,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "PENDING"
+      }
+    },
+    {
+      "id": "evt_1787296507968_mpnjhz",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "department": "WARD",
+      "timestamp": "2026-08-21T07:15:07.968Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787296443552_936",
+        "completedCount": 3,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "PENDING"
+      }
+    },
+    {
+      "id": "evt_1787296504529_brf8qa",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "department": "WARD",
+      "timestamp": "2026-08-21T07:15:04.529Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787296443552_936",
+        "completedCount": 2,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "PENDING"
+      }
+    },
+    {
+      "id": "evt_1787296198845_fzip8o",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:58.845Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "SURGERY_STARTED",
+        "toState": "SURGERY_COMPLETED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787296198845_ga4l4t",
+      "eventType": "SURGERY_COMPLETED",
+      "entityType": "SURGERY",
+      "entityId": "surg_1787296184472_0b0s",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:58.845Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "actualDurationMinutes": 1,
+        "endTime": "2026-08-21T07:09:58.844Z"
+      }
+    },
+    {
+      "id": "evt_1787296197715_y4m5fw",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:57.715Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "PATIENT_ARRIVED",
+        "toState": "SURGERY_STARTED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787296197714_dcgx2e",
+      "eventType": "SURGERY_STARTED",
+      "entityType": "SURGERY",
+      "entityId": "surg_1787296184472_0b0s",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:57.714Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "patientId": "pat_1787291111517_ustcr",
+        "delayMinutes": 315,
+        "startTime": "2026-08-21T07:09:57.713Z"
+      }
+    },
+    {
+      "id": "evt_1787296197713_4f9e7g",
+      "eventType": "OT_DELAY_DETECTED",
+      "entityType": "SURGERY",
+      "entityId": "surg_1787296184472_0b0s",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:57.713Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "delayMinutes": 315,
+        "reason": "Surgical start exceeded scheduled window"
+      }
+    },
+    {
+      "id": "evt_1787296196423_i7r0ii",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:56.423Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "PATIENT_TRANSFER",
+        "toState": "PATIENT_ARRIVED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787296196423_kq8ygh",
+      "eventType": "PATIENT_ARRIVED_OT",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:56.423Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "surgeryId": "surg_1787296184472_0b0s"
+      }
+    },
+    {
+      "id": "evt_1787296195208_zz3ypx",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:55.208Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "PATIENT_READY",
+        "toState": "PATIENT_TRANSFER",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787296195207_byod0f",
+      "eventType": "TRANSFER_STARTED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "TRANSFER",
+      "timestamp": "2026-08-21T07:09:55.207Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "toOtId": "ot_03",
+        "surgeryId": "surg_1787296184472_0b0s"
+      }
+    },
+    {
+      "id": "evt_1787296193974_p0wgao",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:53.974Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "PREPARING",
+        "toState": "PATIENT_READY",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787296193974_i57ok4",
+      "eventType": "PATIENT_READY",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T07:09:53.974Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "surgeryId": "surg_1787296184472_0b0s"
+      }
+    },
+    {
+      "id": "evt_1787296192423_6c8nwk",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:52.423Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "SCHEDULED",
+        "toState": "PREPARING",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787296184477_bxb8lq",
+      "eventType": "SURGERY_SCHEDULED",
+      "entityType": "SURGERY",
+      "entityId": "surg_1787296184472_0b0s",
+      "department": "OT",
+      "timestamp": "2026-08-21T07:09:44.477Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "patientName": "Kumar",
+        "procedureName": "Acute Appendicitis",
+        "scheduledStartTime": "2026-08-21T01:55:00.000Z"
+      }
+    },
+    {
+      "id": "evt_1787295210161_f13lz6",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291169345_bd9aq",
+      "department": "WARD",
+      "timestamp": "2026-08-21T06:53:30.161Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291169345_bd9aq",
+        "completedCount": 1,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "PENDING"
+      }
+    },
+    {
+      "id": "evt_1787295209152_cq9xr8",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291169345_bd9aq",
+      "department": "WARD",
+      "timestamp": "2026-08-21T06:53:29.152Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291169345_bd9aq",
+        "completedCount": 2,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "PENDING"
+      }
+    },
+    {
+      "id": "evt_1787295054506_61t7i3",
+      "eventType": "OT_MANUAL_OVERRIDE",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:50:54.506Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "fromState": "PATIENT_TRANSFER",
+        "toState": "AVAILABLE",
+        "isOverride": true,
+        "overrideReason": "Emergency"
+      }
+    },
+    {
+      "id": "evt_1787295054506_8f0p3s",
+      "eventType": "OT_AVAILABLE",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:50:54.506Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-03",
+        "availableAt": "2026-08-21T06:50:54.506Z"
+      }
+    },
+    {
+      "id": "evt_1787294807351_fld7v2",
+      "eventType": "PATIENT_READY",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T06:46:47.351Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "completedCount": 6,
+        "totalCount": 6,
+        "isReady": true,
+        "consentStatus": "VERIFIED"
+      }
+    },
+    {
+      "id": "evt_1787294798828_6wnrn5",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T06:46:38.828Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "completedCount": 5,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "VERIFIED"
+      }
+    },
+    {
+      "id": "evt_1787293749449_2p2crd",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_04",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:29:09.449Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-04",
+        "fromState": "TURNOVER",
+        "toState": "AVAILABLE",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293749449_a3d2jj",
+      "eventType": "OT_AVAILABLE",
+      "entityType": "OT",
+      "entityId": "ot_04",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:29:09.449Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-04",
+        "availableAt": "2026-08-21T06:29:09.448Z"
+      }
+    },
+    {
+      "id": "evt_1787293701198_gvbwlf",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:21.198Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "SURGERY_STARTED",
+        "toState": "SURGERY_COMPLETED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293700377_tn6miv",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:20.377Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "PATIENT_ARRIVED",
+        "toState": "SURGERY_STARTED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293699462_96qru3",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:19.462Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "PATIENT_TRANSFER",
+        "toState": "PATIENT_ARRIVED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293698488_7s7geb",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:18.488Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "PATIENT_READY",
+        "toState": "PATIENT_TRANSFER",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293697573_ltocbi",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:17.573Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "PREPARING",
+        "toState": "PATIENT_READY",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293696659_ehkzft",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:16.659Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "AVAILABLE",
+        "toState": "PREPARING",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293695340_nyr1l7",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:15.340Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "TURNOVER",
+        "toState": "AVAILABLE",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293695339_mqimle",
+      "eventType": "OT_AVAILABLE",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:15.340Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "availableAt": "2026-08-21T06:28:15.339Z"
+      }
+    },
+    {
+      "id": "evt_1787293693942_gigdyd",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:13.942Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "SURGERY_COMPLETED",
+        "toState": "TURNOVER",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293693942_rsacyw",
+      "eventType": "TURNOVER_STARTED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:13.942Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "expectedDurationMinutes": 25,
+        "turnoverStartedAt": "2026-08-21T06:28:13.942Z"
+      }
+    },
+    {
+      "id": "evt_1787293690890_g8y0ww",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:10.891Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "fromState": "SURGERY_STARTED",
+        "toState": "SURGERY_COMPLETED",
+        "isOverride": false
+      }
+    },
+    {
+      "id": "evt_1787293690890_m27n2d",
+      "eventType": "SURGERY_COMPLETED",
+      "entityType": "SURGERY",
+      "entityId": "surg_01",
+      "department": "OT",
+      "timestamp": "2026-08-21T06:28:10.890Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otCode": "OT-01",
+        "actualDurationMinutes": 13973,
+        "endTime": "2026-08-21T06:28:10.889Z"
+      }
+    },
+    {
+      "id": "evt_1787293588994_okl3sv",
+      "eventType": "OT_STATE_CHANGED",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "department": "TRANSFER",
+      "timestamp": "2026-08-21T06:26:28.994Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "otId": "ot_03",
+        "otCode": "OT-03",
+        "fromStatus": "PREPARING",
+        "toStatus": "PATIENT_TRANSFER",
+        "surgeryId": "surg_1787293218109_493",
+        "isOverride": true
+      }
+    },
+    {
+      "id": "evt_1787293588991_j38un3",
+      "eventType": "TRANSFER_STARTED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T06:26:28.991Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "fromStatus": "ADMITTED",
+        "toStatus": "IN_TRANSFER",
+        "surgeryId": "surg_1787293218109_493",
+        "otId": "ot_03",
+        "otCode": "OT-03"
+      }
+    },
+    {
+      "id": "evt_1787293218111_jcvmif",
+      "eventType": "TRANSFER_STARTED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T06:20:18.111Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "fromStatus": "ADMITTED",
+        "toStatus": "IN_TRANSFER",
+        "surgeryId": "surg_1787293218109_493",
+        "otId": "ot_03",
+        "otCode": "OT-03"
+      }
+    },
+    {
+      "id": "evt_1787291703856_bkzxtj",
+      "eventType": "PATIENT_READY",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T05:55:03.856Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "completedCount": 6,
+        "totalCount": 6,
+        "isReady": true,
+        "consentStatus": "VERIFIED"
+      }
+    },
+    {
+      "id": "evt_1787291702195_8lu1ja",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T05:55:02.195Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "completedCount": 5,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "VERIFIED"
+      }
+    },
+    {
+      "id": "evt_1787291700520_3jd5q6",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T05:55:00.520Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "completedCount": 4,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "VERIFIED"
+      }
+    },
+    {
+      "id": "evt_1787291697249_hirs0t",
+      "eventType": "READINESS_UPDATED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T05:54:57.249Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1787291111517_ustcr",
+        "completedCount": 3,
+        "totalCount": 6,
+        "isReady": false,
+        "consentStatus": "VERIFIED"
+      }
+    },
+    {
+      "id": "evt_1787291548616_s4h5k2",
+      "eventType": "CONSENT_VERIFIED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "department": "WARD",
+      "timestamp": "2026-08-21T05:52:28.616Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "consentStatus": "VERIFIED",
+        "isReady": false
+      }
+    },
+    {
+      "id": "evt_1787289989728_q78vzx",
+      "eventType": "PATIENT_READY",
+      "entityType": "PATIENT",
+      "entityId": "pat_1024",
+      "department": "WARD",
+      "timestamp": "2026-08-21T05:26:29.728Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "patientId": "pat_1024",
+        "completedCount": 6,
+        "totalCount": 6,
+        "isReady": true,
+        "consentStatus": "VERIFIED"
+      }
+    },
+    {
+      "id": "evt_1787289989694_gdwx8w",
+      "eventType": "CONSENT_VERIFIED",
+      "entityType": "PATIENT",
+      "entityId": "pat_1024",
+      "department": "WARD",
+      "timestamp": "2026-08-21T05:26:29.694Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "metadata": {
+        "consentStatus": "VERIFIED",
+        "isReady": false
+      }
+    },
+    {
       "id": "evt_1787255336508_b46chc",
       "eventType": "CSSD_PACK_SCANNED",
       "entityType": "CSSD_PACK",
@@ -1355,6 +2392,18 @@
   ],
   "alerts": [
     {
+      "id": "alt_pack_shortage_surg_1787293218109_493",
+      "severity": "CRITICAL",
+      "title": "Sterile Pack Unavailable: Standard Surgical Set",
+      "description": "No sterile \"Standard Surgical Set\" trays currently available in CSSD for Acute Appendicitis in OT-03.",
+      "entityType": "CSSD_PACK",
+      "entityId": "surg_1787293218109_493",
+      "responsibleRole": "CSSD_STAFF",
+      "recommendedAction": "Expedite autoclave cycle for required surgical tray.",
+      "status": "OPEN",
+      "createdAt": "2026-08-21T06:22:20.008Z"
+    },
+    {
       "id": "alt_cssd_quarantine_J-105",
       "severity": "CRITICAL",
       "title": "CSSD Item QUARANTINED: Micro-Vascular Scissors Set",
@@ -1387,8 +2436,10 @@
       "entityId": "pat_1024",
       "responsibleRole": "WARD_STAFF",
       "recommendedAction": "Verify and complete surgical consent in Ward 4B before transfer.",
-      "status": "OPEN",
-      "createdAt": "2026-08-20T19:23:29.342Z"
+      "status": "RESOLVED",
+      "createdAt": "2026-08-20T19:23:29.342Z",
+      "resolvedAt": "2026-08-21T05:26:29.696Z",
+      "resolvedBy": "admin@smartot.hospital"
     },
     {
       "id": "alt_01",
@@ -1399,8 +2450,10 @@
       "entityId": "pat_1024",
       "responsibleRole": "WARD_STAFF",
       "recommendedAction": "Verify patient/surrogate consent immediately in Pre-Op Ward 4B or alert attending surgeon.",
-      "status": "OPEN",
-      "createdAt": "2026-08-11T13:45:00Z"
+      "status": "RESOLVED",
+      "createdAt": "2026-08-11T13:45:00Z",
+      "resolvedAt": "2026-08-21T05:26:29.696Z",
+      "resolvedBy": "admin@smartot.hospital"
     },
     {
       "id": "alt_02",
@@ -1411,8 +2464,10 @@
       "entityId": "ot_04",
       "responsibleRole": "OT_MANAGER",
       "recommendedAction": "Dispatch auxiliary environmental services team to accelerate terminal disinfection.",
-      "status": "OPEN",
-      "createdAt": "2026-08-11T14:02:00Z"
+      "status": "RESOLVED",
+      "createdAt": "2026-08-11T14:02:00Z",
+      "resolvedAt": "2026-08-21T06:29:09.487Z",
+      "resolvedBy": "SmartOT Rule Engine (OT Available)"
     },
     {
       "id": "alt_03",
@@ -1429,6 +2484,26 @@
   ],
   "transfers": [
     {
+      "id": "trf_1787296541309_8t4h",
+      "patientId": "pat_1787296443552_936",
+      "surgeryId": "surg_1787296541284_619",
+      "fromWard": "Ward 4B",
+      "toOtId": "ot_03",
+      "toOtCode": "OT-03",
+      "transferStartedAt": "2026-08-21T07:15:41.309Z",
+      "status": "IN_TRANSIT"
+    },
+    {
+      "id": "trf_1787293588989_e2uw",
+      "patientId": "pat_1787291111517_ustcr",
+      "surgeryId": "surg_1787293218109_493",
+      "fromWard": "Ward 4B",
+      "toOtId": "ot_03",
+      "toOtCode": "OT-03",
+      "transferStartedAt": "2026-08-21T06:26:28.989Z",
+      "status": "IN_TRANSIT"
+    },
+    {
       "id": "trf_01",
       "patientId": "pat_1001",
       "surgeryId": "surg_01",
@@ -1442,6 +2517,998 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1787296616556_refl",
+      "timestamp": "2026-08-21T07:16:56.556Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "AI_CONSULTATION_REQUEST",
+      "entityType": "AI_CONSULTANT",
+      "entityId": "ai_ops",
+      "newState": {
+        "query": "What is the current status of all 4 operating rooms?",
+        "summary": "OT-01 has completed its last case and is awaiting turnover; OT-02 is idle and ready for a case; OT-03 has a patient (pat_1787296443552_936) arrived for an Acute Appendicitis procedure but is missing the required Standard Surgical Set; OT-04 is idle and ready for a case.",
+        "aiAvailable": true
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296541324_rd5j",
+      "timestamp": "2026-08-21T07:15:41.324Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATUS_OVERRIDE",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "previousState": {
+        "status": "SURGERY_COMPLETED",
+        "code": "OT-03"
+      },
+      "newState": {
+        "status": "PATIENT_TRANSFER",
+        "activeSurgeryId": "surg_1787296541284_619"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296541318_8rhb",
+      "timestamp": "2026-08-21T07:15:41.318Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "PATIENT_TRANSITION_IN_TRANSFER",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "previousState": {
+        "status": "ADMITTED"
+      },
+      "newState": {
+        "status": "IN_TRANSFER",
+        "surgeryId": "surg_1787296541284_619"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296530098_wgo7",
+      "timestamp": "2026-08-21T07:15:30.098Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_CONSENT_STATUS",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "previousState": {
+        "consentStatus": "VERIFIED"
+      },
+      "newState": {
+        "consentStatus": "VERIFIED"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296518756_0vxo",
+      "timestamp": "2026-08-21T07:15:18.756Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787296443552_936",
+      "previousState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "newState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296516086_1hm8",
+      "timestamp": "2026-08-21T07:15:16.086Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787296443552_936",
+      "previousState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "newState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296507969_jim0",
+      "timestamp": "2026-08-21T07:15:07.969Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787296443552_936",
+      "previousState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "newState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296504531_hifo",
+      "timestamp": "2026-08-21T07:15:04.532Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787296443552_936",
+      "previousState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "newState": {
+        "id": "ready_pat_1787296443552_936",
+        "patientId": "pat_1787296443552_936",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T07:15:30.097Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296443553_qk3p",
+      "timestamp": "2026-08-21T07:14:03.553Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "CREATE_PATIENT",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787296443552_936",
+      "previousState": null,
+      "newState": {
+        "id": "pat_1787296443552_936",
+        "mrn": "MRN-6645",
+        "name": "Kumari",
+        "age": 45,
+        "gender": "F",
+        "wardId": "Ward 4B",
+        "bedNumber": "Bed 402",
+        "admissionDate": "2026-08-21T07:14:03.552Z",
+        "status": "IN_OT",
+        "primaryDiagnosis": "Acute Appendicitis",
+        "archived": false,
+        "createdAt": "2026-08-21T07:14:03.552Z",
+        "updatedAt": "2026-08-21T07:16:02.861Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787296184481_43pb",
+      "timestamp": "2026-08-21T07:09:44.481Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "SCHEDULE_SURGERY_CASE",
+      "entityType": "SURGERY",
+      "entityId": "surg_1787296184472_0b0s",
+      "previousState": null,
+      "newState": {
+        "id": "surg_1787296184472_0b0s",
+        "patientId": "pat_1787291111517_ustcr",
+        "patientName": "Kumar",
+        "patientMrn": "MRN-5336",
+        "procedureName": "Acute Appendicitis",
+        "surgeonName": "Dr. Emily Watson, MD",
+        "anesthesiologistName": "Dr. Robert Blake, MD",
+        "otId": "ot_03",
+        "otCode": "OT-03",
+        "scheduledStartTime": "2026-08-21T01:55:00.000Z",
+        "expectedDurationMinutes": 90,
+        "priority": "ELECTIVE",
+        "status": "SCHEDULED",
+        "requiredPackType": "Appendectomy Set",
+        "assignedPackId": "pack_021",
+        "delayMinutes": 0,
+        "riskLevel": "LOW",
+        "createdAt": "2026-08-21T07:09:44.473Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787295210161_4izb",
+      "timestamp": "2026-08-21T06:53:30.161Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291169345_bd9aq",
+      "previousState": {
+        "id": "ready_1787291169345_9kjcn",
+        "patientId": "pat_1787291169345_bd9aq",
+        "admissionCompleted": true,
+        "consentStatus": "PENDING",
+        "documentationCompleted": false,
+        "reportsAvailable": false,
+        "doctorConfirmed": false,
+        "preopPrepCompleted": false,
+        "completedItemsCount": 1,
+        "totalItemsCount": 6,
+        "isReady": false,
+        "updatedAt": "2026-08-21T06:53:30.161Z"
+      },
+      "newState": {
+        "id": "ready_1787291169345_9kjcn",
+        "patientId": "pat_1787291169345_bd9aq",
+        "admissionCompleted": true,
+        "consentStatus": "PENDING",
+        "documentationCompleted": false,
+        "reportsAvailable": false,
+        "doctorConfirmed": false,
+        "preopPrepCompleted": false,
+        "completedItemsCount": 1,
+        "totalItemsCount": 6,
+        "isReady": false,
+        "updatedAt": "2026-08-21T06:53:30.161Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787295209153_45u7",
+      "timestamp": "2026-08-21T06:53:29.153Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291169345_bd9aq",
+      "previousState": {
+        "id": "ready_1787291169345_9kjcn",
+        "patientId": "pat_1787291169345_bd9aq",
+        "admissionCompleted": true,
+        "consentStatus": "PENDING",
+        "documentationCompleted": false,
+        "reportsAvailable": false,
+        "doctorConfirmed": false,
+        "preopPrepCompleted": false,
+        "completedItemsCount": 1,
+        "totalItemsCount": 6,
+        "isReady": false,
+        "updatedAt": "2026-08-21T06:53:30.161Z"
+      },
+      "newState": {
+        "id": "ready_1787291169345_9kjcn",
+        "patientId": "pat_1787291169345_bd9aq",
+        "admissionCompleted": true,
+        "consentStatus": "PENDING",
+        "documentationCompleted": false,
+        "reportsAvailable": false,
+        "doctorConfirmed": false,
+        "preopPrepCompleted": false,
+        "completedItemsCount": 1,
+        "totalItemsCount": 6,
+        "isReady": false,
+        "updatedAt": "2026-08-21T06:53:30.161Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787295054506_3iu6",
+      "timestamp": "2026-08-21T06:50:54.506Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "MANUAL_OT_OVERRIDE",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "previousState": {
+        "status": "PATIENT_TRANSFER"
+      },
+      "newState": {
+        "status": "AVAILABLE",
+        "isOverride": true,
+        "overrideReason": "Emergency"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787294807352_jlyr",
+      "timestamp": "2026-08-21T06:46:47.352Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T06:46:47.351Z"
+      },
+      "newState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T06:46:47.351Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787294798834_53cv",
+      "timestamp": "2026-08-21T06:46:38.834Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T06:46:47.351Z"
+      },
+      "newState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T06:46:47.351Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293749449_2ilw",
+      "timestamp": "2026-08-21T06:29:09.449Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_04",
+      "previousState": {
+        "status": "TURNOVER"
+      },
+      "newState": {
+        "status": "AVAILABLE"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293701199_7mx7",
+      "timestamp": "2026-08-21T06:28:21.199Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "SURGERY_STARTED"
+      },
+      "newState": {
+        "status": "SURGERY_COMPLETED"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293700377_kssm",
+      "timestamp": "2026-08-21T06:28:20.377Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "PATIENT_ARRIVED"
+      },
+      "newState": {
+        "status": "SURGERY_STARTED"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293699462_el6f",
+      "timestamp": "2026-08-21T06:28:19.462Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "PATIENT_TRANSFER"
+      },
+      "newState": {
+        "status": "PATIENT_ARRIVED"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293698488_kkhv",
+      "timestamp": "2026-08-21T06:28:18.488Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "PATIENT_READY"
+      },
+      "newState": {
+        "status": "PATIENT_TRANSFER"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293697574_mtto",
+      "timestamp": "2026-08-21T06:28:17.574Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "PREPARING"
+      },
+      "newState": {
+        "status": "PATIENT_READY"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293696660_mzjk",
+      "timestamp": "2026-08-21T06:28:16.660Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "AVAILABLE"
+      },
+      "newState": {
+        "status": "PREPARING"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293695340_xpaq",
+      "timestamp": "2026-08-21T06:28:15.340Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "TURNOVER"
+      },
+      "newState": {
+        "status": "AVAILABLE"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293693942_f8ne",
+      "timestamp": "2026-08-21T06:28:13.942Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "SURGERY_COMPLETED"
+      },
+      "newState": {
+        "status": "TURNOVER"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293690891_o7nr",
+      "timestamp": "2026-08-21T06:28:10.891Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATE_TRANSITION",
+      "entityType": "OT",
+      "entityId": "ot_01",
+      "previousState": {
+        "status": "SURGERY_STARTED"
+      },
+      "newState": {
+        "status": "SURGERY_COMPLETED"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293588994_itgq",
+      "timestamp": "2026-08-21T06:26:28.994Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "OT_STATUS_OVERRIDE",
+      "entityType": "OT",
+      "entityId": "ot_03",
+      "previousState": {
+        "status": "PREPARING",
+        "code": "OT-03"
+      },
+      "newState": {
+        "status": "PATIENT_TRANSFER",
+        "activeSurgeryId": "surg_1787293218109_493"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293588992_sohs",
+      "timestamp": "2026-08-21T06:26:28.992Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "PATIENT_TRANSITION_IN_TRANSFER",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "status": "ADMITTED"
+      },
+      "newState": {
+        "status": "IN_TRANSFER",
+        "surgeryId": "surg_1787293218109_493"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787293218112_fann",
+      "timestamp": "2026-08-21T06:20:18.112Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "PATIENT_TRANSITION_IN_TRANSFER",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "status": "ADMITTED"
+      },
+      "newState": {
+        "status": "IN_TRANSFER",
+        "surgeryId": "surg_1787293218109_493"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787291703857_8myi",
+      "timestamp": "2026-08-21T05:55:03.857Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "newState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787291702197_0w0n",
+      "timestamp": "2026-08-21T05:55:02.197Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "newState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787291700521_2iqz",
+      "timestamp": "2026-08-21T05:55:00.521Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "newState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787291697254_mpkz",
+      "timestamp": "2026-08-21T05:54:57.254Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "newState": {
+        "id": "ready_1787291111517_yycda",
+        "patientId": "pat_1787291111517_ustcr",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "updatedAt": "2026-08-21T05:55:03.856Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787291548617_qkrl",
+      "timestamp": "2026-08-21T05:52:28.617Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_CONSENT_STATUS",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": {
+        "consentStatus": "VERIFIED"
+      },
+      "newState": {
+        "consentStatus": "VERIFIED"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787291469790_mqz8",
+      "timestamp": "2026-08-21T05:51:09.790Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "CREATE_PATIENT",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291469785_577",
+      "previousState": null,
+      "newState": {
+        "id": "pat_1787291469785_577",
+        "mrn": "MRN-2328",
+        "name": "kumar",
+        "age": 45,
+        "gender": "M",
+        "wardId": "Ward 4B",
+        "bedNumber": "Bed 401",
+        "admissionDate": "2026-08-21T05:51:09.784Z",
+        "status": "ADMITTED",
+        "primaryDiagnosis": "Acute Appendicitis",
+        "archived": false,
+        "createdAt": "2026-08-21T05:51:09.784Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787291348702_zl73",
+      "timestamp": "2026-08-21T05:49:08.702Z",
+      "actorId": "system",
+      "actorName": "System",
+      "action": "CREATE_PATIENT",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291348702_37ewq",
+      "previousState": null,
+      "newState": {
+        "id": "pat_1787291348702_37ewq",
+        "mrn": "MRN-2324",
+        "name": "kumar",
+        "age": 45,
+        "gender": "M",
+        "wardId": "Ward 4B",
+        "bedNumber": "Bed 401",
+        "admissionDate": "2026-08-21T05:49:08.701Z",
+        "status": "ADMITTED",
+        "primaryDiagnosis": "Acute Appendicitis",
+        "archived": false,
+        "createdAt": "2026-08-21T05:49:08.701Z"
+      }
+    },
+    {
+      "id": "aud_1787291169345_42jv",
+      "timestamp": "2026-08-21T05:46:09.345Z",
+      "actorId": "system",
+      "actorName": "System",
+      "action": "CREATE_PATIENT",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291169345_bd9aq",
+      "previousState": null,
+      "newState": {
+        "id": "pat_1787291169345_bd9aq",
+        "mrn": "MRN-5337",
+        "name": "Kumar",
+        "age": 45,
+        "gender": "M",
+        "wardId": "Ward 4B",
+        "bedNumber": "Bed 401",
+        "admissionDate": "2026-08-21T05:46:09.345Z",
+        "status": "ADMITTED",
+        "primaryDiagnosis": "Acute Appendicitis",
+        "archived": false,
+        "createdAt": "2026-08-21T05:46:09.345Z"
+      }
+    },
+    {
+      "id": "aud_1787291111521_51qa",
+      "timestamp": "2026-08-21T05:45:11.521Z",
+      "actorId": "system",
+      "actorName": "System",
+      "action": "CREATE_PATIENT",
+      "entityType": "PATIENT",
+      "entityId": "pat_1787291111517_ustcr",
+      "previousState": null,
+      "newState": {
+        "id": "pat_1787291111517_ustcr",
+        "mrn": "MRN-5336",
+        "name": "Kumar",
+        "age": 45,
+        "gender": "M",
+        "wardId": "Ward 4B",
+        "bedNumber": "Bed 401",
+        "admissionDate": "2026-08-21T05:45:11.517Z",
+        "status": "ADMITTED",
+        "primaryDiagnosis": "Acute Appendicitis",
+        "archived": false,
+        "createdAt": "2026-08-21T05:45:11.517Z"
+      }
+    },
+    {
+      "id": "aud_1787289989728_qly1",
+      "timestamp": "2026-08-21T05:26:29.729Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_PATIENT_READINESS",
+      "entityType": "PATIENT_READINESS",
+      "entityId": "pat_1024",
+      "previousState": {
+        "id": "readiness_pat_1024",
+        "patientId": "pat_1024",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "notes": "Awaiting surgical consent confirmation from ward attending",
+        "updatedAt": "2026-08-21T05:26:29.728Z"
+      },
+      "newState": {
+        "id": "readiness_pat_1024",
+        "patientId": "pat_1024",
+        "admissionCompleted": true,
+        "consentStatus": "VERIFIED",
+        "documentationCompleted": true,
+        "reportsAvailable": true,
+        "doctorConfirmed": true,
+        "preopPrepCompleted": true,
+        "completedItemsCount": 6,
+        "totalItemsCount": 6,
+        "isReady": true,
+        "notes": "Awaiting surgical consent confirmation from ward attending",
+        "updatedAt": "2026-08-21T05:26:29.728Z"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787289989697_x94g",
+      "timestamp": "2026-08-21T05:26:29.697Z",
+      "actorId": "usr_admin_01",
+      "actorName": "admin@smartot.hospital",
+      "action": "UPDATE_CONSENT_STATUS",
+      "entityType": "PATIENT",
+      "entityId": "pat_1024",
+      "previousState": {
+        "consentStatus": "VERIFIED"
+      },
+      "newState": {
+        "consentStatus": "VERIFIED"
+      },
+      "ipAddress": "::1"
+    },
+    {
+      "id": "aud_1787289977402_n90n",
+      "timestamp": "2026-08-21T05:26:17.402Z",
+      "actorId": "usr_admin_01",
+      "actorName": "Dr. Sarah Jenkins",
+      "action": "USER_LOGIN",
+      "entityType": "USER",
+      "entityId": "usr_admin_01",
+      "newState": {
+        "role": "ADMINISTRATOR",
+        "email": "admin@smartot.hospital"
+      },
+      "ipAddress": "::1"
+    },
     {
       "id": "aud_1787256372238_8gai",
       "timestamp": "2026-08-20T20:06:12.238Z",
@@ -1577,6 +3644,43 @@
     }
   },
   "ai_interactions": [
+    {
+      "id": "ai_1787296616555_c3e08q",
+      "timestamp": "2026-08-21T07:16:56.555Z",
+      "actorId": "usr_admin_01",
+      "query": "What is the current status of all 4 operating rooms?",
+      "intent": "GENERAL_OPERATIONS",
+      "contextSnapshot": {
+        "kpis": {
+          "otUtilization": 50,
+          "activeSurgeries": 0,
+          "readyPatients": 17,
+          "delayedCases": 0,
+          "highRiskCases": 1,
+          "cssdAvailability": 63,
+          "openAlertsCount": 4,
+          "currentBottleneck": "Optimal Flow"
+        },
+        "activeAlertCount": 4
+      },
+      "responseSummary": "OT-01 has completed its last case and is awaiting turnover; OT-02 is idle and ready for a case; OT-03 has a patient (pat_1787296443552_936) arrived for an Acute Appendicitis procedure but is missing the required Standard Surgical Set; OT-04 is idle and ready for a case.",
+      "riskLevel": "LOW",
+      "evidence": [
+        "Operating Theatres Status array showing OT-01: SURGERY_COMPLETED, OT-02: AVAILABLE, OT-03: PATIENT_ARRIVED (procedure: Acute Appendicitis), OT-04: AVAILABLE",
+        "Active Operational Alert alt_pack_shortage_surg_1787293218109_493 (CRITICAL) – No sterile \"Standard Surgical Set\" trays available for the Acute Appendicitis case in OT-03",
+        "Event stream entries confirming patient transfer to OT-03 and consent verification completed at 07:15:30Z",
+        "CSSD Availability KPI at 63% and related bottleneck data for Sterile Pack Staging & Barcode Verification (27% of total delays)"
+      ],
+      "recommendedActions": [
+        "Assign a suitable sterile pack (e.g., an Appendectomy Set) to OT-03 immediately (NBA action nba_assign_surg_1024) to resolve the pack shortage",
+        "CSSD staff should prioritize completion of the Standard Surgical Set or locate an alternative compatible tray for the Acute Appendicitis case",
+        "Monitor OT-01 turnover progress and prepare it for the next scheduled case once turnover is complete",
+        "Maintain OT-02 and OT-04 in a ready state and consider pre‑assigning sterile packs to reduce future delays"
+      ],
+      "confidence": 0.95,
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b"
+    },
     {
       "id": "ai_1787227155801_s1v5d1",
       "timestamp": "2026-08-20T11:59:15.801Z",

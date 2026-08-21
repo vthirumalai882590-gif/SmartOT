@@ -1457,7 +1457,7 @@ export const CSSDPage: React.FC = () => {
                   <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 space-y-1">
                     <p className="font-bold">{qrScanResult.message}</p>
                     <ul className="list-disc list-inside space-y-0.5">
-                      {qrScanResult.reasons.map((r, idx) => (
+                      {qrScanResult.reasons?.map((r, idx) => (
                         <li key={idx}>{r}</li>
                       ))}
                     </ul>

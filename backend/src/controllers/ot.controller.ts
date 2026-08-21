@@ -322,17 +322,6 @@ export class OTController {
     });
 
     // Audit Logging
-    auditRepository.log({
-      actorId: actor.userId,
-      actorName: actor.email,
-      action: isOverride ? 'MANUAL_OT_OVERRIDE' : 'OT_STATE_TRANSITION',
-      entityType: 'OT',
-      entityId: result.ot.id,
-      previousState: { status: prevState },
-      newState: { status: targetState, delayMinutes, isOverride, overrideReason },
-      ipAddress: req.ip,
-    });
-
     res.json({
       success: true,
       data: {
@@ -343,105 +332,126 @@ export class OTController {
   }
 
   public async scheduleCase(req: AuthenticatedRequest, res: Response): Promise<void> {
-    const {
-      otId,
-      patientId,
-      procedureName,
-      surgeonName,
-      scheduledStartTime,
-      expectedDurationMinutes,
-      priority,
-      requiredPackType,
-    } = req.body;
+    try {
+      const {
+        otId,
+        patientId,
+        procedureName,
+        surgeonName,
+        scheduledStartTime,
+        expectedDurationMinutes,
+        priority,
+        requiredPackType,
+      } = req.body;
 
-    const actor = req.user || { userId: 'system', email: 'admin@smartot.hospital', role: 'OT_MANAGER', department: 'OT' };
+      const actor = req.user || { userId: 'system', email: 'admin@smartot.hospital', role: 'OT_MANAGER', department: 'OT' };
 
-    const ot = otRepository.findOTById(otId);
-    if (!ot) {
-      res.status(404).json({ success: false, error: 'OT_NOT_FOUND', message: 'Operating Theatre not found' });
-      return;
-    }
+      const canonicalOtId = otRepository.resolveOTId(otId) || otId;
+      const ot = otRepository.findOTById(canonicalOtId);
+      if (!ot) {
+        res.status(404).json({ success: false, error: 'OT_NOT_FOUND', message: 'Operating Theatre not found' });
+        return;
+      }
 
-    if ((ot as any).archived) {
-      res.status(400).json({ success: false, error: 'OT_ARCHIVED', message: 'Cannot schedule into an archived theatre' });
-      return;
-    }
+      if ((ot as any).archived) {
+        res.status(400).json({ success: false, error: 'OT_ARCHIVED', message: 'Cannot schedule into an archived theatre' });
+        return;
+      }
 
-    const patient = patientRepository.findById(patientId);
-    if (!patient) {
-      res.status(404).json({ success: false, error: 'PATIENT_NOT_FOUND', message: 'Patient not found' });
-      return;
-    }
+      const patient = patientRepository.findById(patientId);
+      if (!patient) {
+        res.status(404).json({ success: false, error: 'PATIENT_NOT_FOUND', message: 'Patient not found' });
+        return;
+      }
 
-    const surgeryId = `surg_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
-    const startTimeIso = scheduledStartTime || new Date(Date.now() + 30 * 60000).toISOString();
+      const surgeryId = `surg_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
+      const startTimeIso = scheduledStartTime || new Date(Date.now() + 30 * 60000).toISOString();
 
-    const newSurgery: Surgery = {
-      id: surgeryId,
-      patientId: patient.id,
-      patientName: patient.name,
-      patientMrn: patient.mrn,
-      procedureName: procedureName || patient.primaryDiagnosis || 'Surgical Procedure',
-      surgeonName: surgeonName || 'Dr. Emily Watson, MD',
-      anesthesiologistName: 'Dr. Robert Blake, MD',
-      otId: ot.id,
-      otCode: ot.code,
-      scheduledStartTime: startTimeIso,
-      expectedDurationMinutes: Number(expectedDurationMinutes) || 90,
-      priority: priority || 'ELECTIVE',
-      status: 'SCHEDULED',
-      requiredPackType: requiredPackType || 'Appendectomy Set',
-      delayMinutes: 0,
-      riskLevel: 'LOW',
-      createdAt: new Date().toISOString(),
-    };
+      const packType = requiredPackType || 'Appendectomy Set';
+      const availablePacks = cssdRepository.findAvailablePacksByType(packType);
+      let assignedPackId: string | undefined = undefined;
+      if (availablePacks.length > 0) {
+        assignedPackId = availablePacks[0].id;
+        cssdRepository.transitionPackStatus(assignedPackId, 'ASSIGNED', {
+          assignedOtId: ot.id,
+          assignedSurgeryId: surgeryId,
+          assignedPatientId: patient.id,
+        });
+      }
 
-
-    otRepository.createSurgery(newSurgery);
-
-    // Update patient activeSurgeryId & status
-    const schedRes = patientRepository.updateStatus(patient.id, 'PREPARING');
-    if (!schedRes.success) console.warn(`[OT] Patient state transition warning on scheduling: ${schedRes.error}`);
-    const dbData = (patientRepository as any).findAll ? undefined : undefined;
-    (patient as any).activeSurgeryId = surgeryId;
-
-    // Update OT state to SCHEDULED or PREPARING
-    otRepository.updateOTStatus(ot.id, 'SCHEDULED', { activeSurgeryId: surgeryId }, true);
-
-    await eventEngine.emitEvent({
-      eventType: 'SURGERY_SCHEDULED',
-      entityType: 'SURGERY',
-      entityId: surgeryId,
-      department: 'OT',
-      actorId: actor.userId,
-      actorName: actor.email,
-      metadata: {
-        otCode: ot.code,
+      const newSurgery: Surgery = {
+        id: surgeryId,
+        patientId: patient.id,
         patientName: patient.name,
-        procedureName: newSurgery.procedureName,
+        patientMrn: patient.mrn,
+        procedureName: procedureName || patient.primaryDiagnosis || 'Surgical Procedure',
+        surgeonName: surgeonName || 'Dr. Emily Watson, MD',
+        anesthesiologistName: 'Dr. Robert Blake, MD',
+        otId: ot.id,
+        otCode: ot.code,
         scheduledStartTime: startTimeIso,
-      },
-    });
+        expectedDurationMinutes: Number(expectedDurationMinutes) || 90,
+        priority: priority || 'ELECTIVE',
+        status: 'SCHEDULED',
+        requiredPackType: packType,
+        assignedPackId,
+        delayMinutes: 0,
+        riskLevel: 'LOW',
+        createdAt: new Date().toISOString(),
+      };
 
-    auditRepository.log({
-      actorId: actor.userId,
-      actorName: actor.email,
-      action: 'SCHEDULE_SURGERY_CASE',
-      entityType: 'SURGERY',
-      entityId: surgeryId,
-      previousState: null,
-      newState: newSurgery,
-      ipAddress: req.ip,
-    });
+      otRepository.createSurgery(newSurgery);
 
-    res.json({
-      success: true,
-      data: {
-        surgery: newSurgery,
-        ot: otRepository.findOTById(ot.id),
-      },
-      message: `Surgery scheduled for ${patient.name} in ${ot.code}.`,
-    });
+      // Update patient activeSurgeryId & status
+      const schedRes = patientRepository.updateStatus(patient.id, 'PREPARING');
+      if (!schedRes.success) console.warn(`[OT] Patient state transition warning on scheduling: ${schedRes.error}`);
+      (patient as any).activeSurgeryId = surgeryId;
+
+      // Update OT state to SCHEDULED or PREPARING
+      otRepository.updateOTStatus(ot.id, 'SCHEDULED', { activeSurgeryId: surgeryId }, true);
+
+      await eventEngine.emitEvent({
+        eventType: 'SURGERY_SCHEDULED',
+        entityType: 'SURGERY',
+        entityId: surgeryId,
+        department: 'OT',
+        actorId: actor.userId,
+        actorName: actor.email,
+        metadata: {
+          otCode: ot.code,
+          patientName: patient.name,
+          procedureName: newSurgery.procedureName,
+          scheduledStartTime: startTimeIso,
+        },
+      });
+
+      auditRepository.log({
+        actorId: actor.userId,
+        actorName: actor.email,
+        action: 'SCHEDULE_SURGERY_CASE',
+        entityType: 'SURGERY',
+        entityId: surgeryId,
+        previousState: null,
+        newState: newSurgery,
+        ipAddress: req.ip,
+      });
+
+      res.json({
+        success: true,
+        data: {
+          surgery: newSurgery,
+          ot: otRepository.findOTById(ot.id),
+        },
+        message: `Surgery scheduled for ${patient.name} in ${ot.code}.`,
+      });
+    } catch (err: any) {
+      console.error('[OT] scheduleCase exception:', err);
+      res.status(500).json({
+        success: false,
+        error: 'SCHEDULE_FAILED',
+        message: err.message || 'Failed to schedule surgical case',
+      });
+    }
   }
 }
 

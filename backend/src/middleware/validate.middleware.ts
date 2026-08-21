@@ -119,11 +119,9 @@ export function validateCSSDScan(req: Request, res: Response, next: NextFunction
 }
 
 export function validateTransferStart(req: Request, res: Response, next: NextFunction): void {
-  const { patientId, surgeryId, fromWard, toOtId } = req.body;
+  const { patientId, toOtId } = req.body;
   const missing: string[] = [];
   if (!patientId) missing.push('patientId');
-  if (!surgeryId) missing.push('surgeryId');
-  if (!fromWard) missing.push('fromWard');
   if (!toOtId) missing.push('toOtId');
 
   if (missing.length > 0) {

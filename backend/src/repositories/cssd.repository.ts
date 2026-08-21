@@ -57,6 +57,40 @@ export class CSSDRepository {
     );
   }
 
+  transitionPackStatus(
+    packId: string,
+    targetStatus: string,
+    metadata?: { assignedOtId?: string; assignedSurgeryId?: string; assignedPatientId?: string }
+  ): { success: boolean; pack?: CSSDPack; error?: string } {
+    const item = this.findItemById(packId);
+    if (item) {
+      item.currentStatus = targetStatus as any;
+      if (metadata?.assignedOtId) item.assignedOtId = metadata.assignedOtId;
+      if (metadata?.assignedSurgeryId) item.assignedSurgeryId = metadata.assignedSurgeryId;
+      if (metadata?.assignedPatientId) item.assignedPatientId = metadata.assignedPatientId;
+      item.updatedAt = new Date().toISOString();
+      db.persist();
+      const pack = this.findPackById(packId);
+      return { success: true, pack };
+    }
+
+    const data = db.getData();
+    if (data.cssd_packs) {
+      const p = data.cssd_packs.find((p) => p.id === packId || p.packId === packId);
+      if (p) {
+        p.currentStatus = targetStatus as any;
+        if (metadata?.assignedOtId) p.assignedOtId = metadata.assignedOtId;
+        if (metadata?.assignedSurgeryId) p.assignedSurgeryId = metadata.assignedSurgeryId;
+        if (metadata?.assignedPatientId) p.assignedPatientId = metadata.assignedPatientId;
+        p.updatedAt = new Date().toISOString();
+        db.persist();
+        return { success: true, pack: p };
+      }
+    }
+
+    return { success: false, error: `CSSD pack "${packId}" not found` };
+  }
+
   // ─── MASTER INSTRUMENT / ITEM CATALOG ─────────────────────────────────────
   findAllItems(): CSSDItem[] {
     return db.getData().cssd_items || [];

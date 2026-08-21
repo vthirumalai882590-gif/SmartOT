@@ -3,14 +3,14 @@ import { Patient, PatientReadiness, ConsentStatus, PatientStatus } from '../../.
 
 // Explicit valid patient state machine transitions
 const VALID_PATIENT_TRANSITIONS: Record<PatientStatus, PatientStatus[]> = {
-  ADMITTED: ['PREPARING'],
-  PREPARING: ['READY_FOR_OT', 'ADMITTED'],         // can revert if readiness incomplete
-  READY_FOR_OT: ['IN_TRANSFER', 'PREPARING'],       // can revert if readiness changes
-  IN_TRANSFER: ['IN_OT'],                            // transfer cannot go backwards
-  IN_OT: ['IN_SURGERY', 'IN_TRANSFER'],              // can return if OT issue
-  IN_SURGERY: ['POST_OP'],                           // surgery is one-way
+  ADMITTED: ['PREPARING', 'READY_FOR_OT', 'IN_TRANSFER'],
+  PREPARING: ['READY_FOR_OT', 'ADMITTED', 'IN_TRANSFER'],
+  READY_FOR_OT: ['IN_TRANSFER', 'PREPARING'],
+  IN_TRANSFER: ['IN_OT'],
+  IN_OT: ['IN_SURGERY', 'IN_TRANSFER'],
+  IN_SURGERY: ['POST_OP'],
   POST_OP: ['DISCHARGED'],
-  DISCHARGED: [],                                    // terminal state
+  DISCHARGED: [],
 };
 
 export class PatientRepository {

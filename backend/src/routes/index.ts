@@ -41,6 +41,12 @@ router.get('/dashboard/command-center', authenticate, (req, res) =>
 // 3. Patients & Readiness Checklist
 // ==========================================
 router.get('/patients', authenticate, (req, res) => patientController.getPatients(req, res));
+router.post(
+  '/patients',
+  authenticate,
+  authorize('ADMINISTRATOR', 'OT_MANAGER', 'WARD_STAFF'),
+  (req, res) => patientController.createPatient(req, res)
+);
 router.get('/patients/:id', authenticate, (req, res) => patientController.getPatientById(req, res));
 router.post(
   '/patients/:id/readiness',
@@ -223,8 +229,8 @@ router.patch('/admin/cssd/packs/:id', authenticate, authorize('ADMINISTRATOR'), 
 router.post('/admin/cssd/packs/:id/archive', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.archiveCSSDPack(req, res));
 
 router.get('/admin/patients', authenticate, (req, res) => adminController.getPatients(req, res));
-router.post('/admin/patients', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.createPatient(req, res));
-router.patch('/admin/patients/:id', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.updatePatient(req, res));
+router.post('/admin/patients', authenticate, authorize('ADMINISTRATOR', 'OT_MANAGER', 'WARD_STAFF'), (req, res) => adminController.createPatient(req, res));
+router.patch('/admin/patients/:id', authenticate, authorize('ADMINISTRATOR', 'OT_MANAGER', 'WARD_STAFF'), (req, res) => adminController.updatePatient(req, res));
 router.post('/admin/patients/:id/archive', authenticate, authorize('ADMINISTRATOR'), (req, res) => adminController.archivePatient(req, res));
 
 router.get('/admin/users', authenticate, (req, res) => adminController.getUsers(req, res));

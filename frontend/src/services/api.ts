@@ -19,14 +19,29 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
   try {
     const res = await fetch(url, { ...options, headers });
-    const data = await res.json();
+    const text = await res.text();
+    let data: any = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = { message: text || `HTTP ${res.status} ${res.statusText}` };
+    }
 
     if (!res.ok) {
       if (res.status === 401) {
         localStorage.removeItem('smartot_auth_token');
         localStorage.removeItem('smartot_auth_user');
       }
-      throw new Error(data.message || data.error || 'Network request failed');
+      const errorMsg =
+        (typeof data.message === 'string' && data.message) ||
+        (typeof data.error === 'string' && data.error) ||
+        (data.error && typeof data.error.message === 'string' && data.error.message) ||
+        (typeof data === 'string' ? data : JSON.stringify(data));
+      const errorObj = new Error(errorMsg);
+      if (data.reasons && Array.isArray(data.reasons)) {
+        (errorObj as any).reasons = data.reasons;
+      }
+      throw errorObj;
     }
 
     return data.data;
@@ -60,6 +75,11 @@ export const api = {
   // Patients
   getPatients: () => request<any[]>('/patients'),
   getPatientById: (id: string) => request<any>(`/patients/${id}`),
+  createPatient: (data: any) =>
+    request<any>('/patients', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
   updatePatientReadiness: (id: string, updates: any) =>
     request<any>(`/patients/${id}/readiness`, {
       method: 'POST',

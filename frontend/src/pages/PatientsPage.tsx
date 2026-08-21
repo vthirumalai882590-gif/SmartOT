@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '../services/api';
 import { ReadinessChecklist } from '../components/ReadinessChecklist';
+import { SurgicalWorkflowTracker } from '../components/SurgicalWorkflowTracker';
 import { Patient, ConsentStatus } from '../../../shared/src/types';
 import {
   Users,
@@ -14,6 +15,8 @@ import {
   Send,
   X,
   ArrowUpRight,
+  GitCommit,
+  UserPlus,
 } from 'lucide-react';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { DetailModal } from '../components/ui/DetailModal';
@@ -24,7 +27,50 @@ export const PatientsPage: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [wardFilter, setWardFilter] = useState('ALL');
+  const [showWorkflowTracker, setShowWorkflowTracker] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Add Patient Modal State
+  const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
+  const [addPatientForm, setAddPatientForm] = useState({
+    mrn: '',
+    name: '',
+    age: 45,
+    gender: 'M',
+    wardId: 'Ward 4B',
+    bedNumber: 'Bed 401',
+    primaryDiagnosis: 'Acute Appendicitis',
+  });
+
+  const handleCreatePatient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addPatientForm.name || !addPatientForm.mrn) {
+      alert('Please enter Patient Name and MRN.');
+      return;
+    }
+    try {
+      const created = await api.createPatient(addPatientForm);
+      if (created && (created.id || created.mrn)) {
+        alert(`Patient ${created.name || addPatientForm.name} (${created.mrn || addPatientForm.mrn}) created successfully and added to database.`);
+        setIsAddPatientModalOpen(false);
+        setAddPatientForm({
+          mrn: '',
+          name: '',
+          age: 45,
+          gender: 'M',
+          wardId: 'Ward 4B',
+          bedNumber: 'Bed 401',
+          primaryDiagnosis: 'Acute Appendicitis',
+        });
+        await loadPatients();
+        setSelectedPatient(created);
+      } else {
+        alert('Failed to create patient: Database did not return a valid patient record.');
+      }
+    } catch (err: any) {
+      alert(`Failed to create patient: ${err.message || err}`);
+    }
+  };
 
   const loadPatients = async () => {
     try {
@@ -69,15 +115,15 @@ export const PatientsPage: React.FC = () => {
     try {
       await api.startTransfer({
         patientId: patient.id,
-        surgeryId: patient.activeSurgeryId || 'surg_default',
+        surgeryId: patient.activeSurgeryId,
         fromWard: patient.wardId,
         toOtId: 'ot_03',
         toOtCode: 'OT-03',
       });
-      alert(`Patient transfer started for ${patient.name} to OT-03.`);
+      alert(`Patient transfer started for ${patient.name} (${patient.mrn}) to OT-03.`);
       loadPatients();
     } catch (err: any) {
-      alert(`Transfer initiation failed: ${err.message}`);
+      alert(`Transfer initiation failed: ${err.message || err}`);
     }
   };
 
@@ -113,6 +159,30 @@ export const PatientsPage: React.FC = () => {
 
         {/* Search and Filters */}
         <div className="flex items-center space-x-2">
+          <button
+            onClick={() => {
+              const autoMrn = `MRN-${Math.floor(1000 + Math.random() * 9000)}`;
+              setAddPatientForm((prev) => ({ ...prev, mrn: autoMrn }));
+              setIsAddPatientModalOpen(true);
+            }}
+            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm transition active:scale-95"
+          >
+            <UserPlus className="h-4 w-4" />
+            <span>+ Add Patient</span>
+          </button>
+
+          <button
+            onClick={() => setShowWorkflowTracker(!showWorkflowTracker)}
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 border transition shadow-sm ${
+              showWorkflowTracker
+                ? 'bg-teal-50 border-teal-300 text-teal-800'
+                : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <GitCommit className="h-3.5 w-3.5 text-teal-600" />
+            <span>{showWorkflowTracker ? 'Hide Lifecycle Pipeline' : '12-Step Lifecycle'}</span>
+          </button>
+
           <div className="relative">
             <Search className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -137,6 +207,13 @@ export const PatientsPage: React.FC = () => {
           </select>
         </div>
       </motion.div>
+
+      {/* Live 12-Step Surgical Workflow Tracker */}
+      {showWorkflowTracker && (
+        <motion.div variants={itemVariants}>
+          <SurgicalWorkflowTracker selectedPatient={selectedPatient} onRefreshData={loadPatients} />
+        </motion.div>
+      )}
 
       {/* Main Table */}
       <motion.div
@@ -273,6 +350,122 @@ export const PatientsPage: React.FC = () => {
             </div>
           </div>
         )}
+      </DetailModal>
+
+      {/* Add Patient Modal */}
+      <DetailModal
+        isOpen={isAddPatientModalOpen}
+        onClose={() => setIsAddPatientModalOpen(false)}
+        title="Register New Inpatient Record"
+        subtitle="Create a new patient record & initialize pre-op readiness checklist"
+        maxWidth="max-w-lg"
+      >
+        <form onSubmit={handleCreatePatient} className="space-y-4 text-slate-800">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">MRN (Medical Record Number) *</label>
+              <input
+                type="text"
+                required
+                value={addPatientForm.mrn}
+                onChange={(e) => setAddPatientForm({ ...addPatientForm, mrn: e.target.value })}
+                placeholder="e.g. MRN-1099"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 font-mono font-bold focus:outline-none focus:border-teal-600 bg-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Full Name *</label>
+              <input
+                type="text"
+                required
+                value={addPatientForm.name}
+                onChange={(e) => setAddPatientForm({ ...addPatientForm, name: e.target.value })}
+                placeholder="e.g. Sarah Connor"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 font-bold focus:outline-none focus:border-teal-600 bg-white"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Age</label>
+              <input
+                type="number"
+                value={addPatientForm.age}
+                onChange={(e) => setAddPatientForm({ ...addPatientForm, age: parseInt(e.target.value) || 0 })}
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-600 bg-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Gender</label>
+              <select
+                value={addPatientForm.gender}
+                onChange={(e) => setAddPatientForm({ ...addPatientForm, gender: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 font-bold focus:outline-none focus:border-teal-600 bg-white"
+              >
+                <option value="M">Male (M)</option>
+                <option value="F">Female (F)</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Assigned Ward</label>
+              <select
+                value={addPatientForm.wardId}
+                onChange={(e) => setAddPatientForm({ ...addPatientForm, wardId: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 font-bold focus:outline-none focus:border-teal-600 bg-white"
+              >
+                <option value="Ward 4B">Ward 4B (Pre-Op Inpatient)</option>
+                <option value="Ward 3A">Ward 3A (General Surgery)</option>
+                <option value="Ward 5C">Ward 5C (Orthopedics)</option>
+                <option value="Ward 5A">Ward 5A (Cardiovascular)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Bed Number</label>
+              <input
+                type="text"
+                value={addPatientForm.bedNumber}
+                onChange={(e) => setAddPatientForm({ ...addPatientForm, bedNumber: e.target.value })}
+                placeholder="e.g. Bed 405"
+                className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-600 bg-white"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Primary Diagnosis / Procedure</label>
+            <input
+              type="text"
+              value={addPatientForm.primaryDiagnosis}
+              onChange={(e) => setAddPatientForm({ ...addPatientForm, primaryDiagnosis: e.target.value })}
+              placeholder="e.g. Acute Appendicitis / Laparoscopic Appendectomy"
+              className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-teal-600 bg-white"
+            />
+          </div>
+
+          <div className="flex items-center justify-end space-x-2 pt-3 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => setIsAddPatientModalOpen(false)}
+              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md transition"
+            >
+              Save & Register Patient
+            </button>
+          </div>
+        </form>
       </DetailModal>
     </motion.div>
   );
