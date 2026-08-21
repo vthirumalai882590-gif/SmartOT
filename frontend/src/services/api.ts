@@ -189,6 +189,10 @@ export const api = {
     }
   },
   getPatientById: async (id: string) => {
+    const custom = getCustomPatients();
+    const localMatch = custom.find((p: any) => p.id === id || p.mrn === id);
+    if (localMatch) return localMatch;
+
     try {
       return await request<any>(`/patients/${id}`);
     } catch {
@@ -236,16 +240,60 @@ export const api = {
       return localPatient;
     }
   },
-  updatePatientReadiness: (id: string, updates: any) =>
-    request<any>(`/patients/${id}/readiness`, {
-      method: 'POST',
-      body: JSON.stringify(updates),
-    }),
-  updatePatientConsent: (id: string, consentStatus: string) =>
-    request<any>(`/patients/${id}/consent`, {
-      method: 'POST',
-      body: JSON.stringify({ consentStatus }),
-    }),
+  updatePatientReadiness: async (id: string, updates: any) => {
+    const custom = getCustomPatients();
+    const target = custom.find((p: any) => p.id === id || p.mrn === id);
+    if (target && target.readiness) {
+      Object.assign(target.readiness, updates);
+      const completedCount = [
+        target.readiness.admissionCompleted,
+        target.readiness.documentationCompleted,
+        target.readiness.reportsAvailable,
+        target.readiness.doctorConfirmed,
+        target.readiness.preopPrepCompleted,
+        target.readiness.consentStatus === 'VERIFIED',
+      ].filter(Boolean).length;
+      target.readiness.completedItemsCount = completedCount;
+      target.readiness.isReady = completedCount === 6;
+      target.status = target.readiness.isReady ? 'READY_FOR_OT' : target.status;
+      saveCustomPatient(target);
+    }
+    try {
+      return await request<any>(`/patients/${id}/readiness`, {
+        method: 'POST',
+        body: JSON.stringify(updates),
+      });
+    } catch {
+      return target || { success: true };
+    }
+  },
+  updatePatientConsent: async (id: string, consentStatus: string) => {
+    const custom = getCustomPatients();
+    const target = custom.find((p: any) => p.id === id || p.mrn === id);
+    if (target && target.readiness) {
+      target.readiness.consentStatus = consentStatus;
+      const completedCount = [
+        target.readiness.admissionCompleted,
+        target.readiness.documentationCompleted,
+        target.readiness.reportsAvailable,
+        target.readiness.doctorConfirmed,
+        target.readiness.preopPrepCompleted,
+        target.readiness.consentStatus === 'VERIFIED',
+      ].filter(Boolean).length;
+      target.readiness.completedItemsCount = completedCount;
+      target.readiness.isReady = completedCount === 6;
+      target.status = target.readiness.isReady ? 'READY_FOR_OT' : target.status;
+      saveCustomPatient(target);
+    }
+    try {
+      return await request<any>(`/patients/${id}/consent`, {
+        method: 'POST',
+        body: JSON.stringify({ consentStatus }),
+      });
+    } catch {
+      return target || { success: true };
+    }
+  },
 
   // Operating Theatres & Surgeries
   getOTSchedule: () => request<any>('/ot/schedule'),
