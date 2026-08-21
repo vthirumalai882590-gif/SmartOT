@@ -10,10 +10,15 @@ export interface AuthenticatedRequest<
   Locals extends Record<string, any> = Record<string, any>
 > extends Request<P, ResBody, ReqBody, ReqQuery, Locals> {
   user?: TokenPayload;
+  body: any;
+  params: any;
+  query: any;
+  headers: any;
+  ip: any;
 }
 
 export function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers ? req.headers.authorization : undefined;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     res.status(401).json({
       success: false,
