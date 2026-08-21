@@ -117,7 +117,7 @@ export const SimulatorPage: React.FC = () => {
               max="20"
               step="1"
               value={turnoverReduction}
-              onChange={(e) => setTurnoverReduction(Number(e.target.value))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTurnoverReduction(Number(e.target.value))}
               className="w-full accent-teal-600 bg-slate-200 h-2 rounded-lg cursor-pointer"
             />
             <p className="text-[10px] text-slate-500">Baseline benchmark: 25 mins per room changeover</p>
@@ -135,7 +135,7 @@ export const SimulatorPage: React.FC = () => {
               max="15"
               step="1"
               value={transferOptimization}
-              onChange={(e) => setTransferOptimization(Number(e.target.value))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTransferOptimization(Number(e.target.value))}
               className="w-full accent-cyan-600 bg-slate-200 h-2 rounded-lg cursor-pointer"
             />
             <p className="text-[10px] text-slate-500">Baseline benchmark: 15 mins ward-to-OT transit</p>
@@ -153,7 +153,7 @@ export const SimulatorPage: React.FC = () => {
               max="3"
               step="0.5"
               value={prepChecklistAutomation}
-              onChange={(e) => setPrepChecklistAutomation(Number(e.target.value))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPrepChecklistAutomation(Number(e.target.value))}
               className="w-full accent-emerald-600 bg-slate-200 h-2 rounded-lg cursor-pointer"
             />
             <p className="text-[10px] text-slate-500">Completes consent & checklist before OT call</p>
