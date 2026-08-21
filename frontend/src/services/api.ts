@@ -1,8 +1,16 @@
 import { offlineQueue } from './offline-queue';
 
-const API_BASE = (((import.meta as any).env?.VITE_API_URL as string) || '/api').replace(/\/$/, '');
+const ENV_API_URL = ((import.meta as any).env?.VITE_API_URL as string) || '';
 
+function getApiBase(): string {
+  if (ENV_API_URL) return ENV_API_URL.replace(/\/$/, '');
+  if (typeof window !== 'undefined' && window.location.hostname.endsWith('.vercel.app')) {
+    return 'https://smartot-command.onrender.com/api';
+  }
+  return '/api';
+}
 
+const API_BASE = getApiBase();
 
 function getAuthHeader(): Record<string, string> {
   const token = localStorage.getItem('smartot_auth_token');
@@ -10,7 +18,7 @@ function getAuthHeader(): Record<string, string> {
 }
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${API_BASE}${endpoint}`;
+  let url = `${API_BASE}${endpoint}`;
   const headers = {
     'Content-Type': 'application/json',
     ...getAuthHeader(),
@@ -18,8 +26,20 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   };
 
   try {
-    const res = await fetch(url, { ...options, headers });
-    const text = await res.text();
+    let res = await fetch(url, { ...options, headers });
+    let text = await res.text();
+
+    // Failover check: If relative URL returned HTML (e.g. Vercel static 404/405), retry against live backend
+    if (
+      (text.startsWith('<!DOCTYPE') || text.includes('Cannot POST') || text.includes('Cannot GET')) &&
+      !url.startsWith('https://smartot-command.onrender.com')
+    ) {
+      const fallbackUrl = `https://smartot-command.onrender.com/api${endpoint}`;
+      console.warn(`[API Failover] Endpoint ${url} returned HTML. Retrying with live backend: ${fallbackUrl}`);
+      res = await fetch(fallbackUrl, { ...options, headers });
+      text = await res.text();
+    }
+
     let data: any = {};
     try {
       data = text ? JSON.parse(text) : {};
@@ -44,7 +64,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       throw errorObj;
     }
 
-    return data.data;
+    return data.data !== undefined ? data.data : data;
   } catch (err: any) {
     // If offline and mutating state, queue action to offline store
     if (!navigator.onLine && options.method && options.method !== 'GET') {
