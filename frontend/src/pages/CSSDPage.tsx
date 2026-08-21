@@ -148,19 +148,42 @@ export const CSSDPage: React.FC = () => {
   const loadCSSDData = async () => {
     setIsLoading(true);
     try {
-      const [fetchedItems, fetchedJobs, fetchedMetrics, fetchedProfiles, fetchedSchedule] = await Promise.all([
-        api.getCSSDItems(),
-        api.getCSSDSterilizationJobs(),
-        api.getCSSDMetrics(),
-        api.getCSSDCycleProfiles(),
+      const [fetchedItems, fetchedPacks, fetchedJobs, fetchedMetrics, fetchedProfiles, fetchedSchedule] = await Promise.all([
+        api.getCSSDItems().catch(() => []),
+        api.getCSSDPacks().catch(() => []),
+        api.getCSSDSterilizationJobs().catch(() => []),
+        api.getCSSDMetrics().catch(() => null),
+        api.getCSSDCycleProfiles().catch(() => []),
         api.getOTSchedule().catch(() => []),
       ]);
 
-      setItems(fetchedItems || []);
-      setJobs(fetchedJobs || []);
+      let finalItems: CSSDItem[] = Array.isArray(fetchedItems) ? fetchedItems : [];
+      if (finalItems.length === 0 && Array.isArray(fetchedPacks) && fetchedPacks.length > 0) {
+        finalItems = fetchedPacks.map((p: any) => ({
+          id: p.id,
+          name: p.packType || 'Instrument Set',
+          qrCode: p.packId || p.id,
+          category: 'Instrument Set',
+          quantity: 1,
+          location: p.currentLocation || 'CSSD Storage',
+          currentStatus: p.currentStatus === 'STERILIZED' || p.currentStatus === 'AVAILABLE' ? 'STERILE' : (p.currentStatus as any),
+          lastSterilizedAt: p.sterilizedAt,
+          cycleReference: p.sterilizationBatch,
+          condition: 'EXCELLENT',
+          assignedOtId: p.assignedOtId,
+          assignedSurgeryId: p.assignedSurgeryId,
+          assignedPatientId: p.assignedPatientId,
+          notes: p.notes,
+          createdAt: p.sterilizedAt || new Date().toISOString(),
+          updatedAt: p.updatedAt || new Date().toISOString(),
+        }));
+      }
+
+      setItems(finalItems);
+      setJobs(Array.isArray(fetchedJobs) ? fetchedJobs : []);
       setMetrics(fetchedMetrics || null);
-      setCycleProfiles(fetchedProfiles || []);
-      setSurgeries(fetchedSchedule || []);
+      setCycleProfiles(Array.isArray(fetchedProfiles) ? fetchedProfiles : []);
+      setSurgeries(Array.isArray(fetchedSchedule) ? fetchedSchedule : []);
     } catch (err) {
       console.error('Failed to load CSSD telemetry:', err);
     } finally {

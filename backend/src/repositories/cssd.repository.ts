@@ -93,18 +93,44 @@ export class CSSDRepository {
 
   // ─── MASTER INSTRUMENT / ITEM CATALOG ─────────────────────────────────────
   findAllItems(): CSSDItem[] {
-    return db.getData().cssd_items || [];
+    const data = db.getData();
+    const items = data.cssd_items || [];
+    const itemIds = new Set(items.map((i) => i.id));
+    const itemQRs = new Set(items.map((i) => i.qrCode.toUpperCase()));
+
+    const packItems: CSSDItem[] = (data.cssd_packs || [])
+      .filter((p) => !itemIds.has(p.id) && !itemQRs.has(p.packId.toUpperCase()))
+      .map((p) => ({
+        id: p.id,
+        name: p.packType,
+        qrCode: p.packId,
+        category: 'Instrument Set',
+        quantity: 1,
+        location: p.currentLocation || 'CSSD Sterile Storage Shelf A-1',
+        currentStatus: p.currentStatus === 'STERILIZED' || p.currentStatus === 'AVAILABLE' ? 'STERILE' : (p.currentStatus as any),
+        lastSterilizedAt: p.sterilizedAt,
+        cycleReference: p.sterilizationBatch,
+        condition: 'EXCELLENT',
+        assignedOtId: p.assignedOtId,
+        assignedSurgeryId: p.assignedSurgeryId,
+        assignedPatientId: p.assignedPatientId,
+        notes: p.notes,
+        createdAt: p.sterilizedAt || new Date().toISOString(),
+        updatedAt: p.updatedAt || new Date().toISOString(),
+      }));
+
+    return [...items, ...packItems];
   }
 
   findItemById(id: string): CSSDItem | undefined {
-    const data = db.getData();
-    return (data.cssd_items || []).find((item) => item.id === id || item.qrCode === id);
+    const items = this.findAllItems();
+    return items.find((item) => item.id === id || item.qrCode === id);
   }
 
   findItemByQR(qrCode: string): CSSDItem | undefined {
-    const data = db.getData();
+    const items = this.findAllItems();
     const code = qrCode.trim().toUpperCase();
-    return (data.cssd_items || []).find(
+    return items.find(
       (item) => item.qrCode.toUpperCase() === code || item.id.toUpperCase() === code
     );
   }
