@@ -1,6 +1,6 @@
 import React from 'react';
 import { PatientReadiness, ConsentStatus } from '../../../shared/src/types';
-import { CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ShieldCheck, CheckCheck } from 'lucide-react';
 import { StatusBadge } from './ui/StatusBadge';
 
 interface ReadinessChecklistProps {
@@ -51,11 +51,20 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
     },
   ];
 
+  const handleMarkAllVerified = () => {
+    onConsentChange('VERIFIED');
+    checklistItems.forEach((item) => {
+      if (!item.checked) {
+        onUpdateItem(item.id, true);
+      }
+    });
+  };
+
   return (
     <div className="glass-card p-5 space-y-5 shadow-sm border border-slate-200 text-slate-800">
       {/* Header & Readiness Badge */}
       <div className="space-y-3 border-b border-slate-200 pb-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h4 className="text-sm font-extrabold text-slate-900 heading-serif flex items-center space-x-2">
               <span>Pre-Operative Readiness Checklist</span>
@@ -68,7 +77,17 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
             </p>
           </div>
 
-          <div>
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={handleMarkAllVerified}
+              className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 text-xs font-bold transition flex items-center space-x-1 shadow-sm"
+            >
+              <CheckCheck className="h-3.5 w-3.5" />
+              <span>Mark All Verified</span>
+            </button>
+
             <StatusBadge
               status={readiness.isReady ? 'READY FOR OT' : `NOT READY (${readiness.completedItemsCount}/6)`}
               tone={readiness.isReady ? 'success' : 'danger'}
@@ -96,19 +115,8 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
         </div>
       </div>
 
-      {/* Item 1: Digital Consent Status */}
-      <div
-        onClick={() => {
-          if (disabled) return;
-          const nextConsent: Record<ConsentStatus, ConsentStatus> = {
-            PENDING: 'VERIFIED',
-            VERIFIED: 'MISSING',
-            MISSING: 'VERIFIED',
-          };
-          onConsentChange(nextConsent[readiness.consentStatus] || 'VERIFIED');
-        }}
-        className="p-4 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200 flex items-center justify-between cursor-pointer transition shadow-sm select-none"
-      >
+      {/* Item 1: Digital Consent Status with Crisp Button Toggles */}
+      <div className="p-4 rounded-xl bg-slate-50/90 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
         <div className="flex items-start space-x-3">
           <div className="p-2 rounded-lg bg-teal-100 text-teal-700 mt-0.5 shadow-sm">
             <ShieldCheck className="h-5 w-5" />
@@ -116,52 +124,70 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
           <div>
             <p className="text-sm font-bold text-slate-900 heading-serif">Surgical & Anesthetic Consent Status</p>
             <p className="text-xs text-slate-500">
-              Click row to cycle status (VERIFIED / PENDING / MISSING) or select below
+              Select signed procedural consent documentation clearance status
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
-          <select
-            value={readiness.consentStatus}
+        <div className="flex items-center space-x-1.5 shrink-0">
+          <button
+            type="button"
             disabled={disabled}
-            onChange={(e) => onConsentChange(e.target.value as ConsentStatus)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition focus:outline-none shadow-sm cursor-pointer ${
+            onClick={() => onConsentChange('VERIFIED')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border cursor-pointer ${
               readiness.consentStatus === 'VERIFIED'
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                : readiness.consentStatus === 'PENDING'
-                ? 'bg-amber-50 text-amber-800 border-amber-300'
-                : 'bg-rose-50 text-rose-800 border-rose-300'
+                ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                : 'bg-white text-slate-700 border-slate-300 hover:bg-emerald-50 hover:text-emerald-700'
             }`}
           >
-            <option value="VERIFIED">VERIFIED (Consent Confirmed)</option>
-            <option value="PENDING">PENDING (Awaiting Review)</option>
-            <option value="MISSING">MISSING (Consent Incomplete)</option>
-          </select>
+            VERIFIED
+          </button>
+
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => onConsentChange('PENDING')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border cursor-pointer ${
+              readiness.consentStatus === 'PENDING'
+                ? 'bg-amber-500 text-white border-amber-600 shadow-sm'
+                : 'bg-white text-slate-700 border-slate-300 hover:bg-amber-50 hover:text-amber-700'
+            }`}
+          >
+            PENDING
+          </button>
+
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => onConsentChange('MISSING')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition border cursor-pointer ${
+              readiness.consentStatus === 'MISSING'
+                ? 'bg-rose-600 text-white border-rose-700 shadow-sm'
+                : 'bg-white text-slate-700 border-slate-300 hover:bg-rose-50 hover:text-rose-700'
+            }`}
+          >
+            MISSING
+          </button>
         </div>
       </div>
 
-      {/* Remaining 5 Checklist Checkboxes */}
+      {/* Remaining 5 Checklist Checkboxes with Native Labels */}
       <div className="space-y-2.5">
         {checklistItems.map((item) => (
-          <div
+          <label
             key={item.id}
-            onClick={() => !disabled && onUpdateItem(item.id, !item.checked)}
-            className={`flex items-start space-x-3 p-3 rounded-xl border transition-all cursor-pointer shadow-sm select-none ${
+            className={`flex items-start space-x-3.5 p-3.5 rounded-xl border transition-all cursor-pointer shadow-sm select-none ${
               item.checked
-                ? 'bg-white border-teal-500 ring-1 ring-teal-500/20 text-slate-900'
-                : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
+                ? 'bg-teal-50/60 border-teal-500 ring-1 ring-teal-500/30 text-slate-900'
+                : 'bg-slate-50/80 border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300'
             }`}
           >
             <input
               type="checkbox"
               checked={item.checked}
               disabled={disabled}
-              onChange={(e) => {
-                e.stopPropagation();
-                onUpdateItem(item.id, e.target.checked);
-              }}
-              className="mt-1 h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer"
+              onChange={(e) => onUpdateItem(item.id, e.target.checked)}
+              className="mt-0.5 h-4.5 w-4.5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer shrink-0"
             />
             <div className="text-xs">
               <span className={`font-bold ${item.checked ? 'text-slate-900' : 'text-slate-700'}`}>
@@ -169,7 +195,7 @@ export const ReadinessChecklist: React.FC<ReadinessChecklistProps> = ({
               </span>
               <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
             </div>
-          </div>
+          </label>
         ))}
       </div>
     </div>
