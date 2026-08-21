@@ -1332,6 +1332,54 @@
   ],
   "alerts": [
     {
+      "id": "alt_cssd_delay_J-106",
+      "severity": "WARNING",
+      "title": "Sterilization Processing Overrun: J-106 (SET-009)",
+      "description": "Job J-106 for \"Orthopedic Joint Replacement Kit\" has exceeded expected completion duration by 11 minutes.",
+      "entityType": "CSSD_PACK",
+      "entityId": "job_106",
+      "responsibleRole": "CSSD_STAFF",
+      "recommendedAction": "Inspect autoclave chamber and verify cycle progress for Steam Autoclave Standard (134°C).",
+      "status": "OPEN",
+      "createdAt": "2026-08-21T18:55:56.721Z"
+    },
+    {
+      "id": "alt_cssd_quarantine_J-105",
+      "severity": "CRITICAL",
+      "title": "CSSD Item QUARANTINED: Micro-Vascular Scissors Set",
+      "description": "Job J-105 (INS-088) was QUARANTINED: Pouch seal compromised during pressure change.",
+      "entityType": "CSSD_PACK",
+      "entityId": "job_105",
+      "responsibleRole": "CSSD_STAFF",
+      "recommendedAction": "Repackage and queue replacement tray immediately.",
+      "status": "OPEN",
+      "createdAt": "2026-08-21T18:55:56.721Z"
+    },
+    {
+      "id": "alt_cssd_delay_J-103",
+      "severity": "WARNING",
+      "title": "Sterilization Processing Overrun: J-103 (TRAY-005)",
+      "description": "Job J-103 for \"Vascular Bypass Surgical Tray\" has exceeded expected completion duration by 19 minutes.",
+      "entityType": "CSSD_PACK",
+      "entityId": "job_103",
+      "responsibleRole": "CSSD_STAFF",
+      "recommendedAction": "Inspect autoclave chamber and verify cycle progress for Hydrogen Peroxide Vapor (VHP / Plasma).",
+      "status": "OPEN",
+      "createdAt": "2026-08-21T18:55:56.720Z"
+    },
+    {
+      "id": "alt_consent_surg_1024",
+      "severity": "CRITICAL",
+      "title": "Missing Surgical Consent: Arthur Pendelton (OT-03)",
+      "description": "Surgery \"Emergency Appendectomy\" is scheduled for 07:30 pm but consent is MISSING in Ward 4B.",
+      "entityType": "PATIENT",
+      "entityId": "pat_1024",
+      "responsibleRole": "WARD_STAFF",
+      "recommendedAction": "Verify and complete surgical consent in Ward 4B before transfer.",
+      "status": "OPEN",
+      "createdAt": "2026-08-21T18:55:56.718Z"
+    },
+    {
       "id": "alt_01",
       "severity": "CRITICAL",
       "title": "Missing Surgical Consent: Patient P-1024",

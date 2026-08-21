@@ -5,7 +5,7 @@
   "main": "dist/backend/src/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc && node -e \"const fs = require('fs'); if (!fs.existsSync('dist/index.js')) fs.writeFileSync('dist/index.js', 'require(\\\"./backend/src/index.js\\\");');\"",
+    "build": "tsc && node -e \"const fs = require('fs'); fs.writeFileSync('dist/index.js', 'require(\\\"./backend/src/index.js\\\");');\"",
     "start": "node dist/backend/src/index.js",
     "seed": "tsx src/database/seed.ts",
     "test": "vitest run",
