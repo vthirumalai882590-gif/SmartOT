@@ -73,7 +73,8 @@ export class OTRepository {
       return { success: false, error: `Operating Theatre "${otId}" not found` };
     }
 
-    if (!allowOverride && !isValidOTTransition(ot.currentStatus, newStatus)) {
+    const isFlexibleTransition = ['SURGERY_STARTED', 'SURGERY_COMPLETED', 'TURNOVER', 'AVAILABLE', 'PREPARING', 'PATIENT_READY', 'PATIENT_TRANSFER', 'PATIENT_ARRIVED'].includes(newStatus);
+    if (!allowOverride && !isFlexibleTransition && !isValidOTTransition(ot.currentStatus, newStatus)) {
       return {
         success: false,
         error: `Invalid OT transition from "${ot.currentStatus}" to "${newStatus}"`,
